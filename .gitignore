@@ -3,9 +3,13 @@
 .env
 .vscode
 
-/client/node_modules
 
+/client/node_modules
+/client/package-lock.json
+
+/server/oAuth2.credentials.json
 /server/node_modules
+/server/package-lock.json
 
 # dependencies
 /node_modules
