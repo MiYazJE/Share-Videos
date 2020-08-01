@@ -1,9 +1,3 @@
-import axios from 'axios';
-
-function search(text) {
-
+export async function searchYoutubeVideo(text) {
+    return await (await fetch(`/youtube/search/${text}`)).json();
 }
-
-exports = {
-    search,
-};

@@ -1,10 +1,12 @@
 import React from 'react';
 import Input from '@material-ui/core/TextField';
+import { searchYoutubeVideo } from '../../Http/api';
 import './searchBar.scss';
 
 const SearchBar = () => {
-    const searchText = ({ target }) => {
-        console.log(target.value);
+    const searchText = async ({ target }) => {
+        const data = await searchYoutubeVideo(target.value);
+        console.log(data);
     };
 
     return (

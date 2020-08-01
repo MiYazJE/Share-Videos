@@ -3,6 +3,10 @@
 .env
 .vscode
 
+/client/node_modules
+
+/server/node_modules
+
 # dependencies
 /node_modules
 /.pnp
