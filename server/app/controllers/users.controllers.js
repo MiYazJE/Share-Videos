@@ -1,12 +1,14 @@
 const fetch = require('node-fetch');
 
+const URL_GOOGLE_SUGGEST = 'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=es&q=';
+
 module.exports = {
     searchVideoSuggestions,
 }
 
 async function searchVideoSuggestions(req, res) {
     const { q } = req.params;
-    const response    = await fetch(`http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=es&q=${q}`);
+    const response    = await fetch(`${URL_GOOGLE_SUGGEST}${q}`);
     const suggestions = mapSuggestions((await response.text()));
     res.json([...suggestions]);
 }   
