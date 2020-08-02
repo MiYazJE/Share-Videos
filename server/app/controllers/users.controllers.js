@@ -16,8 +16,8 @@ async function searchVideoSuggestions(req, res) {
 }   
 
 function mapSuggestions(suggestions) {
-    const regexp = /(\[)\"(([a-z0-9])*(\ )?([a-z0-9])*)*/gi;
-    return suggestions.match(regexp).map(w => w.substring(2));
+    const regexp = /\[\"[\w\s]+"/gi;
+    return suggestions.match(regexp).map(w => w.substring(2, w.length - 1));
 }
 
 async function getVideos(req, res) {
