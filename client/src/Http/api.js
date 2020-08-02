@@ -1,3 +1,3 @@
-export async function searchYoutubeVideo(text) {
-    return await (await fetch(`/youtube/search/${text}`)).json();
+export async function searchVideoSuggestions(text, maxResults = 8) {
+    return await (await fetch(`/youtube/search/${text}/${maxResults}`)).json();
 }
