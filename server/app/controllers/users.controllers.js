@@ -1,9 +1,11 @@
 const fetch = require('node-fetch');
+const youtubeScraper = require('../lib/youtubeScraper');
 
 const URL_GOOGLE_SUGGEST = 'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=es&q=';
 
 module.exports = {
     searchVideoSuggestions,
+    getVideos
 }
 
 async function searchVideoSuggestions(req, res) {
@@ -16,6 +18,13 @@ async function searchVideoSuggestions(req, res) {
 function mapSuggestions(suggestions) {
     const regexp = /(\[)\"(([a-z0-9])*(\ )?([a-z0-9])*)*/gi;
     return suggestions.match(regexp).map(w => w.substring(2));
+}
+
+async function getVideos(req, res) {
+    const { q } = req.params;
+    if (!q) return res.status(400).json({ msg: 'Query is empty!' });
+    const videos = await youtubeScraper.scrapVideosWithQuery(q);
+    res.json([...videos]);
 }
 
 /*
