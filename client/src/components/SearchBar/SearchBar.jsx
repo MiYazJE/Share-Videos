@@ -1,7 +1,7 @@
 import React from 'react';
 import Input from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
-import { searchVideoSuggestions } from '../../Http/api';
+import { searchVideoSuggestions, searchYoutubeVideos } from '../../Http/api';
 import './searchBar.scss';
 import { useState } from 'react';
 
@@ -25,13 +25,13 @@ const SearchBar = () => {
             setVideosSuggested([]);
             return;
         };
-        const { items } = await searchVideoSuggestions(target.value);
-        setVideosSuggested([...items.map(video => video.snippet)]);
+        const data = await searchVideoSuggestions(target.value);
+        setVideosSuggested([...data]);
     };
 
     const getVideos = async (searched) => {
-        const { items } = await searchVideoSuggestions(searched, 15);
-        setVideos([...items.map(video => video.snippet)]);
+        const videos = await searchYoutubeVideos(searched);
+        setVideos(videos);
     }
 
     return (
@@ -39,7 +39,7 @@ const SearchBar = () => {
             <Autocomplete
                 onChange={(_, searched) => getVideos(searched)}
                 style={{ width: 300 }}
-                options={videosSuggested.map(video => video.title)}
+                options={videosSuggested}
                 renderInput={(params) => (
                     <Input {...params} onChange={searchAutoCompletation} id="search" placeholder="Busca un vídeo" />
                 )}
