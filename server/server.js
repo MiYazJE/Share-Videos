@@ -4,6 +4,8 @@ const app = express();
 
 require('dotenv').config();
 
+app.use(require('morgan')('tiny'));
+
 app.use(express.json());
 app.use('/', require('./app/routes/routes.js'));
 
