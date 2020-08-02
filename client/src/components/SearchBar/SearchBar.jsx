@@ -6,16 +6,16 @@ import './searchBar.scss';
 import { useState } from 'react';
 
 const Video = ({ title, urlThumbnail, url }) => (
-    <a className="linkVideo" href={`https://youtube.com/${url}`} target="_blank">
-        <div className="video">
-            <div className="top">
+    <div className="video">
+        <div className="top">
+            <a className="linkVideo" href={`https://youtube.com/${url}`} target="_blank">
                 <img src={urlThumbnail}/>
-            </div>
-            <div className="bottom">
-                <p className="title">{title}</p>
-            </div>
+            </a>
         </div>
-    </a>
+        <div className="bottom">
+            <p className="title">{title}</p>
+        </div>
+    </div>
 );
 
 const SearchBar = () => {
@@ -40,11 +40,12 @@ const SearchBar = () => {
         <div id="wrapSearchBar">
             <Autocomplete
                 onChange={(_, searched) => getVideos(searched)}
-                style={{ width: 300 }}
+                style={{ width: '70%', maxWidth: 350 }}
                 options={videosSuggested}
                 renderInput={(params) => (
-                    <Input {...params} onChange={searchAutoCompletation} id="search" placeholder="Busca un vídeo" />
+                    <Input {...params} onChange={searchAutoCompletation} id="search" placeholder="Search a video" />
                 )}
+                noOptionsText="No results"
             />
             <div className="videosContainer">
                 {videos.map(video => <Video {...video} />)}
