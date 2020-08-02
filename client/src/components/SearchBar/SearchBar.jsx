@@ -5,15 +5,17 @@ import { searchVideoSuggestions, searchYoutubeVideos } from '../../Http/api';
 import './searchBar.scss';
 import { useState } from 'react';
 
-const Video = ({ title }) => (
-    <div className="video">
-        <div className="top">
-            <span className="title">{title}</span>
+const Video = ({ title, urlThumbnail, url }) => (
+    <a className="linkVideo" href={`https://youtube.com/${url}`} target="_blank">
+        <div className="video">
+            <div className="top">
+                <img src={urlThumbnail}/>
+            </div>
+            <div className="bottom">
+                <p className="title">{title}</p>
+            </div>
         </div>
-        <div className="bottom">
-
-        </div>
-    </div>
+    </a>
 );
 
 const SearchBar = () => {
