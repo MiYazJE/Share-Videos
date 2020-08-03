@@ -12,8 +12,8 @@ This project uses [node](http://nodejs-org), so you must have installed it.
 
 - <strong>Development mode</strong>: 
     ```
-    cd client && npm run start
-    cd server && npm run dev
+    npm run client
+    npm run server
     ```
     
 ## Usage
