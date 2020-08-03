@@ -13,7 +13,7 @@ const initialState = {
     urlVideo: 'https://www.youtube.com/watch?v=A1xEete-zHM',
     loadingVideos: false,
     suggestedVideos: [],
-    videos: [],
+    videos: []
 };
 
 const reducer = (state = initialState, action) => {

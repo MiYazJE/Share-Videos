@@ -1,6 +1,7 @@
 const { createProxyMiddleware } = require('http-proxy-middleware');
 
 module.exports = (app) => {
+    
     app.use(
         '/search/autocomplete/',
         createProxyMiddleware({
@@ -8,11 +9,20 @@ module.exports = (app) => {
             changeOrigin: true,
         })
     );
+
     app.use(
         '/youtube/',
         createProxyMiddleware({
             target: 'http://localhost:5000',
             changeOrigin: true,
+        })
+    );
+
+    app.use(
+        '/socket-io',
+        createProxyMiddleware({
+            target: 'http://localhost:5000',
+            ws: true,
         })
     );
 };
