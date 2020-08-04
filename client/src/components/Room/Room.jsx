@@ -50,20 +50,24 @@ const Room = ({
     const history = useHistory();
     const { id } = useParams();
 
+    // If the room is not valid it will redirect the user to the homepage
     useEffect(() => {
         (async () => {
             checkIsValidRoom(id, () => history.push('/'));
-            setOpenDialog(id && !name);
-            if (id && name) joinRoom({ id, name });
         })();
     }, [history, id, checkIsValidRoom, name]);
+    
+    // If the user does not have a name it will ask for it
+    useEffect(() => {
+        setOpenDialog(id && !name);
+        if (id && name) joinRoom({ id, name });
+    }, [id, name, joinRoom]);
 
     const scrollTo = (ref) => ref.current.scrollIntoView({ behavior: 'smooth' });
 
     const onCancelDialog = () => history.push('/');
 
     const onAcceptDialog = (nickname) => {
-        console.log(nickname)
         if (nickname) {
             setName(nickname);
             setOpenDialog(false);
