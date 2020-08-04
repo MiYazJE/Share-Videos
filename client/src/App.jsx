@@ -1,17 +1,12 @@
-/* eslint linebreak-style: ["error", "unix"] */
 import React from 'react';
-import SearchBar from './components/SearchBar';
+import Routes from './routes/Routes';
+import { BrowserRouter as Router } from 'react-router-dom'
 import './app.scss';
 
 const App = () => (
-    <div id="mainContent">
-        <header>
-            <nav />
-        </header>
-        <main>
-            <SearchBar />
-        </main>
-    </div>
+    <Router>    
+        <Routes />
+    </Router>
 );
 
 export default App;

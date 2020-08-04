@@ -6,12 +6,16 @@ import ReactPlayer from 'react-player';
 import { connect } from 'react-redux';
 import { setUrlVideo, getSuggestedVideos, getVideos } from '../../actions/userActions';
 import { readLoadingVideos, readUrlVideo, readSuggestedVideos, readVideos } from '../../reducers/userReducer';
-import './searchBar.scss';
+import './room.scss';
 
 const Video = ({ title, urlThumbnail, url, changeVideo }) => (
     <div className="video">
         <div className="top">
-            <img alt="Thumbnail" onClick={() => changeVideo(`https://youtube.com${url}`)} src={urlThumbnail}/>
+            <img 
+                alt="Thumbnail" 
+                onClick={() => changeVideo(`https://youtube.com${url}`)} 
+                src={urlThumbnail}
+            />
         </div>
         <div className="bottom">
             <p className="title">{title}</p>
@@ -19,7 +23,15 @@ const Video = ({ title, urlThumbnail, url, changeVideo }) => (
     </div>
 );
 
-const SearchBar = ({ loading, urlVideo, videosSuggested, videos, getVideos, getSuggestedVideos, setUrlVideo }) => {
+const Room = ({ 
+    loading, 
+    urlVideo, 
+    videosSuggested, 
+    videos, 
+    getVideos, 
+    getSuggestedVideos, 
+    setUrlVideo 
+}) => {
 
     const refResultVideos = useRef();
 
@@ -67,4 +79,4 @@ const mapDispatchToProps = dispatch => ({
     getSuggestedVideos: (query) => dispatch(getSuggestedVideos(query)),
 });
 
-export default connect(mapStateToProps, mapDispatchToProps)(SearchBar);
+export default connect(mapStateToProps, mapDispatchToProps)(Room);

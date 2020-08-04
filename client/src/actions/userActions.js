@@ -1,4 +1,10 @@
-import { SET_LOADING_VIDEOS, SET_VIDEOS, SET_SUGGESTED_VIDEOS, SET_URL_VIDEO } from './actionTypes';
+import {
+    SET_LOADING_VIDEOS,
+    SET_VIDEOS,
+    SET_SUGGESTED_VIDEOS,
+    SET_URL_VIDEO,
+    SET_NAME,
+} from './actionTypes';
 import api from '../Http/api';
 
 export const setUrlVideo = (url) => ({
@@ -9,6 +15,11 @@ export const setUrlVideo = (url) => ({
 export const setLoadingVideos = (loading) => ({
     type: SET_LOADING_VIDEOS,
     loading,
+});
+
+export const setName = (name) => ({
+    type: SET_NAME,
+    name,
 });
 
 const setSuggestedVideos = (suggestedVideos) => ({
