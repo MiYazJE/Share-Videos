@@ -1,0 +1,54 @@
+import React, { useState } from 'react';
+import { connect } from 'react-redux';
+import { setName } from '../../actions/userActions';
+import Button from '@material-ui/core/Button';
+import TextField from '@material-ui/core/TextField';
+import Dialog from '@material-ui/core/Dialog';
+import DialogActions from '@material-ui/core/DialogActions';
+import DialogContent from '@material-ui/core/DialogContent';
+import DialogContentText from '@material-ui/core/DialogContentText';
+import DialogTitle from '@material-ui/core/DialogTitle';
+
+const stylesContentDialog = {
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center'
+}
+
+const DialogName = ({ open, onAccept, onCancel}) => {
+    const [nickname, setNickname] = useState(false);
+
+    return (
+        <Dialog 
+            disableBackdropClick
+            disableEscapeKeyDown
+            open={open} 
+            aria-labelledby="form-dialog-title"
+        >
+            <DialogContent style={stylesContentDialog}>
+                <TextField
+                    autoFocus
+                    margin="dense"
+                    id="name"
+                    label="nickname"
+                    type="name"
+                    onChange={({ target }) => setNickname(target.value)}
+                />
+            </DialogContent>
+            <DialogActions>
+                <Button size="small" onClick={onCancel} color="secondary" variant="contained">
+                    CANCEL
+                </Button>
+                <Button size="small" onClick={() => onAccept(nickname)} color="primary" variant="contained">
+                    ACCEPT
+                </Button>
+            </DialogActions>
+        </Dialog>
+    );
+
+}
+
+export default connect(null, {
+    setName
+})(DialogName);

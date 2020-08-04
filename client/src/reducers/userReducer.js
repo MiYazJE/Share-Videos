@@ -36,7 +36,7 @@ const reducer = (state = initialState, action) => {
 };
 
 export const readUser = (state) => ({ ...state.userReducer });
-export const readName = (state) => state.userReducer.name;
+export const readName = () => window.localStorage.getItem('name');
 export const readIsLogged = (state) => state.userReducer.isLogged;
 export const readUrlVideo = (state) => state.userReducer.urlVideo;
 export const readLoadingVideos = (state) => state.userReducer.loadingVideos;

@@ -1,13 +1,14 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import Input from '@material-ui/core/TextField';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactPlayer from 'react-player';
 import { connect } from 'react-redux';
-import { setUrlVideo, getSuggestedVideos, getVideos, joinRoom } from '../../actions/userActions';
+import { setUrlVideo, getSuggestedVideos, getVideos, joinRoom, setName } from '../../actions/userActions';
 import { readLoadingVideos, readUrlVideo, readSuggestedVideos, readVideos, readName } from '../../reducers/userReducer';
 import { readRoomName, readUsers, readIsLoading } from '../../reducers/roomReducer';
+import DialogName from './DialogName';
 import { isValidRoom } from '../../actions/roomActions';
 import './room.scss';
 
@@ -40,8 +41,10 @@ const Room = ({
     isLoading,
     checkIsValidRoom,
     joinRoom,
-    name
+    name,
+    setName
 }) => {
+    const [openDialog, setOpenDialog] = useState(false);
 
     const refResultVideos = useRef();
     const history = useHistory();
@@ -50,11 +53,22 @@ const Room = ({
     useEffect(() => {
         (async () => {
             checkIsValidRoom(id, () => history.push('/'));
-            joinRoom({ id, name });
+            setOpenDialog(id && !name);
+            if (id && name) joinRoom({ id, name });
         })();
     }, [history, id, checkIsValidRoom, name]);
 
     const scrollTo = (ref) => ref.current.scrollIntoView({ behavior: 'smooth' });
+
+    const onCancelDialog = () => history.push('/');
+
+    const onAcceptDialog = (nickname) => {
+        console.log(nickname)
+        if (nickname) {
+            setName(nickname);
+            setOpenDialog(false);
+        }
+    }
 
     return (
         <main>
@@ -62,6 +76,14 @@ const Room = ({
                 ? <CircularProgress style={{ position: 'absolute', top: '50%' }} /> 
                 : (
                     <div id="wrapVideoPlayer">
+                        {openDialog 
+                            ? <DialogName 
+                                    open={openDialog} 
+                                    onCancel={onCancelDialog} 
+                                    onAccept={onAcceptDialog}
+                                /> 
+                            : null 
+                        }
                         <div className="wrapSearchBar">
                             <Autocomplete
                                 onChange={(_, searched) => getVideos(searched, () => scrollTo(refResultVideos))}
@@ -107,7 +129,8 @@ const mapDispatchToProps = dispatch => ({
     getVideos: (query, callback) => dispatch(getVideos(query, callback)),
     getSuggestedVideos: (query) => dispatch(getSuggestedVideos(query)),
     checkIsValidRoom: (id, redirect) => dispatch(isValidRoom(id, redirect)),
-    joinRoom: (payload) => dispatch(joinRoom(payload))
+    joinRoom: (payload) => dispatch(joinRoom(payload)),
+    setName: (name) => dispatch(setName(name))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Room);

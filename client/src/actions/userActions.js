@@ -17,10 +17,13 @@ export const setLoadingVideos = (loading) => ({
     loading,
 });
 
-export const setName = (name) => ({
-    type: SET_NAME,
-    name,
-});
+export const setName = (name) => {
+    window.localStorage.setItem('name', name);
+    return {
+        type: SET_NAME,
+        name,
+    }
+};
 
 const setSuggestedVideos = (suggestedVideos) => ({
     type: SET_SUGGESTED_VIDEOS,
