@@ -49,3 +49,8 @@ export const getVideos = (searched, callback) => async (dispatch) => {
     callback();
     dispatch(setLoadingVideos(false));
 };
+
+export const joinRoom = (payload) => ({
+    type: 'WS_JOIN_ROOM',
+    payload
+});

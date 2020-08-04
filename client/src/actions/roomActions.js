@@ -1,13 +1,26 @@
 import api from '../Http/api';
-import { SET_ROOM } from './actionTypes';
+import { SET_ROOM, SET_LOADING } from './actionTypes';
 
-const setRoom = (room) => ({
+export const setRoom = (room) => ({
     type: SET_ROOM,
     room
 });
 
-export const createRoom = (nameCreator, cb) => ({
-    type: 'WS_CREATE_ROOM',
-    promise: (socket) => socket.emit('createRoom', { nameCreator }),
-    cb
+const setLoading = (loading) => ({
+    type: SET_LOADING,
+    loading
 });
+
+export const createRoom = (host, cb) => async (dispatch) => {
+    const room = await api.createRoom(host);
+    dispatch(setRoom(room));
+    cb(room.id);
+};
+
+export const isValidRoom = (id, redirect) => async (dispatch) => {
+    dispatch(setLoading(true));
+    const isValid = await api.isValidRoom(id);
+    if (!isValid) redirect();
+
+    dispatch(setLoading(false));
+};

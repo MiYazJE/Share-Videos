@@ -18,9 +18,8 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
     switch (action.type) {
-        case SET_IS_LOGGED: {
+        case SET_IS_LOGGED:
             return { ...state, isLogged: action.isLogged };
-        }
         case SET_NAME:
             return { ...state, name: action.name };
         case SET_VIDEOS:
@@ -31,9 +30,8 @@ const reducer = (state = initialState, action) => {
             return { ...state, suggestedVideos: action.suggestedVideos };
         case SET_URL_VIDEO:
             return { ...state, urlVideo: action.url };
-        default: {
+        default:
             return { ...state };
-        }
     }
 };
 

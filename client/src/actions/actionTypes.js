@@ -5,3 +5,4 @@ export const SET_SUGGESTED_VIDEOS = 'SET_SUGGESTED_VIDEOS';
 export const SET_VIDEOS = 'SET_VIDEOS';
 export const SET_LOADING_VIDEOS = 'SET_LOADING_VIDEOS';
 export const SET_ROOM = 'SET_ROOM';
+export const SET_LOADING = 'SET_LOADING';

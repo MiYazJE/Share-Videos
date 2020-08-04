@@ -12,7 +12,7 @@ const Home = ({ createRoom, name, setName }) => {
     const history = useHistory();    
 
     const handleCreateRoom = () => {
-        createRoom(name, () => history.push('/room'));
+        createRoom(name, (id) => history.push(`/room/${id}`));
     }
 
     return (

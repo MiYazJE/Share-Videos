@@ -18,4 +18,5 @@ if (!isDev) {
 const PORT = process.env.PORT || 5000;
 const server = app.listen(PORT, () => console.log('MAGIC at port ' + PORT));
 const io = socketIO(server, { path: '/socket-io' });
-require('./lib/socketIo')(io);
+const roomsCtrl = require('./lib/socketIo')(io);
+app.locals.roomsCtrl = roomsCtrl;
