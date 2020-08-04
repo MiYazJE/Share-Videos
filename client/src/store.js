@@ -8,6 +8,6 @@ const composeFunction = process.env.NODE_ENV  === 'development'
     ? composeWithDevTools
     : compose;
 
-const store = createStore(rootReducer, {}, composeFunction(applyMiddleware(thunk, socketMiddleware)));
+const store = createStore(rootReducer, composeFunction(applyMiddleware(thunk, socketMiddleware())));
 
 export default store;

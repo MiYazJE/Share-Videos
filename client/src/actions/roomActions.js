@@ -7,7 +7,7 @@ const setRoom = (room) => ({
 });
 
 export const createRoom = (nameCreator, cb) => ({
-    type: 'socket',
+    type: 'WS_CREATE_ROOM',
     promise: (socket) => socket.emit('createRoom', { nameCreator }),
     cb
 });
