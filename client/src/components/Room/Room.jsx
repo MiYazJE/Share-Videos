@@ -5,11 +5,11 @@ import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactPlayer from 'react-player';
 import { connect } from 'react-redux';
-import { setUrlVideo, getSuggestedVideos, getVideos, joinRoom, setName } from '../../actions/userActions';
-import { readLoadingVideos, readUrlVideo, readSuggestedVideos, readVideos, readName } from '../../reducers/userReducer';
-import { readRoomName, readUsers, readIsLoading } from '../../reducers/roomReducer';
+import { setName } from '../../actions/userActions';
+import { readName } from '../../reducers/userReducer';
+import { readRoomName, readUsers, readIsLoading, readSuggestedVideos, readUrlVideo, readLoadingVideos, readVideos } from '../../reducers/roomReducer';
+import { isValidRoom, setUrlVideo, getVideos, getSuggestedVideos, joinRoom } from '../../actions/roomActions';
 import DialogName from './DialogName';
-import { isValidRoom } from '../../actions/roomActions';
 import './room.scss';
 
 const Video = ({ title, urlThumbnail, url, changeVideo }) => (
@@ -28,7 +28,6 @@ const Video = ({ title, urlThumbnail, url, changeVideo }) => (
 );
 
 const Room = ({ 
-    loading, 
     urlVideo, 
     videosSuggested, 
     videos, 
@@ -37,8 +36,8 @@ const Room = ({
     setUrlVideo,
     roomName,
     users,
-    isValidRoom,
     isLoading,
+    loadingVideos,
     checkIsValidRoom,
     joinRoom,
     name,
@@ -55,14 +54,14 @@ const Room = ({
         (async () => {
             checkIsValidRoom(id, () => history.push('/'));
         })();
-    }, [history, id, checkIsValidRoom, name]);
+    }, [history, id, checkIsValidRoom]);
     
     // If the user does not have a name it will ask for it
     useEffect(() => {
         setOpenDialog(id && !name);
         if (id && name) joinRoom({ id, name });
     }, [id, name, joinRoom]);
-
+    
     const scrollTo = (ref) => ref.current.scrollIntoView({ behavior: 'smooth' });
 
     const onCancelDialog = () => history.push('/');
@@ -103,7 +102,7 @@ const Room = ({
                                 )}
                                 noOptionsText="No results"
                             />
-                            {loading ? <CircularProgress style={{marginLeft: '30px'}} size={30} /> : null}
+                            {loadingVideos ? <CircularProgress style={{marginLeft: '30px'}} size={30} /> : null}
                         </div>
                         <div className="reactPlayer">
                             <ReactPlayer width="100%" height="100%" controls={true} url={urlVideo} />
@@ -119,12 +118,12 @@ const Room = ({
 
 const mapStateToProps = state => ({
     urlVideo: readUrlVideo(state),
-    loading: readLoadingVideos(state),
     videosSuggested: readSuggestedVideos(state),
     videos: readVideos(state),
     users: readUsers(state),
     roomName: readRoomName(state),
     isLoading: readIsLoading(state),
+    loadingVideos: readLoadingVideos(state),
     name: readName(state),
 });
 
