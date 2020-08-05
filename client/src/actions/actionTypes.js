@@ -11,3 +11,4 @@ export const WS_JOIN_ROOM = 'WS_JOIN_ROOM';
 export const WS_ADD_VIDEO = 'WS_ADD_VIDEO';
 export const WS_GET_VIDEO = 'WS_GET_VIDEO';
 export const WS_UPDATE_ROOM = 'WS_UPDATE_ROOM';
+export const WS_REMOVE_VIDEO = 'WS_REMOVE_VIDEO';

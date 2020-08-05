@@ -8,6 +8,7 @@ import {
     SET_SUGGESTED_VIDEOS,
     SET_VIDEOS,
     WS_ADD_VIDEO,
+    WS_REMOVE_VIDEO
 } from './actionTypes';
 
 export const setRoom = (room) => ({
@@ -79,5 +80,10 @@ export const joinRoom = (payload) => ({
 
 export const enqueueVideo = (payload) => ({
     type: WS_ADD_VIDEO,
+    payload
+});
+
+export const removeVideo = (payload) => ({
+    type: WS_REMOVE_VIDEO,
     payload
 });

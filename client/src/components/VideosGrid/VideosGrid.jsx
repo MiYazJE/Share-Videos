@@ -1,16 +1,22 @@
 import React from 'react';
 import FlipMove from 'react-flip-move';
 import { connect } from 'react-redux';
-import { readQueue } from '../../reducers/roomReducer';
+import { readQueue, readRoomName } from '../../reducers/roomReducer';
+import { removeVideo } from '../../actions/roomActions';
 import './videosGrid.scss';
 
-const VideosGrid = ({ videos, removeVideo }) => {
+const VideosGrid = ({ videos, removeVideo, idRoom }) => {
+
+    const handleRemoveVideo = (idToRemove) => {
+        removeVideo({ idToRemove, idRoom });
+    }
+
     return (
         <FlipMove
             staggerDurationBy="30"
-            duration={500}
-            enterAnimation="accordionVertical"
-            leaveAnimation="accordionVertical"
+            duration={100}
+            enterAnimation="fade"
+            leaveAnimation="fade"
             typeName="div"
             className="wrapVideosGrid"
         >
@@ -23,7 +29,7 @@ const VideosGrid = ({ videos, removeVideo }) => {
                     </div>
                     <div className="meta">
                         <span className="title">{video.title}</span>
-                        <button onClick={() => removeVideo(video.id)}>remove</button>
+                        <button onClick={() => handleRemoveVideo(video.id)}>remove</button>
                     </div>
                 </div>
             ))}
@@ -33,7 +39,12 @@ const VideosGrid = ({ videos, removeVideo }) => {
 }
 
 const mapStateToProps = (state) => ({
-    videos: readQueue(state)
+    videos: readQueue(state),
+    idRoom: readRoomName(state)
 });
 
-export default connect(mapStateToProps, {})(VideosGrid);
+const mapDispatchToProps = (dispatch) => ({
+    removeVideo: (payload) => dispatch(removeVideo(payload))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(VideosGrid);

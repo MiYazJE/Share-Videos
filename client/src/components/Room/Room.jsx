@@ -1,14 +1,12 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import Input from '@material-ui/core/TextField';
-import Autocomplete from '@material-ui/lab/Autocomplete';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactPlayer from 'react-player';
 import { connect } from 'react-redux';
 import { setName } from '../../actions/userActions';
 import { readName } from '../../reducers/userReducer';
-import { readRoomName, readUsers, readIsLoading, readSuggestedVideos, readUrlVideo, readLoadingVideos, readVideos } from '../../reducers/roomReducer';
-import { isValidRoom, setUrlVideo, getVideos, getSuggestedVideos, joinRoom, enqueueVideo } from '../../actions/roomActions';
+import { readRoomName, readIsLoading, readVideos, readUrlVideo } from '../../reducers/roomReducer';
+import { isValidRoom, joinRoom, enqueueVideo } from '../../actions/roomActions';
 import DialogName from './DialogName';
 import UsersGrid from '../UsersGrid';
 import VideosGrid from '../VideosGrid';
@@ -18,6 +16,7 @@ import Typography from '@material-ui/core/Typography';
 import Box from '@material-ui/core/Box';
 import { FaUsers, FaPhotoVideo } from 'react-icons/fa';
 import { AppBar } from '@material-ui/core';
+import NavBar from '../NavBar/';
 import './room.scss';
 
 const Video = ({ title, urlThumbnail, url, addVideo }) => (
@@ -57,15 +56,9 @@ const TabPanel = ({ children, value, index, ...other }) => (
 
 const Room = ({ 
     urlVideo, 
-    videosSuggested, 
     videos, 
-    getVideos, 
-    getSuggestedVideos, 
-    setUrlVideo,
     roomName,
-    users,
     isLoading,
-    loadingVideos,
     checkIsValidRoom,
     joinRoom,
     name,
@@ -92,7 +85,7 @@ const Room = ({
         if (id && name) joinRoom({ id, name });
     }, [id, name, joinRoom]);
 
-    const scrollTo = (ref) => ref.current.scrollIntoView({ behavior: 'smooth' });
+    const scrollTo = (ref) => refResultVideos.current.scrollIntoView({ behavior: 'smooth' });
 
     const onCancelDialog = () => history.push('/');
 
@@ -122,23 +115,7 @@ const Room = ({
                                 /> 
                             : null 
                         }
-                        <div className="wrapSearchBar">
-                            <Autocomplete
-                                onChange={(_, searched) => getVideos(searched, () => scrollTo(refResultVideos))}
-                                style={{ width: '70%', maxWidth: 350 }}
-                                options={videosSuggested}
-                                renderInput={(params) => (
-                                    <Input 
-                                        {...params} 
-                                        onChange={({ target }) => getSuggestedVideos(target.value)} 
-                                        id="search" 
-                                        placeholder="Search a video" 
-                                    />
-                                )}
-                                noOptionsText="No results"
-                            />
-                            {loadingVideos ? <CircularProgress style={{marginLeft: '30px'}} size={30} /> : null}
-                        </div>
+                        <NavBar scrollTo={scrollTo} />
                         <div className="reactPlayer">
                             <ReactPlayer width="100%" height="100%" controls={true} url={urlVideo} />
                         </div>
@@ -171,23 +148,17 @@ const Room = ({
 
 const mapStateToProps = state => ({
     urlVideo: readUrlVideo(state),
-    videosSuggested: readSuggestedVideos(state),
-    videos: readVideos(state),
-    users: readUsers(state),
     roomName: readRoomName(state),
     isLoading: readIsLoading(state),
-    loadingVideos: readLoadingVideos(state),
     name: readName(state),
+    videos: readVideos(state)
 });
 
 const mapDispatchToProps = dispatch => ({
-    getVideos: (query, callback) => dispatch(getVideos(query, callback)),
-    getSuggestedVideos: (query) => dispatch(getSuggestedVideos(query)),
     checkIsValidRoom: (id, redirect) => dispatch(isValidRoom(id, redirect)),
     joinRoom: (payload) => dispatch(joinRoom(payload)),
     enqueueVideo: (payload) => dispatch(enqueueVideo(payload)),
-    setUrlVideo,
-    setName,
+    setName: (name) => dispatch(setName(name)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Room);
