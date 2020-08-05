@@ -1,0 +1,20 @@
+.wrapVideo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    
+
+    .img {
+        width: 50%;
+    }
+
+    .meta {
+        width: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+    }
+
+}

@@ -1,0 +1,13 @@
+.wrapUsersGrid {
+    width: 100%;
+    height: 100%;
+
+    .wrapUser {
+        display: flex;
+        justify-content: center;
+        .name {
+            text-align: center;
+        }
+    }
+
+}

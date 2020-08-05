@@ -8,22 +8,50 @@ import { connect } from 'react-redux';
 import { setName } from '../../actions/userActions';
 import { readName } from '../../reducers/userReducer';
 import { readRoomName, readUsers, readIsLoading, readSuggestedVideos, readUrlVideo, readLoadingVideos, readVideos } from '../../reducers/roomReducer';
-import { isValidRoom, setUrlVideo, getVideos, getSuggestedVideos, joinRoom } from '../../actions/roomActions';
+import { isValidRoom, setUrlVideo, getVideos, getSuggestedVideos, joinRoom, enqueueVideo } from '../../actions/roomActions';
 import DialogName from './DialogName';
+import UsersGrid from '../UsersGrid';
+import VideosGrid from '../VideosGrid';
+import Tabs from '@material-ui/core/Tabs';
+import Tab from '@material-ui/core/Tab';
+import Typography from '@material-ui/core/Typography';
+import Box from '@material-ui/core/Box';
+import { FaUsers, FaPhotoVideo } from 'react-icons/fa';
+import { AppBar } from '@material-ui/core';
 import './room.scss';
 
-const Video = ({ title, urlThumbnail, url, changeVideo }) => (
+const Video = ({ title, urlThumbnail, url, addVideo }) => (
     <div className="video">
         <div className="top">
             <img 
                 alt="Thumbnail" 
-                onClick={() => changeVideo(`https://youtube.com${url}`)} 
+                onClick={() => addVideo({
+                    title,
+                    urlThumbnail,
+                    url: `https://youtube.com${url}`,
+                })} 
                 src={urlThumbnail}
             />
         </div>
         <div className="bottom">
             <p className="title">{title}</p>
         </div>
+    </div>
+);
+
+const TabPanel = ({ children, value, index, ...other }) => (
+    <div
+        role="tabpanel"
+        hidden={value !== index}
+        id={`nav-tabpanel-${index}`}
+        aria-labelledby={`nav-tab-${index}`}
+        {...other}
+    >
+        {value === index && (
+            <Box p={3}>
+                <Typography>{children}</Typography>
+            </Box>
+        )}
     </div>
 );
 
@@ -41,9 +69,11 @@ const Room = ({
     checkIsValidRoom,
     joinRoom,
     name,
-    setName
+    setName,
+    enqueueVideo
 }) => {
     const [openDialog, setOpenDialog] = useState(false);
+    const [selectedTab, setSelectedTab] = useState(1);
 
     const refResultVideos = useRef();
     const history = useHistory();
@@ -61,7 +91,7 @@ const Room = ({
         setOpenDialog(id && !name);
         if (id && name) joinRoom({ id, name });
     }, [id, name, joinRoom]);
-    
+
     const scrollTo = (ref) => ref.current.scrollIntoView({ behavior: 'smooth' });
 
     const onCancelDialog = () => history.push('/');
@@ -71,6 +101,11 @@ const Room = ({
             setName(nickname);
             setOpenDialog(false);
         }
+    }
+
+    const handleAddVideo = (video) => {
+        console.log('adding video', video);
+        enqueueVideo({ video, id });
     }
 
     return (
@@ -107,8 +142,26 @@ const Room = ({
                         <div className="reactPlayer">
                             <ReactPlayer width="100%" height="100%" controls={true} url={urlVideo} />
                         </div>
+                        <div className="tabs">
+                            <AppBar position="static">
+                                <Tabs 
+                                    value={selectedTab}
+                                    onChange={(e, newValue) => setSelectedTab(newValue)}
+                                    variant="fullWidth"
+                                    >
+                                    <Tab icon={<FaUsers />} label="users" />
+                                    <Tab icon={<FaPhotoVideo />} label="videos" />
+                                </Tabs>
+                            </AppBar>
+                            <TabPanel value={selectedTab} index={0}>
+                                <UsersGrid />
+                            </TabPanel>
+                            <TabPanel value={selectedTab} index={1}>
+                                <VideosGrid />
+                            </TabPanel>
+                        </div>
                         <div ref={refResultVideos} className="videosContainer">
-                            {videos.map(video => <Video key={video.url} changeVideo={setUrlVideo} {...video} />)}
+                            {videos.map(video => <Video key={video.url} addVideo={handleAddVideo} {...video} />)}
                         </div>
                     </div>
                 )}
@@ -128,12 +181,13 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    setUrlVideo: (url) => dispatch(setUrlVideo(url)),
     getVideos: (query, callback) => dispatch(getVideos(query, callback)),
     getSuggestedVideos: (query) => dispatch(getSuggestedVideos(query)),
     checkIsValidRoom: (id, redirect) => dispatch(isValidRoom(id, redirect)),
     joinRoom: (payload) => dispatch(joinRoom(payload)),
-    setName: (name) => dispatch(setName(name))
+    enqueueVideo: (payload) => dispatch(enqueueVideo(payload)),
+    setUrlVideo,
+    setName,
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Room);

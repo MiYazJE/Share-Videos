@@ -38,11 +38,12 @@ const roomReducer = (state = initialState, action) => {
 export const readRoom = (state) => ({ ...state.roomReducer.room });
 export const readRoomName = (state) => state.roomReducer.id;
 export const readUsers = (state) => state.roomReducer.users;
+export const readQueue = (state) => state.roomReducer.queue;
 export const readHost = (state) => state.roomReducer.host;
 export const readIsLoading = (state) => state.roomReducer.loading;
 export const readLoadingVideos = (state) => state.roomReducer.loadingVideos;
 export const readUrlVideo = (state) => state.roomReducer.urlVideo;
 export const readSuggestedVideos = (state) => state.roomReducer.suggestedVideos;
-export const readVideos = (state) => { console.log(state);return state.roomReducer.videos};
+export const readVideos = (state) => state.roomReducer.videos;
 
 export default roomReducer;

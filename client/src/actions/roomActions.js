@@ -6,7 +6,8 @@ import {
     WS_JOIN_ROOM,
     SET_URL_VIDEO,
     SET_SUGGESTED_VIDEOS,
-    SET_VIDEOS
+    SET_VIDEOS,
+    WS_ADD_VIDEO,
 } from './actionTypes';
 
 export const setRoom = (room) => ({
@@ -73,5 +74,10 @@ export const getVideos = (searched, callback) => async (dispatch) => {
 
 export const joinRoom = (payload) => ({
     type: WS_JOIN_ROOM,
+    payload
+});
+
+export const enqueueVideo = (payload) => ({
+    type: WS_ADD_VIDEO,
     payload
 });
