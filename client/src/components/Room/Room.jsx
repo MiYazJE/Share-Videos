@@ -100,7 +100,7 @@ const Room = ({
             console.log(Math.abs(refPlayer.current.getCurrentTime() - progressVideo));
             sendProgress({ progress: refPlayer.current.getCurrentTime(), idRoom, seekVideo: true, name });
         }
-        console.log(name, state, seekVideo, isPlaying);
+        console.log(name, state, seekVideo, isPlaying); 
         setIsPlaying(true);
         sendPlayerState({ state, idRoom, name });
     }
