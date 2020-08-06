@@ -3,6 +3,8 @@ import FlipMove from 'react-flip-move';
 import { connect } from 'react-redux';
 import { readQueue, readRoomName, readActualVideoId } from '../../reducers/roomReducer';
 import { removeVideo, viewVideo } from '../../actions/roomActions';
+import { FaPlay } from 'react-icons/fa';
+import { FiDelete } from 'react-icons/fi';
 import './videosGrid.scss';
 
 const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, actualVideoId }) => {
@@ -31,8 +33,10 @@ const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, actualVideoId }) =
                     </div>
                     <div className="meta">
                         <span className="title">{video.title}</span>
-                        <button onClick={() => handleRemoveVideo(video.id)}>remove</button>
-                        <button onClick={() => handleViewVideo(video.id)}>play</button>
+                        <div className="icons">
+                            <FaPlay className="play" onClick={() => handleViewVideo(video.id)} />
+                            <FiDelete className="remove" onClick={() => handleRemoveVideo(video.id)} />
+                        </div>
                     </div>
                 </div>
             ))}

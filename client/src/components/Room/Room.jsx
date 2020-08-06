@@ -70,7 +70,6 @@ const Room = ({
     }, [id, name, joinRoom]);
 
     useEffect(() => {
-        if (refPlayer || !refPlayer.current) return;
         if (seekVideo) {
             refPlayer.current.seekTo(progressVideo);
             setSeekVideo(false);
