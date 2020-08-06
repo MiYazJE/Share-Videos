@@ -92,8 +92,8 @@ const NavBar = ({ getVideos, videosSuggested, getSuggestedVideos, loadingVideos,
                                 />
                             )}
                         />
-                        {loadingVideos ? <CircularProgress style={{marginLeft: '30px'}} size={30} /> : null}
                     </div>
+                    {loadingVideos ? <CircularProgress style={{marginLeft: '30px', color: 'white'}} size={30} /> : null}
                 </Toolbar>
             </AppBar>
         </div>

@@ -4,18 +4,21 @@ import {
     SET_LOADING_VIDEOS,
     SET_SUGGESTED_VIDEOS,
     SET_URL_VIDEO,
+    SET_PLAY_VIDEO
 } from '../actions/actionTypes';
 
 const initialState = {
     id: '',
     host: '',
+    urlVideo: '',
+    actualVideoId: '',
     users: [],
     queue: [],
     suggestedVideos: [],
     videos: [],
     loading: false,
-    urlVideo: 'https://www.youtube.com/watch?v=A1xEete-zHM',
     loadingVideos: false,
+    isPlaying: false
 };
 
 const roomReducer = (state = initialState, action) => {
@@ -30,6 +33,8 @@ const roomReducer = (state = initialState, action) => {
             return { ...state, suggestedVideos: action.suggestedVideos };
         case SET_URL_VIDEO:
             return { ...state, urlVideo: action.url };
+        case SET_PLAY_VIDEO:
+            return { ...state, ...action.payload, isPlaying: true };
         default:
             return { ...state };
     }
@@ -45,5 +50,7 @@ export const readLoadingVideos = (state) => state.roomReducer.loadingVideos;
 export const readUrlVideo = (state) => state.roomReducer.urlVideo;
 export const readSuggestedVideos = (state) => state.roomReducer.suggestedVideos;
 export const readVideos = (state) => state.roomReducer.videos;
+export const readActualVideoId = (state) => state.roomReducer.actualVideoId;
+export const readIsPlaying = (state) => state.roomReducer.isPlaying;
 
 export default roomReducer;

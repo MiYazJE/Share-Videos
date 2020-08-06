@@ -3,6 +3,7 @@
 }
  
 .wrapVideo {
+    transition: background-color .5s ease;
     margin-top: 10px;
     display: flex;
     justify-content: center;
@@ -23,4 +24,8 @@
         flex-direction: column;
     }
 
+}
+
+.current {
+    background-color: chartreuse;
 }

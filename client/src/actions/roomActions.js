@@ -8,7 +8,10 @@ import {
     SET_SUGGESTED_VIDEOS,
     SET_VIDEOS,
     WS_ADD_VIDEO,
-    WS_REMOVE_VIDEO
+    WS_REMOVE_VIDEO,
+    WS_VIEW_VIDEO,
+    SET_PLAY_VIDEO,
+    WS_SEND_PLAYER_STATE,
 } from './actionTypes';
 
 export const setRoom = (room) => ({
@@ -41,6 +44,13 @@ const setVideos = (videos) => ({
     videos,
 });
 
+export const setPlayVideo = (payload) => ({
+    type: SET_PLAY_VIDEO,
+    payload,
+});
+
+
+/* ASYNC API CALLS */
 export const createRoom = (host, cb) => async (dispatch) => {
     const room = await api.createRoom(host);
     dispatch(setRoom(room));
@@ -73,6 +83,8 @@ export const getVideos = (searched, callback) => async (dispatch) => {
     callback();
 };
 
+
+/* WEB SOCKETS */
 export const joinRoom = (payload) => ({
     type: WS_JOIN_ROOM,
     payload
@@ -85,5 +97,15 @@ export const enqueueVideo = (payload) => ({
 
 export const removeVideo = (payload) => ({
     type: WS_REMOVE_VIDEO,
+    payload
+});
+
+export const viewVideo = (payload) => ({
+    type: WS_VIEW_VIDEO,
+    payload
+});
+
+export const sendPlayerState = (payload) => ({
+    type: WS_SEND_PLAYER_STATE,
     payload
 });
