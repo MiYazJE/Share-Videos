@@ -19,7 +19,6 @@ const socketMiddleware = () => (store) => {
 
     return (next) => (action) => {
         if (action.type.includes('WS')) {
-            console.log(action)
             socket.emit(action.type, action.payload);
         }
         else {

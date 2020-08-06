@@ -15,25 +15,46 @@ import ResultVideos from '../ResultVideos';
 import { connect } from 'react-redux';
 import { setName } from '../../actions/userActions';
 import { readName } from '../../reducers/userReducer';
-import { readRoomName, readIsLoading, readUrlVideo, readIsPlaying } from '../../reducers/roomReducer';
-import { isValidRoom, joinRoom, sendPlayerState } from '../../actions/roomActions';
+import { 
+    readRoomName, 
+    readIsLoading, 
+    readUrlVideo, 
+    readIsPlaying, 
+    readHost, 
+    readSeekVideo, 
+    readProgress 
+} from '../../reducers/roomReducer';
+import { 
+    isValidRoom, 
+    joinRoom, 
+    sendPlayerState, 
+    sendProgress,
+    setSeekVideo,
+    setIsPlaying, 
+} from '../../actions/roomActions';
 
 import './room.scss';
 
 const Room = ({ 
     urlVideo, 
-    roomName,
-    isLoading,
-    checkIsValidRoom,
-    joinRoom,
+    host,
     name,
-    setName,
+    idRoom,
+    isLoading,
+    joinRoom,
     isPlaying,
-    sendPlayerState
+    setName,
+    checkIsValidRoom,
+    sendPlayerState,
+    sendProgress,
+    progressVideo,
+    seekVideo,
+    setSeekVideo
 }) => {
     const [openDialog, setOpenDialog] = useState(false);
 
     const refVideoResults = useRef();
+    const refPlayer = useRef();
     const history = useHistory();
     const { id } = useParams();
 
@@ -48,6 +69,13 @@ const Room = ({
         if (id && name) joinRoom({ id, name });
     }, [id, name, joinRoom]);
 
+    useEffect(() => {
+        if (seekVideo) {
+            refPlayer.current.seekTo(progressVideo);
+            setSeekVideo(false);
+        }
+    }, [seekVideo]);
+
     const scrollTo = () => {
         refVideoResults.current.scrollIntoView({ behavior: 'smooth' });
     }
@@ -55,14 +83,26 @@ const Room = ({
     const onCancelDialog = () => history.push('/');
 
     const onAcceptDialog = (nickname) => {
-       if (nickname) {
+        if (nickname) {
             setName(nickname);
             setOpenDialog(false);
         } 
     }
 
+    const handleSendProgress = (progress) => {
+        if (name === host) {
+            sendProgress({ progress: refPlayer.current.getCurrentTime(), idRoom, name });
+        }
+    }
+    
     const handleSendPlayerState = (state) => {
-        sendPlayerState({ state, idRoom: roomName });
+        if (Math.abs(refPlayer.current.getCurrentTime() - progressVideo) > 0.8) {
+            console.log(Math.abs(refPlayer.current.getCurrentTime() - progressVideo));
+            sendProgress({ progress: refPlayer.current.getCurrentTime(), idRoom, seekVideo: true, name });
+        }
+        console.log(name, state, seekVideo, isPlaying);
+        setIsPlaying(true);
+        sendPlayerState({ state, idRoom, name });
     }
 
     return (
@@ -74,9 +114,11 @@ const Room = ({
                         <NavBar scrollTo={scrollTo} />
                         <div className="reactPlayer">
                             <ReactPlayer 
+                                ref={refPlayer}
                                 playing={isPlaying}
                                 onPlay={() => handleSendPlayerState('play')}
                                 onPause={() => handleSendPlayerState('pause')}
+                                onProgress={handleSendProgress}
                                 width="100%" 
                                 height="100%" 
                                 controls={true} 
@@ -94,17 +136,22 @@ const Room = ({
 
 const mapStateToProps = state => ({
     urlVideo: readUrlVideo(state),
-    roomName: readRoomName(state),
+    idRoom: readRoomName(state),
     isLoading: readIsLoading(state),
     name: readName(state),
     isPlaying: readIsPlaying(state),
+    host: readHost(state),
+    seekVideo: readSeekVideo(state),
+    progressVideo: readProgress(state)
 });
 
 const mapDispatchToProps = dispatch => ({
     checkIsValidRoom: (id, redirect) => dispatch(isValidRoom(id, redirect)),
     joinRoom: (payload) => dispatch(joinRoom(payload)),
     setName: (name) => dispatch(setName(name)),
-    sendPlayerState: (payload) => dispatch(sendPlayerState(payload))
+    sendPlayerState: (payload) => dispatch(sendPlayerState(payload)),
+    sendProgress: (payload) => dispatch(sendProgress(payload)),
+    setSeekVideo: (seekVideo) => dispatch(setSeekVideo(seekVideo))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Room);

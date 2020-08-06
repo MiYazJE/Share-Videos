@@ -4,7 +4,9 @@ import {
     SET_LOADING_VIDEOS,
     SET_SUGGESTED_VIDEOS,
     SET_URL_VIDEO,
-    SET_PLAY_VIDEO
+    SET_PLAY_VIDEO,
+    SET_SEEK_VIDEO,
+    SET_IS_PLAYING
 } from '../actions/actionTypes';
 
 const initialState = {
@@ -18,7 +20,9 @@ const initialState = {
     videos: [],
     loading: false,
     loadingVideos: false,
-    isPlaying: false
+    isPlaying: false,
+    seekVideo: false,
+    progressVideo: 0
 };
 
 const roomReducer = (state = initialState, action) => {
@@ -27,6 +31,8 @@ const roomReducer = (state = initialState, action) => {
             return { ...state, ...action.room };
         case SET_VIDEOS:
             return { ...state, videos: action.videos };
+        case SET_IS_PLAYING:
+            return { ...state, isPlaying: action.isPlaying };
         case SET_LOADING_VIDEOS:
             return { ...state, loadingVideos: action.loading };
         case SET_SUGGESTED_VIDEOS:
@@ -35,22 +41,26 @@ const roomReducer = (state = initialState, action) => {
             return { ...state, urlVideo: action.url };
         case SET_PLAY_VIDEO:
             return { ...state, ...action.payload, isPlaying: true };
+        case SET_SEEK_VIDEO:
+            return { ...state, seekVideo: action.seekVideo };
         default:
             return { ...state };
     }
 };
 
-export const readRoom = (state) => ({ ...state.roomReducer.room });
-export const readRoomName = (state) => state.roomReducer.id;
-export const readUsers = (state) => state.roomReducer.users;
-export const readQueue = (state) => state.roomReducer.queue;
-export const readHost = (state) => state.roomReducer.host;
-export const readIsLoading = (state) => state.roomReducer.loading;
-export const readLoadingVideos = (state) => state.roomReducer.loadingVideos;
-export const readUrlVideo = (state) => state.roomReducer.urlVideo;
+export const readRoom            = (state) => ({ ...state.roomReducer.room });
+export const readRoomName        = (state) => state.roomReducer.id;
+export const readUsers           = (state) => state.roomReducer.users;
+export const readQueue           = (state) => state.roomReducer.queue;
+export const readHost            = (state) => state.roomReducer.host;
+export const readIsLoading       = (state) => state.roomReducer.loading;
+export const readLoadingVideos   = (state) => state.roomReducer.loadingVideos;
+export const readUrlVideo        = (state) => state.roomReducer.urlVideo;
 export const readSuggestedVideos = (state) => state.roomReducer.suggestedVideos;
-export const readVideos = (state) => state.roomReducer.videos;
-export const readActualVideoId = (state) => state.roomReducer.actualVideoId;
-export const readIsPlaying = (state) => state.roomReducer.isPlaying;
+export const readVideos          = (state) => state.roomReducer.videos;
+export const readActualVideoId   = (state) => state.roomReducer.actualVideoId;
+export const readIsPlaying       = (state) => state.roomReducer.isPlaying;
+export const readSeekVideo       = (state) => state.roomReducer.seekVideo;
+export const readProgress        = (state) => state.roomReducer.progressVideo;
 
 export default roomReducer;

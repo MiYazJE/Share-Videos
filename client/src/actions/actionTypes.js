@@ -7,6 +7,8 @@ export const SET_LOADING_VIDEOS = 'SET_LOADING_VIDEOS';
 export const SET_ROOM = 'SET_ROOM';
 export const SET_LOADING = 'SET_LOADING';
 export const SET_PLAY_VIDEO = 'SET_PLAY_VIDEO';
+export const SET_SEEK_VIDEO = 'SET_SEEK_VIDEO';
+export const SET_IS_PLAYING = 'SET_IS_PLAYING';
 
 export const WS_JOIN_ROOM = 'WS_JOIN_ROOM';
 export const WS_ADD_VIDEO = 'WS_ADD_VIDEO';
@@ -15,3 +17,4 @@ export const WS_UPDATE_ROOM = 'WS_UPDATE_ROOM';
 export const WS_REMOVE_VIDEO = 'WS_REMOVE_VIDEO';
 export const WS_VIEW_VIDEO = 'WS_VIEW_VIDEO';
 export const WS_SEND_PLAYER_STATE = 'WS_SEND_PLAYER_STATE';
+export const WS_SEND_PROGRESS = 'WS_SEND_PROGRESS';

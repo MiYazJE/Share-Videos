@@ -3,15 +3,18 @@ import {
     SET_ROOM,
     SET_LOADING,
     SET_LOADING_VIDEOS,
-    WS_JOIN_ROOM,
     SET_URL_VIDEO,
     SET_SUGGESTED_VIDEOS,
     SET_VIDEOS,
+    SET_PLAY_VIDEO,
+    SET_SEEK_VIDEO,
+    SET_IS_PLAYING,
     WS_ADD_VIDEO,
     WS_REMOVE_VIDEO,
     WS_VIEW_VIDEO,
-    SET_PLAY_VIDEO,
     WS_SEND_PLAYER_STATE,
+    WS_JOIN_ROOM,
+    WS_SEND_PROGRESS
 } from './actionTypes';
 
 export const setRoom = (room) => ({
@@ -47,6 +50,16 @@ const setVideos = (videos) => ({
 export const setPlayVideo = (payload) => ({
     type: SET_PLAY_VIDEO,
     payload,
+});
+
+export const setSeekVideo = (seekVideo) => ({
+    type: SET_SEEK_VIDEO,
+    seekVideo
+});
+
+export const setIsPlaying = (isPlaying) => ({
+    type: SET_IS_PLAYING,
+    isPlaying
 });
 
 
@@ -107,5 +120,10 @@ export const viewVideo = (payload) => ({
 
 export const sendPlayerState = (payload) => ({
     type: WS_SEND_PLAYER_STATE,
+    payload
+});
+
+export const sendProgress = (payload) => ({
+    type: WS_SEND_PROGRESS,
     payload
 });
