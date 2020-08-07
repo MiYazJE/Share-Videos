@@ -61,42 +61,42 @@ const NavBar = ({ getVideos, videosSuggested, getSuggestedVideos, loadingVideos,
     const classes = useStyles();
 
     return (
-        <div className={classes.root}>
-            <AppBar position="static">
-                <Toolbar>
-                    <Typography className={classes.title} variant="h6" noWrap>
-                        Video Share
-                    </Typography>
-                    <div className={classes.search}>
-                        <div className={classes.searchIcon}>
-                            <SearchIcon />
-                        </div>
-                        <Autocomplete
-                            onChange={(_, searched) => getVideos(searched, () => scrollTo())}
-                            style={{ width: '70%', maxWidth: 350 }}
-                            options={videosSuggested}
-                            noOptionsText="No results"
-                            classes={{
-                                root: classes.inputRoot,
-                                input: classes.inputInput,
-                            }}
-                            inputProps={{ 'aria-label': 'search' }}
-                            renderInput={(params) => (
-                                <InputBase
-                                    {...params} 
-                                    style={{color: 'white'}}
-                                    ref={params.InputProps.ref}
-                                    onChange={({ target }) => getSuggestedVideos(target.value)} 
-                                    id="search" 
-                                    placeholder="Search a video..." 
-                                />
-                            )}
-                        />
-                    </div>
-                    {loadingVideos ? <CircularProgress style={{marginLeft: '30px', color: 'white'}} size={30} /> : null}
-                </Toolbar>
-            </AppBar>
-        </div>
+        <AppBar position="sticky">
+          <div className={classes.root}>
+              <Toolbar>
+                  <Typography className={classes.title} variant="h6" noWrap>
+                      Video Share
+                  </Typography>
+                  <div className={classes.search}>
+                      <div className={classes.searchIcon}>
+                          <SearchIcon />
+                      </div>
+                      <Autocomplete
+                          onChange={(_, searched) => getVideos(searched, () => scrollTo())}
+                          style={{ width: '70%', maxWidth: 350 }}
+                          options={videosSuggested}
+                          noOptionsText="No results"
+                          classes={{
+                              root: classes.inputRoot,
+                              input: classes.inputInput,
+                          }}
+                          inputProps={{ 'aria-label': 'search' }}
+                          renderInput={(params) => (
+                              <InputBase
+                                  {...params} 
+                                  style={{color: 'white'}}
+                                  ref={params.InputProps.ref}
+                                  onChange={({ target }) => getSuggestedVideos(target.value)} 
+                                  id="search" 
+                                  placeholder="Search a video..." 
+                              />
+                          )}
+                      />
+                  </div>
+                  {loadingVideos ? <CircularProgress style={{marginLeft: '30px', color: 'white'}} size={30} /> : null}
+              </Toolbar>
+          </div>
+        </AppBar>
     );
 }
 

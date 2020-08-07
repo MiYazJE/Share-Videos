@@ -6,6 +6,7 @@ import { AppBar } from '@material-ui/core';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs'
 import Box from '@material-ui/core/Box';
+import './tabs.scss';
 
 const TabPanel = ({ children, value, index, ...other }) => (
     <div
@@ -28,7 +29,7 @@ const CustomTabs = () => {
 
     return (
         <div className="tabs">
-            <AppBar position="static">
+            <AppBar position="static" className="wrapTabs">
                 <Tabs 
                     value={selectedTab}
                     onChange={(e, newValue) => setSelectedTab(newValue)}
@@ -41,7 +42,10 @@ const CustomTabs = () => {
             <TabPanel value={selectedTab} index={0}>
                 <UsersGrid />
             </TabPanel>
-            <TabPanel value={selectedTab} index={1}>
+            <TabPanel 
+                className="videosGrid"
+                value={selectedTab} index={1}
+                >
                 <VideosGrid />
             </TabPanel>
         </div>

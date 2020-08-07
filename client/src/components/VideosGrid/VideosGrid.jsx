@@ -20,9 +20,9 @@ const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, actualVideoId }) =
     return (
         <FlipMove
             staggerDurationBy="30"
-            duration={100}
-            enterAnimation="fade"
-            leaveAnimation="fade"
+            duration={600}
+            enterAnimation="accordionVertical"
+            leaveAnimation="accordionVertical"
             typeName="div"
             className="wrapVideosGrid"
         >

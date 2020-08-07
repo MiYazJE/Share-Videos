@@ -113,19 +113,23 @@ const Room = ({
                     <div id="wrapVideoPlayer">
                         <NavBar scrollTo={scrollTo} />
                         <div className="reactPlayer">
-                            <ReactPlayer 
-                                ref={refPlayer}
-                                playing={isPlaying}
-                                onPlay={() => handleSendPlayerState('play')}
-                                onPause={() => handleSendPlayerState('pause')}
-                                onProgress={handleSendProgress}
-                                width="100%" 
-                                height="100%" 
-                                controls={true} 
-                                url={urlVideo} 
-                            />
+                            <div className="player">
+                                <ReactPlayer 
+                                    ref={refPlayer}
+                                    playing={isPlaying}
+                                    onPlay={() => handleSendPlayerState('play')}
+                                    onPause={() => handleSendPlayerState('pause')}
+                                    onProgress={handleSendProgress}
+                                    width="100%" 
+                                    height="100%" 
+                                    controls={true} 
+                                    url={urlVideo} 
+                                />
+                            </div>
+                            <div className="tabs">
+                                <CustomTabs />
+                            </div>
                         </div>
-                        <CustomTabs />
                         <ResultVideos refVideoResults={refVideoResults} />
                         {openDialog && <DialogName open={openDialog} onCancel={onCancelDialog} onAccept={onAcceptDialog} />}
                     </div>
