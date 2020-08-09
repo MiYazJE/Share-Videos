@@ -30,7 +30,6 @@ import {
     sendPlayerState, 
     sendProgress,
     setSeekVideo,
-    setIsPlaying, 
 } from '../../actions/roomActions';
 
 import './room.scss';
@@ -51,6 +50,7 @@ const Room = ({
     seekVideo,
     setSeekVideo
 }) => {
+    const [playerHeight, setPlayerHeight] = useState(window.innerWidth < 700 ? '35vh' : '70vh');
     const [openDialog, setOpenDialog] = useState(false);
 
     const refVideoResults = useRef();
@@ -68,13 +68,18 @@ const Room = ({
         setOpenDialog(id && !name);
         if (id && name) joinRoom({ id, name });
     }, [id, name, joinRoom]);
-
+    
     useEffect(() => {
         if (seekVideo) {
             refPlayer.current.seekTo(progressVideo);
             setSeekVideo(false);
         }
-    }, [seekVideo]);
+    }, [seekVideo, progressVideo, setSeekVideo]);
+
+    useEffect(() => {
+        console.log(window.innerWidth);
+        setPlayerHeight(window.innerWidth < 700 ? '35vh' : '70vh');
+    }, [window.innerWidth]);
 
     const scrollTo = () => {
         refVideoResults.current.scrollIntoView({ behavior: 'smooth' });
@@ -95,14 +100,16 @@ const Room = ({
         }
     }
     
-    const handleSendPlayerState = (state) => {
-        if (Math.abs(refPlayer.current.getCurrentTime() - progressVideo) > 0.8) {
-            console.log(Math.abs(refPlayer.current.getCurrentTime() - progressVideo));
+    const handleOnPlay = () => {
+        console.log(seekVideo);
+        if (Math.abs(refPlayer.current.getCurrentTime() - progressVideo) > 0.2) {
             sendProgress({ progress: refPlayer.current.getCurrentTime(), idRoom, seekVideo: true, name });
         }
-        console.log(name, state, seekVideo, isPlaying); 
-        setIsPlaying(true);
-        sendPlayerState({ state, idRoom, name });
+        sendPlayerState({ state: 'play', idRoom, name });
+    }
+    
+    const handleOnPause = () => {
+        sendPlayerState({ state: 'pause', idRoom, name });
     }
 
     return (
@@ -117,11 +124,11 @@ const Room = ({
                                 <ReactPlayer 
                                     ref={refPlayer}
                                     playing={isPlaying}
-                                    onPlay={() => handleSendPlayerState('play')}
-                                    onPause={() => handleSendPlayerState('pause')}
+                                    onPlay={handleOnPlay}
+                                    onPause={handleOnPause}
                                     onProgress={handleSendProgress}
                                     width="100%" 
-                                    height="100%" 
+                                    height={playerHeight} 
                                     controls={true} 
                                     url={urlVideo} 
                                 />

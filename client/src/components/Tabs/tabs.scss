@@ -10,9 +10,9 @@ $main-background: #f3f3f3f3;
 
 .videosGrid {
     background-color: $main-background; 
-    height: 630px;
+    height: 70vh;
+    max-height: 700px;
     max-width: 400px; 
-    max-height: 630px;
     overflow: auto;
     overflow-x: hidden;
 }

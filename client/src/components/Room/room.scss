@@ -26,19 +26,12 @@ main {
         width: 100%;
         height: 700px;
         margin-top: 20px;
-        padding: 20px;
+        padding: 20px 0px;
         display: flex;
         justify-content: center;
-        
-        // @media (max-width: 1350px) {
-        //     .reactPlayer {
-        //         flex-direction: column !important;
-        //     }
-        // }
 
         .player {
             min-width: 60%;
-            // padding: 50px;
         }
 
         .tabs {
@@ -118,11 +111,6 @@ main {
         margin: 0px !important;
     }
 
-    .player {
-        height: 600px;
-        min-height: 600px;
-    }
-
     .tabs {
         width: 100% !important;
         margin: 0px !important;
@@ -130,10 +118,5 @@ main {
 
     .videosContainer {
         margin-top: 600px !important;
-    }
-}
-@media (max-width: 500px) {
-    .reactPlayer {
-        width: 100% !important;
     }
 }
