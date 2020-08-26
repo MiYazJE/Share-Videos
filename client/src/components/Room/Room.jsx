@@ -101,7 +101,6 @@ const Room = ({
     }
     
     const handleOnPlay = () => {
-        console.log(seekVideo);
         if (Math.abs(refPlayer.current.getCurrentTime() - progressVideo) > 0.2) {
             sendProgress({ progress: refPlayer.current.getCurrentTime(), idRoom, seekVideo: true, name });
         }
