@@ -29,7 +29,7 @@ import {
     joinRoom, 
     sendPlayerState, 
     sendProgress,
-    setSeekVideo,
+    setSeekVideo
 } from '../../actions/roomActions';
 
 import './room.scss';
@@ -77,9 +77,11 @@ const Room = ({
     }, [seekVideo, progressVideo, setSeekVideo]);
 
     useEffect(() => {
-        console.log(window.innerWidth);
-        setPlayerHeight(window.innerWidth < 700 ? '35vh' : '70vh');
-    }, [window.innerWidth]);
+        window.addEventListener('resize', () => {
+            console.log(window.innerWidth);
+            setPlayerHeight(window.innerWidth < 700 ? '35vh' : '70vh');
+        });
+    }, []);
 
     const scrollTo = () => {
         refVideoResults.current.scrollIntoView({ behavior: 'smooth' });
