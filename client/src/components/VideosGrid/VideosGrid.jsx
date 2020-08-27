@@ -9,8 +9,8 @@ import './videosGrid.scss';
 
 const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, actualVideoId }) => {
 
-    const handleRemoveVideo = (idToRemove) => {
-        removeVideo({ idToRemove, idRoom });
+    const handleRemoveVideo = (idVideo) => {
+        removeVideo({ idVideo, idRoom });
     }
 
     const handleViewVideo = (idVideo) => {

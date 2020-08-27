@@ -22,14 +22,16 @@ import {
     readIsPlaying, 
     readHost, 
     readSeekVideo, 
-    readProgress 
+    readProgress,
+    readActualVideoId
 } from '../../reducers/roomReducer';
 import { 
     isValidRoom, 
     joinRoom, 
     sendPlayerState, 
     sendProgress,
-    setSeekVideo
+    setSeekVideo,
+    removeVideo
 } from '../../actions/roomActions';
 
 import './room.scss';
@@ -48,7 +50,9 @@ const Room = ({
     sendProgress,
     progressVideo,
     seekVideo,
-    setSeekVideo
+    setSeekVideo,
+    removeVideo,
+    actualVideoId
 }) => {
     const [playerHeight, setPlayerHeight] = useState(window.innerWidth < 700 ? '35vh' : '70vh');
     const [openDialog, setOpenDialog] = useState(false);
@@ -113,6 +117,10 @@ const Room = ({
         sendPlayerState({ state: 'pause', idRoom, name });
     }
 
+    const handleOnEnded = () => {
+        removeVideo({ idVideo: actualVideoId, idRoom });
+    }
+
     return (
         <main>
             {isLoading 
@@ -128,6 +136,7 @@ const Room = ({
                                     onPlay={handleOnPlay}
                                     onPause={handleOnPause}
                                     onProgress={handleSendProgress}
+                                    onEnded={handleOnEnded}
                                     width="100%" 
                                     height={playerHeight} 
                                     controls={true} 
@@ -154,7 +163,8 @@ const mapStateToProps = state => ({
     isPlaying: readIsPlaying(state),
     host: readHost(state),
     seekVideo: readSeekVideo(state),
-    progressVideo: readProgress(state)
+    progressVideo: readProgress(state),
+    actualVideoId: readActualVideoId(state)
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -163,7 +173,8 @@ const mapDispatchToProps = dispatch => ({
     setName: (name) => dispatch(setName(name)),
     sendPlayerState: (payload) => dispatch(sendPlayerState(payload)),
     sendProgress: (payload) => dispatch(sendProgress(payload)),
-    setSeekVideo: (seekVideo) => dispatch(setSeekVideo(seekVideo))
+    setSeekVideo: (seekVideo) => dispatch(setSeekVideo(seekVideo)),
+    removeVideo: (idVideo, idRoom) => dispatch(removeVideo(idVideo, idRoom))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Room);
