@@ -23,15 +23,6 @@
     width: 100%;
 
     @media (max-width: 665px) {
-        flex-direction: column;
-
-        .img {
-            width: 100% !important;
-        }
-
-        .meta {
-            width: 100% !important;
-        }
 
         .remove {
             position: relative;

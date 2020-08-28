@@ -36,6 +36,7 @@ import {
 } from '../../actions/roomActions';
 
 import './room.scss';
+import Scroller from '../Scroller/Scroller';
 
 const Room = ({ 
     urlVideo, 
@@ -155,6 +156,7 @@ const Room = ({
                         </div>
                         <ResultVideos refVideoResults={refVideoResults} />
                         {openDialog && <DialogName open={openDialog} onCancel={onCancelDialog} onAccept={onAcceptDialog} />}
+                        <Scroller />
                     </div>
                 )}
         </main>
