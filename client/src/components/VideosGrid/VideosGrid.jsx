@@ -26,20 +26,24 @@ const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, actualVideoId }) =
             typeName="div"
             className="wrapVideosGrid"
         >
-            {videos.map((video, index) => (
-                <div key={video.id} className={`wrapVideo ${video.id === actualVideoId ? 'current' : null}`}>
-                    <div className="img">
-                        <img src={video.urlThumbnail} alt="thumbnail" />
-                    </div>
-                    <div className="meta">
-                        <span className="title">{video.title}</span>
-                        <div className="icons">
-                            <FaPlay className="play" onClick={() => handleViewVideo(video.id)} />
-                            <FiDelete className="remove" onClick={() => handleRemoveVideo(video.id)} />
+            {!videos.length 
+                ? (<div className="no-videos">
+                        <h2>No videos enqueued</h2>
+                    </div>)
+                : (videos.map((video, index) => (
+                    <div key={video.id} className={`wrapVideo ${video.id === actualVideoId ? 'current' : null}`}>
+                        <div className="img">
+                            <img src={video.urlThumbnail} alt="thumbnail" />
+                        </div>
+                        <div className="meta">
+                            <span className="title">{video.title}</span>
+                            <div className="icons">
+                                <FaPlay className="play" onClick={() => handleViewVideo(video.id)} />
+                                <FiDelete className="remove" onClick={() => handleRemoveVideo(video.id)} />
+                            </div>
                         </div>
                     </div>
-                </div>
-            ))}
+                )))}
         </FlipMove>
     );
 
