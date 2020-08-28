@@ -23,6 +23,7 @@ const DialogName = ({ open, onAccept, onCancel}) => {
             disableEscapeKeyDown
             open={open} 
             aria-labelledby="form-dialog-title"
+            onKeyDown={({ key }) => key === 'Enter' && onAccept(nickname)}
         >
             <DialogContent style={stylesContentDialog}>
                 <TextField

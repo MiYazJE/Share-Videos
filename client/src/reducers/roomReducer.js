@@ -22,7 +22,8 @@ const initialState = {
     loadingVideos: false,
     isPlaying: false,
     seekVideo: false,
-    progressVideo: 0
+    progressVideo: 0,
+    title: ''
 };
 
 const roomReducer = (state = initialState, action) => {
@@ -40,6 +41,7 @@ const roomReducer = (state = initialState, action) => {
         case SET_URL_VIDEO:
             return { ...state, urlVideo: action.url };
         case SET_PLAY_VIDEO:
+            console.log(action.payload)
             return { ...state, ...action.payload, isPlaying: true };
         case SET_SEEK_VIDEO:
             return { ...state, seekVideo: action.seekVideo };
@@ -62,5 +64,6 @@ export const readActualVideoId   = (state) => state.roomReducer.actualVideoId;
 export const readIsPlaying       = (state) => state.roomReducer.isPlaying;
 export const readSeekVideo       = (state) => state.roomReducer.seekVideo;
 export const readProgress        = (state) => state.roomReducer.progressVideo;
+export const readTitle           = (state) => state.roomReducer.title;
 
 export default roomReducer;

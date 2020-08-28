@@ -23,7 +23,8 @@ import {
     readHost, 
     readSeekVideo, 
     readProgress,
-    readActualVideoId
+    readActualVideoId,
+    readTitle
 } from '../../reducers/roomReducer';
 import { 
     isValidRoom, 
@@ -52,7 +53,8 @@ const Room = ({
     seekVideo,
     setSeekVideo,
     removeVideo,
-    actualVideoId
+    actualVideoId,
+    title
 }) => {
     const [playerHeight, setPlayerHeight] = useState(window.innerWidth < 700 ? '35vh' : '70vh');
     const [openDialog, setOpenDialog] = useState(false);
@@ -142,6 +144,10 @@ const Room = ({
                                     controls={true} 
                                     url={urlVideo} 
                                 />
+                                {window.innerWidth > 1300 
+                                    ? <span style={{ marginTop: '10px' }}>{title}</span>
+                                    : null
+                                }
                             </div>
                             <div className="tabs">
                                 <CustomTabs />
@@ -164,7 +170,8 @@ const mapStateToProps = state => ({
     host: readHost(state),
     seekVideo: readSeekVideo(state),
     progressVideo: readProgress(state),
-    actualVideoId: readActualVideoId(state)
+    actualVideoId: readActualVideoId(state),
+    title: readTitle(state) 
 });
 
 const mapDispatchToProps = dispatch => ({

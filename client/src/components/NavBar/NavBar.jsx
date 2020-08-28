@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
@@ -41,57 +41,71 @@ const useStyles = makeStyles((theme) => ({
       padding: theme.spacing(0, 2),
       height: '100%',
       position: 'absolute',
-      pointerEvents: 'none',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'center',
-    },
-    inputRoot: {
-      color: 'inherit',
+	  justifyContent: 'center',
+	  cursor: 'pointer',
+	  zIndex: 100,
+	  right: 1,
+	  top: 1
     },
     inputInput: {
-      padding: theme.spacing(1, 1, 1, 0),
-      paddingLeft: `calc(1em + ${theme.spacing(4)}px)`,
+	  padding: theme.spacing(1, 1, 1, 1),
+      paddingLeft: '5px',
+      paddingRight: `calc(1em + ${theme.spacing(4)}px)`,
       transition: theme.transitions.create('width'),
       width: '100%',
     },
   }));
 
 const NavBar = ({ getVideos, videosSuggested, getSuggestedVideos, loadingVideos, scrollTo }) => {
-    const classes = useStyles();
+	const [search, setSearch] = useState('');
+	const classes = useStyles();
+
+	const handleGetVideos = () => {
+		if (!search) return;
+		getVideos(search, () => scrollTo());
+	}
 
     return (
-        <AppBar position="sticky">
+        <AppBar position="sticky" style={{ alignItems: 'center' }}>
           <div className={classes.root}>
               <Toolbar>
-                  <Typography className={classes.title} variant="h6" noWrap>
-                      Video Share
+				  <Typography className={classes.title} variant="h6" noWrap>
+					Video Share
                   </Typography>
                   <div className={classes.search}>
-                      <div className={classes.searchIcon}>
-                          <SearchIcon />
-                      </div>
                       <Autocomplete
-                          onChange={(_, searched) => getVideos(searched, () => scrollTo())}
-                          style={{ width: '70%', maxWidth: 350 }}
+						  onKeyPress={({ key }) => {
+							if (key === 'Enter') handleGetVideos()
+						  }}
+                          onChange={(_, searched) => {
+							if (!searched) return;
+							setSearch(searched);
+							handleGetVideos();
+						  }}
                           options={videosSuggested}
                           noOptionsText="No results"
-                          classes={{
-                              root: classes.inputRoot,
-                              input: classes.inputInput,
-                          }}
+                          classes={{ root: classes.inputRoot, input: classes.inputInput }}
+						  value={search}
                           inputProps={{ 'aria-label': 'search' }}
                           renderInput={(params) => (
                               <InputBase
                                   {...params} 
                                   style={{color: 'white'}}
                                   ref={params.InputProps.ref}
-                                  onChange={({ target }) => getSuggestedVideos(target.value)} 
+                                  onChange={({ target }) => {
+									  setSearch(target.value);
+									  getSuggestedVideos(target.value);
+								  }}
                                   id="search" 
                                   placeholder="Search a video..." 
                               />
                           )}
                       />
+					  <div className={classes.searchIcon}>
+                          <SearchIcon onClick={handleGetVideos} />
+                      </div>
                   </div>
                   {loadingVideos ? <CircularProgress style={{marginLeft: '30px', color: 'white'}} size={30} /> : null}
               </Toolbar>

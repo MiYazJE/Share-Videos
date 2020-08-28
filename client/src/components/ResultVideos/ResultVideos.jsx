@@ -5,7 +5,6 @@ import { connect } from 'react-redux';
 import { readVideos } from '../../reducers/roomReducer';
 import { enqueueVideo } from '../../actions/roomActions';
 
-
 const Video = ({ title, urlThumbnail, url, addVideo }) => (
     <div className="video">
         <div className="top">
@@ -29,9 +28,7 @@ const ResultVideos = ({ enqueueVideo, videos, refVideoResults }) => {
     const { id } = useParams();
 
     const handleAddVideo = (video) => {
-        console.log('adding video', video);
         enqueueVideo({ video, id });
-        console.log(refVideoResults)
     }
 
     return (
