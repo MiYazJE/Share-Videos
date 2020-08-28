@@ -1,8 +1,8 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
-
 import { connect } from 'react-redux';
 import { readVideos } from '../../reducers/roomReducer';
+import { readName } from '../../reducers/userReducer';
 import { enqueueVideo } from '../../actions/roomActions';
 
 const Video = ({ title, urlThumbnail, url, addVideo }) => (
@@ -13,7 +13,7 @@ const Video = ({ title, urlThumbnail, url, addVideo }) => (
                 onClick={() => addVideo({
                     title,
                     urlThumbnail,
-                    url: `https://youtube.com${url}`,
+                    url: `https://youtube.com${url}`
                 })} 
                 src={urlThumbnail}
             />
@@ -24,11 +24,11 @@ const Video = ({ title, urlThumbnail, url, addVideo }) => (
     </div>
 );
 
-const ResultVideos = ({ enqueueVideo, videos, refVideoResults }) => {
+const ResultVideos = ({ enqueueVideo, videos, refVideoResults, name }) => {
     const { id } = useParams();
 
     const handleAddVideo = (video) => {
-        enqueueVideo({ video, id });
+        enqueueVideo({ video, id, name });
     }
 
     return (
@@ -42,7 +42,8 @@ const ResultVideos = ({ enqueueVideo, videos, refVideoResults }) => {
 };
 
 const mapStateToProps = state => ({
-    videos: readVideos(state)
+    videos: readVideos(state),
+    name: readName(state)
 });
 
 const mapDispatchToProps = dispatch => ({

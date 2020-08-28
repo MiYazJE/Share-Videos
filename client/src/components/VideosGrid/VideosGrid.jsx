@@ -2,15 +2,16 @@ import React from 'react';
 import FlipMove from 'react-flip-move';
 import { connect } from 'react-redux';
 import { readQueue, readRoomName, readActualVideoId } from '../../reducers/roomReducer';
+import { readName } from '../../reducers/userReducer';
 import { removeVideo, viewVideo } from '../../actions/roomActions';
 import { FaPlay } from 'react-icons/fa';
 import { FiDelete } from 'react-icons/fi';
 import './videosGrid.scss';
 
-const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, actualVideoId }) => {
+const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, actualVideoId, name }) => {
 
     const handleRemoveVideo = (idVideo) => {
-        removeVideo({ idVideo, idRoom });
+        removeVideo({ idVideo, idRoom, name });
     }
 
     const handleViewVideo = (idVideo) => {
@@ -52,7 +53,8 @@ const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, actualVideoId }) =
 const mapStateToProps = (state) => ({
     videos: readQueue(state),
     idRoom: readRoomName(state),
-    actualVideoId: readActualVideoId(state)
+    actualVideoId: readActualVideoId(state),
+    name: readName(state)
 });
 
 const mapDispatchToProps = (dispatch) => ({
