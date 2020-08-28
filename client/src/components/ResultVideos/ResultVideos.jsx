@@ -32,9 +32,12 @@ const ResultVideos = ({ enqueueVideo, videos, refVideoResults }) => {
     }
 
     return (
-        <div ref={refVideoResults} className="videosContainer">
-            {videos.map(video => <Video key={video.url} addVideo={handleAddVideo} {...video} />)}
-        </div>
+        videos.length
+            ? (
+                <div ref={refVideoResults} className="videosContainer">
+                    {videos.map(video => <Video key={video.url} addVideo={handleAddVideo} {...video} />)}
+                </div>)
+            : null
     );
 };
 

@@ -15,12 +15,11 @@
 
     .arrow {
         color: white;
-        transition: transform .2s ease;
-
-        &:hover {
-            transform: rotate(360deg);
-        }
-
+        transition: transform .5s ease;
     }
+}
+
+.wrapScroller:hover .arrow {
+    transform: rotate(360deg);
 }
 
