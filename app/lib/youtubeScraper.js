@@ -4,6 +4,7 @@ let browser, page;
 (async () => {
     browser = await puppeteer.launch({ args: ['--no-sandbox', '--disable-setuid-sandbox'] });
     page = await browser.newPage();
+    await page.setViewport({ width: 1080, height: 6000 });
 })();
 
 module.exports = {
@@ -20,5 +21,5 @@ async function scrapVideosWithQuery(query) {
             return { title, urlThumbnail, url };
         });
     });
-    return videos;
+    return videos.filter(v => v.urlThumbnail);
 }
