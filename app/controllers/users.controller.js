@@ -1,5 +1,4 @@
 const fetch = require('node-fetch');
-const youtubeScraper = require('../lib/youtubeScraper');
 
 const URL_GOOGLE_SUGGEST =
     'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=es&q=';
@@ -24,16 +23,7 @@ function mapSuggestions(suggestions) {
 async function getVideos(req, res) {
     const { q } = req.params;
     if (!q) return res.status(400).json({ msg: 'Query is empty!' });
-    const videos = await youtubeScraper.scrapVideosWithQuery(q);
-    res.json([...videos]);
+    const response = await fetch(`http://youtube-scrap-service.herokuapp.com/api/v1/getVideos/${q}`);
+    const videos = await response.json();
+    res.json(videos);
 }
-
-/*
-    const { google } = require('googleapis');
-    const { API_KEY } = process.env;
-    const youtube = google.youtube('v3');
-
-    const { clientID, clientSecret, callbackURL } = process.env;
-    const auth = new google.auth.OAuth2(clientID, clientSecret, callbackURL);
-    const youtube = google.youtube({ version: 'v3', auth });
-*/
