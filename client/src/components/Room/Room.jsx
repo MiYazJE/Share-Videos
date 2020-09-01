@@ -59,6 +59,7 @@ const Room = ({
 }) => {
     const [playerHeight, setPlayerHeight] = useState(window.innerWidth < 700 ? '35vh' : '70vh');
     const [openDialog, setOpenDialog] = useState(false);
+    const [floatPlayer, setFLoatPlayer] = useState(false);
 
     const refVideoResults = useRef();
     const refPlayer = useRef();
@@ -85,8 +86,11 @@ const Room = ({
 
     useEffect(() => {
         window.addEventListener('resize', () => {
-            console.log(window.innerWidth);
             setPlayerHeight(window.innerWidth < 700 ? '35vh' : '70vh');
+        });
+        window.addEventListener('scroll', () => {
+            console.log(window.innerHeight);    
+            setFLoatPlayer(window.innerHeight > 700);
         });
     }, []);
 
@@ -132,7 +136,8 @@ const Room = ({
                     <div id="wrapVideoPlayer">
                         <NavBar scrollTo={scrollTo} />
                         <div className="reactPlayer">
-                            <div className="player">
+                            <div className={floatPlayer ? 'fakePlayer-active' : 'fakePlayer-inactive'}></div>
+                            <div className={`player ${floatPlayer ? 'floatPlayer' : ''}`}>
                                 <ReactPlayer 
                                     ref={refPlayer}
                                     playing={isPlaying}

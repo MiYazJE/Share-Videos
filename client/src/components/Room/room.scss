@@ -30,6 +30,10 @@ main {
         display: flex;
         justify-content: center;
 
+        .fakePlayer-inactive {
+            display: none;
+        }
+
         .player {
             display: flex;
             flex-direction: column;
@@ -119,4 +123,17 @@ main {
         width: 100% !important;
         margin: 0px !important;
     }
+}
+
+.fakePlayer-active {
+    display: block;
+    width: 100%;
+    height: 200px;
+    background-color: red;
+}
+
+.floatPlayer {
+    position: fixed;
+    bottom: 0px;
+    right: 0px;
 }

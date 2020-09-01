@@ -3,7 +3,6 @@ import { connect } from 'react-redux';
 import { readRoomName } from '../../reducers/roomReducer';
 import { Input } from '@material-ui/core';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import './settings.scss';
 
 const Settings = ({ roomId }) => {
