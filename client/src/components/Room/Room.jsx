@@ -85,13 +85,20 @@ const Room = ({
     }, [seekVideo, progressVideo, setSeekVideo]);
 
     useEffect(() => {
-        window.addEventListener('resize', () => {
+        function onResize() {
             setPlayerHeight(window.innerWidth < 700 ? '35vh' : '70vh');
-        });
-        window.addEventListener('scroll', () => {
-            console.log(window.innerHeight);    
-            setFLoatPlayer(window.innerHeight > 700);
-        });
+        }
+        function onScroll() {
+            setFLoatPlayer(window.innerWidth < 1300 && this.scrollY > 700);
+        }
+
+        window.addEventListener('resize', onResize);
+        window.addEventListener('scroll', onScroll);
+        
+        return () => {
+            window.removeEventListener('resize', onResize);
+            window.removeEventListener('scroll', onScroll);
+        }
     }, []);
 
     const scrollTo = () => {
@@ -107,7 +114,7 @@ const Room = ({
         } 
     }
 
-    const handleSendProgress = (progress) => {
+    const handleSendProgress = () => {
         if (name === host) {
             sendProgress({ progress: refPlayer.current.getCurrentTime(), idRoom, name });
         }
@@ -136,8 +143,16 @@ const Room = ({
                     <div id="wrapVideoPlayer">
                         <NavBar scrollTo={scrollTo} />
                         <div className="reactPlayer">
-                            <div className={floatPlayer ? 'fakePlayer-active' : 'fakePlayer-inactive'}></div>
-                            <div className={`player ${floatPlayer ? 'floatPlayer' : ''}`}>
+                            <div
+                                style={{
+                                    height: playerHeight,
+                                    width: '100%',
+                                    display: floatPlayer ? 'block' : 'none'
+                                }}
+                            />
+                            <div 
+                                className={`player ${floatPlayer ? 'floatPlayer' : ''}`}
+                            >
                                 <ReactPlayer 
                                     ref={refPlayer}
                                     playing={isPlaying}
