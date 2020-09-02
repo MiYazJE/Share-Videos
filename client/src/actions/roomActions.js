@@ -70,11 +70,13 @@ export const createRoom = (host, cb) => async (dispatch) => {
     cb(room.id);
 };
 
-export const isValidRoom = (id, redirect) => async (dispatch) => {
+export const isValidRoom = (id, cbFailure, cbSuccess) => async (dispatch) => {
     dispatch(setLoading(true));
-    const isValid = await api.isValidRoom(id);
-    if (!isValid) redirect();
 
+    const isValid = await api.isValidRoom(id);
+    if (!isValid) cbFailure();
+    else cbSuccess && cbSuccess();
+    
     dispatch(setLoading(false));
 };
 
