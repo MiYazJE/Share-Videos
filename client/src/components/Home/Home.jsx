@@ -27,9 +27,15 @@ const Home = ({ createRoom, name, setName }) => {
 
     return (
         <div id="home">
+            <h1>Share Videos</h1>
             <div className="wrap">
                 <FormControl error={errorNoNickname}>
-                    <TextField value={name} onChange={({target}) => setName(target.value)} style={{width: '80%'}} placeholder="Enter your name" />
+                    <TextField 
+                        value={name} 
+                        onChange={({target}) => setName(target.value)} 
+                        label="Name" 
+                        variant="outlined"
+                    />
                     {errorNoNickname
                     ? (
                         <FormHelperText id="component-error-text">Your nickname is empty!</FormHelperText>

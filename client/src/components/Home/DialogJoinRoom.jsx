@@ -7,8 +7,8 @@ import { readIsLoading } from '../../reducers/roomReducer';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
+import { DialogActions, DialogContent, FormHelperText } from '@material-ui/core';
+import FormControl from '@material-ui/core/FormControl';
 
 const stylesContentDialog = {
     display: 'flex',
@@ -17,15 +17,22 @@ const stylesContentDialog = {
     alignItems: 'center'
 }
 
-const DialogJoinRoom = ({ open, name, onCancel, isLoading, isValidRoom, joinRoom }) => {
+const DialogJoinRoom = ({ open, name, onCancel, isLoading, isValidRoom }) => {
     const [idRoom, setIdRoom] = useState('');
+    const [errorRoomId, setErrorRoomId] = useState('');
+
     const history = useHistory();
 
     const handleJoinRoom = () => {
+        if (!idRoom) {
+            setErrorRoomId('The room id is empty!');
+            return;
+        }
+
         console.log('joining room...');
         isValidRoom(
             idRoom, 
-            () => console.log('the room is not valid'),
+            () => setErrorRoomId('The roomID is not valid'),
             () => {
                 history.push(`/room/${idRoom}`) 
                 onCancel();
@@ -42,14 +49,20 @@ const DialogJoinRoom = ({ open, name, onCancel, isLoading, isValidRoom, joinRoom
             onKeyDown={({ key }) => key === 'Enter' && handleJoinRoom(name)}
         >
             <DialogContent style={stylesContentDialog}>
-                <TextField
-                    autoFocus
-                    margin="dense"
-                    id="name"
-                    label="room"
-                    type="name"
-                    onChange={({ target }) => setIdRoom(target.value)}
-                />
+                <FormControl error={errorRoomId}>
+                    <TextField
+                        autoFocus
+                        margin="dense"
+                        id="roomID"
+                        label="Room id"
+                        type="name"
+                        onChange={({ target }) => setIdRoom(target.value)}
+                    />
+                    {errorRoomId
+                        ? (
+                            <FormHelperText id="roomID">{errorRoomId}</FormHelperText>
+                        ) : null}
+                </FormControl>
             </DialogContent>
             <DialogActions>
                 <Button
@@ -65,6 +78,7 @@ const DialogJoinRoom = ({ open, name, onCancel, isLoading, isValidRoom, joinRoom
                     onClick={() => handleJoinRoom()}
                     color="primary"
                     variant="contained"
+                    disabled={isLoading}
                 >
                     JOIN
                 </Button>
