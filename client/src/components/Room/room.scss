@@ -138,6 +138,7 @@ main {
     left: 0px;
     z-index: 300;
     pointer-events: none;
+    justify-content: flex-end;
 }
 
 @keyframes moveDown {

@@ -161,7 +161,7 @@ const Room = ({
                                     onProgress={handleSendProgress}
                                     onEnded={handleOnEnded}
                                     width="100%" 
-                                    height={playerHeight} 
+                                    height={floatPlayer ? null : playerHeight} 
                                     controls={true} 
                                     url={urlVideo} 
                                 />
