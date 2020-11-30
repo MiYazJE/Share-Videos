@@ -89,7 +89,7 @@ const Room = ({
             setPlayerHeight(window.innerWidth < 700 ? '35vh' : '70vh');
         }
         function onScroll() {
-            setFLoatPlayer(window.innerWidth < 1300 && this.scrollY > 700);
+            setFLoatPlayer(window.innerWidth < 1300 && this.scrollY > 900);
         }
 
         window.addEventListener('resize', onResize);

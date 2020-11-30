@@ -6,9 +6,12 @@ import { readName } from '../../reducers/userReducer';
 import { removeVideo, viewVideo } from '../../actions/roomActions';
 import { FaPlay } from 'react-icons/fa';
 import { FiDelete } from 'react-icons/fi';
+import useTitle from '../../hooks/useTitle';
 import './videosGrid.scss';
 
 const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, currentVideoId, name }) => {
+
+    const formatTitle = useTitle();
 
     const handleRemoveVideo = (idVideo) => {
         removeVideo({ idVideo, idRoom, name });
@@ -28,26 +31,25 @@ const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, currentVideoId, na
             className="wrapVideosGrid"
         >
             {!videos.length 
-                ? (<div className="no-videos">
-                        <h2>No videos enqueued</h2>
-                    </div>)
-                : (videos.map((video, index) => (
-                    <div key={video.id} className={`wrapVideo ${video.id === currentVideoId ? 'current' : null}`}>
+                ? <div className="no-videos">
+                    <h2>No videos enqueued</h2>
+                  </div>
+                : videos.map(({ id, urlThumbnail, title }) => (
+                    <div className={`wrapVideo ${id === currentVideoId ? 'current' : null}`}>
                         <div className="img">
-                            <img src={video.urlThumbnail} alt="thumbnail" />
+                            <img src={urlThumbnail} alt="thumbnail" />
                         </div>
                         <div className="meta">
-                            <span className="title">{video.title}</span>
+                            <span className="title" title={title}>{formatTitle(title)}</span>
                             <div className="icons">
-                                <FaPlay className="play" onClick={() => handleViewVideo(video.id)} />
-                                <FiDelete className="remove" onClick={() => handleRemoveVideo(video.id)} />
+                                <FaPlay className="play" onClick={() => handleViewVideo(id)} />
+                                <FiDelete className="remove" onClick={() => handleRemoveVideo(id)} />
                             </div>
                         </div>
-                    </div>
-                )))}
+                    </div>))
+                }
         </FlipMove>
     );
-
 }
 
 const mapStateToProps = (state) => ({

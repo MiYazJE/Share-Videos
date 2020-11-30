@@ -89,13 +89,12 @@ export const getSuggestedVideos = (query) => async (dispatch) => {
     dispatch(setSuggestedVideos([...suggestedVideos]));
 };
 
-export const getVideos = (searched, callback) => async (dispatch) => {
+export const getVideos = (searched) => async (dispatch) => {
     dispatch(setLoadingVideos(true));
     dispatch(getSuggestedVideos(searched));
     const videos = await api.searchYoutubeVideos(searched);
     dispatch(setVideos(videos));
     dispatch(setLoadingVideos(false));
-    callback();
 };
 
 

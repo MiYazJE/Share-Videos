@@ -1,24 +1,41 @@
 import React from 'react';
 import { useParams } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { readVideos } from '../../reducers/roomReducer';
+import { readVideos, readLoadingVideos } from '../../reducers/roomReducer';
 import { readName } from '../../reducers/userReducer';
 import { enqueueVideo } from '../../actions/roomActions';
-import useText from '../../hooks/useText';
+import useTitle from '../../hooks/useTitle';
 import useViews from '../../hooks/useViews';
-import Tooltip from '@material-ui/core/Tooltip';
-import { makeStyles } from '@material-ui/core/styles';
+import Skeleton from '@material-ui/lab/Skeleton';
+import Box from '@material-ui/core/Box';
+import Typography from '@material-ui/core/Typography';
 import './resultVideos.scss';
 
-const useStylesTooltip = makeStyles((theme) => ({
-    tooltip: {
-      backgroundColor: theme.palette.common.black,
-    },
-  }));
+const getSekeletonVideos = () => {
+    return Array(20).fill().map((_, i) => (
+        <div key={i} style={{ width: '250px', margin: '10px' }}>
+            <Skeleton variant="rect" width="100%">
+                <div style={{ paddingTop: '50%' }} />
+            </Skeleton>
+            <Box display="flex" flexDirection="column" alignItems="center">
+                <Box width="100%">
+                    <Skeleton width="100%">
+                        <Typography>.</Typography>
+                    </Skeleton>
+                </Box>
+                <Box width="100%">
+                    <Skeleton width="100%">
+                        <Typography>.</Typography>
+                    </Skeleton>
+                </Box>
+            </Box>
+        </div>
+    ));
+}
 
 const Video = ({ title, urlThumbnail, url, addVideo, duration, views, uploadedAt }) => (
     <div className="video">
-        <div className="top">
+        <div className="top" title="Add video">
             <img 
                 alt="Thumbnail" 
                 onClick={() => addVideo({
@@ -30,18 +47,16 @@ const Video = ({ title, urlThumbnail, url, addVideo, duration, views, uploadedAt
             />
             <div className="duration">{duration}</div>
         </div>
-        <Tooltip title={title} placement="right-start" classes={useStylesTooltip()}>
-            <div className="bottom">
-                <p className="title">{useText(title)}</p>
-                <div className="metaInfo">
-                    <p>{`${useViews(views)} views ${uploadedAt ? `| ${uploadedAt}` : ''}`}</p>
-                </div>
+        <div className="bottom" title={title}>
+            <p className="title">{useTitle()(title)}</p>
+            <div className="metaInfo">
+                <p>{`${useViews(views)} views ${uploadedAt ? `| ${uploadedAt}` : ''}`}</p>
             </div>
-        </Tooltip>
+        </div>
     </div>
 );
 
-const ResultVideos = ({ enqueueVideo, videos, refVideoResults, name }) => {
+const ResultVideos = ({ enqueueVideo, videos, refVideoResults, name, loadingVideos }) => {
     const { id } = useParams();
 
     const handleAddVideo = (video) => {
@@ -49,18 +64,19 @@ const ResultVideos = ({ enqueueVideo, videos, refVideoResults, name }) => {
     }
 
     return (
-        videos.length
-            ? (
-                <div ref={refVideoResults} className="videosContainer">
-                    {videos.map(video => <Video key={video.url} addVideo={handleAddVideo} {...video} />)}
-                </div>)
-            : null
+        <div ref={refVideoResults} className="videosContainer">
+            {videos.length && !loadingVideos
+                ? videos.map(video => <Video key={video.url} addVideo={handleAddVideo} {...video} />)
+                : loadingVideos ? getSekeletonVideos() : null
+            } 
+        </div>
     );
 };
 
 const mapStateToProps = state => ({
     videos: readVideos(state),
-    name: readName(state)
+    name: readName(state),
+    loadingVideos: readLoadingVideos(state)
 });
 
 const mapDispatchToProps = dispatch => ({

@@ -63,55 +63,56 @@ const NavBar = ({ getVideos, videosSuggested, getSuggestedVideos, loadingVideos,
 	const classes = useStyles();
 
 	const handleGetVideos = () => {
-		if (!search) return;
-		getVideos(search, () => scrollTo());
+    if (!search) return;
+    scrollTo();
+		getVideos(search);
 	}
 
-    return (
-        <AppBar position="sticky" style={{ alignItems: 'center' }}>
-          <div className={classes.root}>
-              <Toolbar>
-				  <Typography className={classes.title} variant="h6" noWrap>
-					Video Share
-                  </Typography>
-                  <div className={classes.search}>
-                      <Autocomplete
-						  onKeyPress={({ key }) => {
-							if (key === 'Enter') handleGetVideos()
-						  }}
-                          onChange={(_, searched) => {
-							if (!searched) return;
-							setSearch(searched);
-							handleGetVideos();
-						  }}
-                          options={videosSuggested}
-                          noOptionsText="No results"
-                          classes={{ root: classes.inputRoot, input: classes.inputInput }}
-						  value={search}
-                          inputProps={{ 'aria-label': 'search' }}
-                          renderInput={(params) => (
-                              <InputBase
-                                  {...params} 
-                                  style={{color: 'white'}}
-                                  ref={params.InputProps.ref}
-                                  onChange={({ target }) => {
-									  setSearch(target.value);
-									  getSuggestedVideos(target.value);
-								  }}
-                                  id="search" 
-                                  placeholder="Search a video..." 
-                              />
-                          )}
-                      />
-					  <div className={classes.searchIcon}>
-                          <SearchIcon onClick={handleGetVideos} />
-                      </div>
-                  </div>
-                  {loadingVideos ? <CircularProgress style={{marginLeft: '30px', color: 'white'}} size={30} /> : null}
-              </Toolbar>
+  return (
+    <AppBar position="sticky" style={{ alignItems: 'center' }}>
+      <div className={classes.root}>
+        <Toolbar>
+          <Typography className={classes.title} variant="h6" noWrap>
+            Video Share
+          </Typography>
+          <div className={classes.search}>
+            <Autocomplete
+              onKeyPress={({ key }) => {
+                if (key === 'Enter') handleGetVideos()
+              }}
+              onChange={(_, searched) => {
+                if (!searched) return;
+                setSearch(searched);
+                handleGetVideos();
+              }}
+              options={videosSuggested}
+              noOptionsText="No results"
+              classes={{ root: classes.inputRoot, input: classes.inputInput }}
+              value={search}
+              inputProps={{ 'aria-label': 'search' }}
+              renderInput={(params) => (
+                <InputBase
+                    {...params} 
+                    style={{color: 'white'}}
+                    ref={params.InputProps.ref}
+                    onChange={({ target }) => {
+                      setSearch(target.value);
+                      getSuggestedVideos(target.value);
+                    }}
+                    id="search" 
+                    placeholder="Search a video..." 
+                />
+              )}
+            />
+            <div className={classes.searchIcon}>
+              <SearchIcon onClick={handleGetVideos} />
+            </div>
           </div>
-        </AppBar>
-    );
+          {loadingVideos ? <CircularProgress style={{marginLeft: '30px', color: 'white'}} size={30} /> : null}
+        </Toolbar>
+      </div>
+    </AppBar>
+  );
 }
 
 const mapStateToProps = state => ({
@@ -121,7 +122,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-    getVideos: (query, callback) => dispatch(getVideos(query, callback)),
+    getVideos: (query) => dispatch(getVideos(query)),
     getSuggestedVideos: (query) => dispatch(getSuggestedVideos(query)),
 });
 
