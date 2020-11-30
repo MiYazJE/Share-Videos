@@ -23,8 +23,7 @@ import {
     readHost, 
     readSeekVideo, 
     readProgress,
-    readActualVideoId,
-    readTitle
+    readCurrentVideoId
 } from '../../reducers/roomReducer';
 import { 
     isValidRoom, 
@@ -35,8 +34,11 @@ import {
     removeVideo
 } from '../../actions/roomActions';
 
-import './room.scss';
 import Scroller from '../Scroller/Scroller';
+import './room.scss';
+import MetaVideoInfo from './MetaVideoInfo';
+
+const WIDTH_TO_RESIZE = 1300;
 
 const Room = ({ 
     urlVideo, 
@@ -54,8 +56,7 @@ const Room = ({
     seekVideo,
     setSeekVideo,
     removeVideo,
-    actualVideoId,
-    title
+    currentVideoId
 }) => {
     const [playerHeight, setPlayerHeight] = useState(window.innerWidth < 700 ? '35vh' : '70vh');
     const [openDialog, setOpenDialog] = useState(false);
@@ -89,7 +90,7 @@ const Room = ({
             setPlayerHeight(window.innerWidth < 700 ? '35vh' : '70vh');
         }
         function onScroll() {
-            setFLoatPlayer(window.innerWidth < 1300 && this.scrollY > 900);
+            setFLoatPlayer(window.innerWidth < WIDTH_TO_RESIZE && this.scrollY > 900);
         }
 
         window.addEventListener('resize', onResize);
@@ -132,7 +133,7 @@ const Room = ({
     }
 
     const handleOnEnded = () => {
-        removeVideo({ idVideo: actualVideoId, idRoom });
+        removeVideo({ idVideo: currentVideoId, idRoom });
     }
 
     return (
@@ -165,9 +166,10 @@ const Room = ({
                                     controls={true} 
                                     url={urlVideo} 
                                 />
-                                {window.innerWidth > 1300 
-                                    ? <span style={{ marginTop: '10px' }}>{title}</span>
-                                    : null
+                                {window.innerWidth > WIDTH_TO_RESIZE 
+                                    ? (
+                                        <MetaVideoInfo />
+                                    ) : null
                                 }
                             </div>
                             <div className="tabs">
@@ -192,8 +194,7 @@ const mapStateToProps = state => ({
     host: readHost(state),
     seekVideo: readSeekVideo(state),
     progressVideo: readProgress(state),
-    actualVideoId: readActualVideoId(state),
-    title: readTitle(state) 
+    currentVideoId: readCurrentVideoId(state)
 });
 
 const mapDispatchToProps = dispatch => ({
