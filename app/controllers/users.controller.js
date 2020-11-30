@@ -1,7 +1,7 @@
 const fetch = require('node-fetch');
+const youtube = require('youtube-sr');
 
-const URL_GOOGLE_SUGGEST =
-    'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=es&q=';
+const URL_GOOGLE_SUGGEST = 'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=es&q=';
 
 module.exports = {
     searchVideoSuggestions,
@@ -22,8 +22,20 @@ function mapSuggestions(suggestions) {
 
 async function getVideos(req, res) {
     const { q } = req.params;
-    if (!q) return res.status(400).json({ msg: 'Query is empty!' });
-    const response = await fetch(`http://youtube-scrap-service.herokuapp.com/api/v1/getVideos/${q}`);
-    const videos = await response.json();
-    res.json(videos);
+    const videos = await youtube.search(q, { limit: 20 });
+    res.json(mapVideos(videos));
+}
+
+function mapVideos(videos) {
+    return videos.map((video) => {
+        const { durationFormatted: duration, url, views, title, thumbnail: { url: urlThumbnail }, uploadedAt } = video;
+        return {
+            url,
+            views,
+            title,
+            urlThumbnail,
+            uploadedAt,
+            duration
+        };
+    });
 }

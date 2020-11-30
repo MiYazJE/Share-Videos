@@ -19,8 +19,8 @@
     "express": "^4.17.1",
     "morgan": "^1.10.0",
     "node-fetch": "^2.6.0",
-    "react-toastify": "^6.0.8",
-    "socket.io": "^2.3.0"
+    "socket.io": "^2.3.0",
+    "youtube-sr": "^2.0.4"
   },
   "devDependencies": {
     "nodemon": "^2.0.4"
