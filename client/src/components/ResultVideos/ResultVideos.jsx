@@ -33,28 +33,28 @@ const getSekeletonVideos = () => {
     ));
 }
 
-const Video = ({ title, urlThumbnail, url, addVideo, duration, views, uploadedAt }) => (
-    <div className="video">
-        <div className="top" title="Add video">
-            <img 
-                alt="Thumbnail" 
-                onClick={() => addVideo({
-                    title,
-                    urlThumbnail,
-                    url: `https://youtube.com${url}`
-                })} 
-                src={urlThumbnail}
-            />
-            <div className="duration">{duration}</div>
-        </div>
-        <div className="bottom" title={title}>
-            <p className="title">{useTitle()(title)}</p>
-            <div className="metaInfo">
-                <p>{`${useViews(views)} views ${uploadedAt ? `| ${uploadedAt}` : ''}`}</p>
+const Video = ({ video, addVideo }) => {
+    const { title, urlThumbnail, duration, views, uploadedAt } = video;
+    
+    return (
+        <div className="video">
+            <div className="top" title="Add video">
+                <img 
+                    alt="Thumbnail" 
+                    onClick={() => addVideo(video)} 
+                    src={urlThumbnail}
+                />
+                <div className="duration">{duration}</div>
+            </div>
+            <div className="bottom" title={title}>
+                <p className="title">{useTitle()(title)}</p>
+                <div className="metaInfo">
+                    <p>{`${useViews()(views)} ${uploadedAt ? `| ${uploadedAt}` : ''}`}</p>
+                </div>
             </div>
         </div>
-    </div>
-);
+    );
+};
 
 const ResultVideos = ({ enqueueVideo, videos, refVideoResults, name, loadingVideos }) => {
     const { id } = useParams();
@@ -66,7 +66,7 @@ const ResultVideos = ({ enqueueVideo, videos, refVideoResults, name, loadingVide
     return (
         <div ref={refVideoResults} className="videosContainer">
             {videos.length && !loadingVideos
-                ? videos.map(video => <Video key={video.url} addVideo={handleAddVideo} {...video} />)
+                ? videos.map(video => <Video key={video.url} addVideo={handleAddVideo} video={video} />)
                 : loadingVideos ? getSekeletonVideos() : null
             } 
         </div>

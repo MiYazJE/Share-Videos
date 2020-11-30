@@ -1,7 +1,7 @@
 import React from 'react';
 import FlipMove from 'react-flip-move';
 import { connect } from 'react-redux';
-import { readQueue, readRoomName, readActualVideoId } from '../../reducers/roomReducer';
+import { readQueue, readRoomName, readCurrentVideoId } from '../../reducers/roomReducer';
 import { readName } from '../../reducers/userReducer';
 import { removeVideo, viewVideo } from '../../actions/roomActions';
 import { FaPlay } from 'react-icons/fa';
@@ -55,7 +55,7 @@ const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, currentVideoId, na
 const mapStateToProps = (state) => ({
     videos: readQueue(state),
     idRoom: readRoomName(state),
-    currentVideoId: readActualVideoId(state),
+    currentVideoId: readCurrentVideoId(state),
     name: readName(state)
 });
 
