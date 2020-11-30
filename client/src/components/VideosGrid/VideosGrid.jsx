@@ -8,7 +8,7 @@ import { FaPlay } from 'react-icons/fa';
 import { FiDelete } from 'react-icons/fi';
 import './videosGrid.scss';
 
-const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, actualVideoId, name }) => {
+const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, currentVideoId, name }) => {
 
     const handleRemoveVideo = (idVideo) => {
         removeVideo({ idVideo, idRoom, name });
@@ -32,7 +32,7 @@ const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, actualVideoId, nam
                         <h2>No videos enqueued</h2>
                     </div>)
                 : (videos.map((video, index) => (
-                    <div key={video.id} className={`wrapVideo ${video.id === actualVideoId ? 'current' : null}`}>
+                    <div key={video.id} className={`wrapVideo ${video.id === currentVideoId ? 'current' : null}`}>
                         <div className="img">
                             <img src={video.urlThumbnail} alt="thumbnail" />
                         </div>
@@ -53,7 +53,7 @@ const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, actualVideoId, nam
 const mapStateToProps = (state) => ({
     videos: readQueue(state),
     idRoom: readRoomName(state),
-    actualVideoId: readActualVideoId(state),
+    currentVideoId: readActualVideoId(state),
     name: readName(state)
 });
 
