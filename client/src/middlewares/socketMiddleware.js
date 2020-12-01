@@ -27,7 +27,7 @@ const socketMiddleware = () => (store) => {
     });
 
     return (next) => (action) => {
-        if (action.type.includes('WS')) {
+        if (action.type.startsWith('WS')) {
             socket.emit(action.type, action.payload);
         }
         else {

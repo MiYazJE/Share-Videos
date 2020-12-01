@@ -1,14 +1,93 @@
-.wrapUsersGrid {
-    width: 100%;
-    height: 100%;
+.MuiBox-root {
+    padding: 0px !important;
+}
 
-    .wrapUser {
+.chatWrap {
+    background-color: #F3F3F3;
+    width: 100%;
+    min-height: 600px;
+    max-height: 600px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    flex-direction: column;
+    
+    .usersConnected {
+        width: 100%;
+        min-height: 80px;
         display: flex;
         justify-content: center;
-        
-        .name {
-            text-align: center;
+        align-items: center;
+        flex-wrap: wrap;
+        height: 10%;
+
+        * {
+            margin: 2px;
         }
     }
+    
+    .chat {
+        width: 100%;
+        min-height: 480px;
+        max-height: 480px;
+        overflow: auto;
+        align-items: center;
+        flex-direction: column;
 
+        &::-webkit-scrollbar {
+            width: 8px;
+            background-color: transparent;
+        }
+
+        &::-webkit-scrollbar-thumb {
+            border-radius: 10px;
+            -webkit-box-shadow: inset 0 0 6px #3F51B5;
+            background-color: #3F51B5;
+        }
+
+        .messagesChat {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: flex-start;
+
+            .message {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: flex-start;
+                max-width: 80%;
+                background-color:#3F51B5;
+                border-radius: 10px;
+                color: white;
+                padding: 10px;
+                margin: 5px;
+                word-break: break-all;
+
+                p {
+                    margin: 0;
+                }
+
+                .emitter {
+                    text-transform: capitalize;
+                    font-weight: bold;
+                }
+
+                .time {
+                    padding-left: 5px;
+                    font-size: 11px;
+                }
+            }
+
+            .me {
+                align-self: flex-end;
+                background: #F50057 !important;
+            }
+
+            .isAdmin {
+                background: rgb(76, 212, 76) !important;
+            }
+        }
+    }
 }

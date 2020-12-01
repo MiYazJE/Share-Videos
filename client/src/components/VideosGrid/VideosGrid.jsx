@@ -35,7 +35,7 @@ const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, currentVideoId, na
                     <h2>No videos enqueued</h2>
                   </div>
                 : videos.map(({ id, urlThumbnail, title }) => (
-                    <div className={`wrapVideo ${id === currentVideoId ? 'current' : null}`}>
+                    <div key={id} className={`wrapVideo ${id === currentVideoId ? 'current' : null}`}>
                         <div className="img">
                             <img src={urlThumbnail} alt="thumbnail" />
                         </div>
@@ -47,7 +47,7 @@ const VideosGrid = ({ videos, removeVideo, idRoom, viewVideo, currentVideoId, na
                             </div>
                         </div>
                     </div>))
-                }
+            }
         </FlipMove>
     );
 }

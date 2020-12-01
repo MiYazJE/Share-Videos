@@ -28,7 +28,8 @@ const initialState = {
         title: '',
         views: null,
         updatedAt: null
-    }
+    },
+    chat: []
 };
 
 const roomReducer = (state = initialState, action) => {
@@ -46,7 +47,6 @@ const roomReducer = (state = initialState, action) => {
         case SET_URL_VIDEO:
             return { ...state, urlVideo: action.url };
         case SET_PLAY_VIDEO:
-            console.log(action.payload)
             return { ...state, ...action.payload, isPlaying: true };
         case SET_SEEK_VIDEO:
             return { ...state, seekVideo: action.seekVideo };
@@ -71,5 +71,6 @@ export const readSeekVideo       = (state) => state.roomReducer.seekVideo;
 export const readProgress        = (state) => state.roomReducer.progressVideo;
 export const readTitle           = (state) => state.roomReducer.currentVideo.title;
 export const readCurrentVideo    = (state) => state.roomReducer.currentVideo;
+export const readChat            = (state) => state.roomReducer.chat;
 
 export default roomReducer;

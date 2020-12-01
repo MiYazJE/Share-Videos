@@ -14,7 +14,8 @@ import {
     WS_VIEW_VIDEO,
     WS_SEND_PLAYER_STATE,
     WS_JOIN_ROOM,
-    WS_SEND_PROGRESS
+    WS_SEND_PROGRESS,
+    WS_SEND_MESSAGE
 } from './actionTypes';
 
 export const setRoom = (room) => ({
@@ -126,5 +127,10 @@ export const sendPlayerState = (payload) => ({
 
 export const sendProgress = (payload) => ({
     type: WS_SEND_PROGRESS,
+    payload
+});
+
+export const sendMessage = (payload) => ({
+    type: WS_SEND_MESSAGE,
     payload
 });
