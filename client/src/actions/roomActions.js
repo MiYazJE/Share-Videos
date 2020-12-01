@@ -9,6 +9,7 @@ import {
     SET_PLAY_VIDEO,
     SET_SEEK_VIDEO,
     SET_IS_PLAYING,
+    SET_CHAT,
     WS_ADD_VIDEO,
     WS_REMOVE_VIDEO,
     WS_VIEW_VIDEO,
@@ -18,9 +19,9 @@ import {
     WS_SEND_MESSAGE
 } from './actionTypes';
 
-export const setRoom = (room) => ({
+export const setRoom = (payload) => ({
     type: SET_ROOM,
-    room
+    payload
 });
 
 const setLoadingVideos = (loading) =>({
@@ -63,6 +64,10 @@ export const setIsPlaying = (isPlaying) => ({
     isPlaying
 });
 
+export const setChat = (chat) => ({
+    type: SET_CHAT,
+    chat
+});
 
 /* ASYNC API CALLS */
 export const createRoom = (host, cb) => async (dispatch) => {

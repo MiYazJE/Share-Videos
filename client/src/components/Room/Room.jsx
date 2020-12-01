@@ -122,7 +122,7 @@ const Room = ({
     }
     
     const handleOnPlay = () => {
-        if (Math.abs(refPlayer.current.getCurrentTime() - progressVideo) > 0.2) {
+        if (Math.abs(refPlayer.current.getCurrentTime() - progressVideo) > 1) {
             sendProgress({ progress: refPlayer.current.getCurrentTime(), idRoom, seekVideo: true, name });
         }
         sendPlayerState({ state: 'play', idRoom, name });

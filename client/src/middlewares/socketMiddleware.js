@@ -1,6 +1,15 @@
 import io from 'socket.io-client';
-import { WS_UPDATE_ROOM, WS_VIEW_VIDEO, WS_NOTIFY_MESSAGE } from '../actions/actionTypes';
-import { setRoom, setPlayVideo } from '../actions/roomActions';
+import { 
+    WS_UPDATE_ROOM,
+    WS_VIEW_VIDEO, 
+    WS_NOTIFY_MESSAGE,
+    WS_UPDATE_CHAT
+} from '../actions/actionTypes';
+import { 
+    setRoom, 
+    setPlayVideo, 
+    setChat
+} from '../actions/roomActions';
 import { toast } from 'react-toastify';
 
 const isDev = process.env.NODE_ENV === 'development';
@@ -12,6 +21,10 @@ const socket = isDev
 const socketMiddleware = () => (store) => {
     socket.on(WS_UPDATE_ROOM, (room) => {
         store.dispatch(setRoom(room));
+    });
+    
+    socket.on(WS_UPDATE_CHAT, (chat) => {
+        store.dispatch(setChat(chat))
     });
 
     socket.on(WS_VIEW_VIDEO, (payload) => {

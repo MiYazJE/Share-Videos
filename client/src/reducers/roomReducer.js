@@ -6,13 +6,13 @@ import {
     SET_URL_VIDEO,
     SET_PLAY_VIDEO,
     SET_SEEK_VIDEO,
-    SET_IS_PLAYING
+    SET_IS_PLAYING,
+    SET_CHAT
 } from '../actions/actionTypes';
 
 const initialState = {
     id: '',
     host: '',
-    urlVideo: '',
     users: [],
     queue: [],
     suggestedVideos: [],
@@ -35,7 +35,7 @@ const initialState = {
 const roomReducer = (state = initialState, action) => {
     switch (action.type) {
         case SET_ROOM:
-            return { ...state, ...action.room };
+            return { ...state, ...action.payload };
         case SET_VIDEOS:
             return { ...state, videos: action.videos };
         case SET_IS_PLAYING:
@@ -50,6 +50,8 @@ const roomReducer = (state = initialState, action) => {
             return { ...state, ...action.payload, isPlaying: true };
         case SET_SEEK_VIDEO:
             return { ...state, seekVideo: action.seekVideo };
+        case SET_CHAT:
+            return { ...state, chat: action.chat };
         default:
             return { ...state };
     }

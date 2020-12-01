@@ -26,10 +26,11 @@ const Message = ({ isAdmin, emitter, msg, me, time }) => {
 
 const UsersGrid = ({ chat, me, users, sendMessage, idRoom }) => {
     const [msg, setMessage] = useState('');
+    const [isWriting, setIsWriting] = useState(false);
     const refScroll = useRef(null);
     
     const scrollToBottom = () => {
-        console.log('scrolling to bottom')
+        if (!isWriting) return;
         refScroll.current && refScroll.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
 
@@ -64,6 +65,8 @@ const UsersGrid = ({ chat, me, users, sendMessage, idRoom }) => {
             <form style={{width: '100%'}} onSubmit={handleSubmit} noValidate autoComplete="off">
                 <TextField 
                     value={msg}
+                    onFocus={() => setIsWriting(true)}
+                    onBlur={() => setIsWriting(false)}
                     onInput={(e) => setMessage(e.target.value)}
                     fullWidth 
                     id="standard-basic" 
