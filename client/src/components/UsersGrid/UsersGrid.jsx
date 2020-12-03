@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { connect } from 'react-redux';
 import { sendMessage } from '../../actions/roomActions';
 import { readUsers, readRoomName, readChat } from '../../reducers/roomReducer';
@@ -6,8 +6,9 @@ import { readName } from '../../reducers/userReducer';
 import TextField from '@material-ui/core/TextField';
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
+import SendIcon from '@material-ui/icons/Send';
+import IconButton from '@material-ui/core/IconButton';
 import './usersGrid.scss';
-import { useEffect } from 'react';
 
 const Message = ({ isAdmin, emitter, msg, me, time }) => {
     const meClass = me === emitter ? 'me' : '';
@@ -28,16 +29,16 @@ const UsersGrid = ({ chat, me, users, sendMessage, idRoom }) => {
     const [msg, setMessage] = useState('');
     const [isWriting, setIsWriting] = useState(false);
     const refScroll = useRef(null);
-    
+
     const scrollToBottom = () => {
-        if (!isWriting) return;
+        // if (!isWriting) return;
         refScroll.current && refScroll.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
 
     useEffect(scrollToBottom, [chat]);
 
     const handleSubmit = (e) => {
-        e.preventDefault();
+        e && e.preventDefault();
         if (msg.trim()) {
             sendMessage({ name: me, msg, idRoom });
             setMessage('');
@@ -59,10 +60,10 @@ const UsersGrid = ({ chat, me, users, sendMessage, idRoom }) => {
             <div className="chat">
                 <div className="messagesChat">
                     {chat.map((message, i) => <Message key={i} me={me} refScroll={refScroll} {...message}/>)}
-                    <div ref={refScroll}/>
+                    <div ref={refScroll} />
                 </div>
             </div>
-            <form style={{width: '100%'}} onSubmit={handleSubmit} noValidate autoComplete="off">
+            <form onSubmit={handleSubmit} noValidate autoComplete="off">
                 <TextField 
                     value={msg}
                     onFocus={() => setIsWriting(true)}
@@ -72,10 +73,12 @@ const UsersGrid = ({ chat, me, users, sendMessage, idRoom }) => {
                     id="standard-basic" 
                     label="Type a message..." 
                 />
+                <IconButton onClick={handleSubmit} color="primary" aria-label="upload picture" component="span">
+                    <SendIcon />
+                </IconButton>
             </form>
         </div>
     );
-
 }
 
 const mapStateToProps = (state) => ({

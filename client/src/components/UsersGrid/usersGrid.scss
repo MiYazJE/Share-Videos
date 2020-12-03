@@ -1,9 +1,8 @@
 .MuiBox-root {
-    padding: 0px !important;
+    padding: 0px 30px !important;
 }
 
 .chatWrap {
-    background-color: #F3F3F3;
     width: 100%;
     min-height: 600px;
     max-height: 600px;
@@ -41,8 +40,8 @@
 
         &::-webkit-scrollbar-thumb {
             border-radius: 10px;
-            -webkit-box-shadow: inset 0 0 6px #3F51B5;
-            background-color: #3F51B5;
+            -webkit-box-shadow: inset 0 0 6px transparent;
+            background-color: transparent;
         }
 
         .messagesChat {
@@ -51,6 +50,18 @@
             flex-direction: column;
             justify-content: flex-end;
             align-items: flex-start;
+            position: relative;
+
+            .scrollToBottom {
+                position: sticky;
+                bottom: 0;
+                left: 50%;
+                background-color: #2196f3;
+                width: 33px;
+                height: 33px;
+                border-radius: 99%;
+                cursor: pointer;
+            }
 
             .message {
                 display: flex;
@@ -90,4 +101,9 @@
             }
         }
     }
+}
+
+form {
+    display: flex;
+    width: 100%;
 }
