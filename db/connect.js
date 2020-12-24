@@ -12,7 +12,4 @@ async function getConnection() {
     return connection;
 }
 
-module.exports = { 
-    connect,
-    getConnection
-}
+module.exports = { getConnection };

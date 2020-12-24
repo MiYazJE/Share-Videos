@@ -1,7 +1,6 @@
 const path = require('path');
 const express = require('express');
 const socketIO = require('socket.io');
-const { connect } = require('./db/connect')
 const app = express();
 
 require('dotenv').config();
@@ -9,9 +8,6 @@ require('dotenv').config();
 const isDev = process.env.ENVIROMENT !== 'production';
 
 (async () => {
-    await connect();
-    console.log('CONNECTED TO DATABASE');
-
     app.use(require('morgan')('tiny'));
     app.use(express.json());
     app.use('/api/v1/', require('./app/routes/routes.js'));
