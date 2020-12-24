@@ -38,10 +38,25 @@ async function register(payload) {
     return await (await fetch(request)).json();
 }
 
+async function login(payload) {
+    const request = new Request(
+        '/api/v1/user/login',
+        {
+            method: 'POST',
+            body: JSON.stringify(payload),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+    );
+    return await (await fetch(request)).json();
+}
+
 export default {
     searchVideoSuggestions,
     searchYoutubeVideos,
     createRoom,
     isValidRoom,
     register,
-}
+    login,
+};
