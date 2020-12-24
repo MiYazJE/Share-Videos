@@ -1,11 +1,13 @@
 const fetch = require('node-fetch');
 const youtube = require('youtube-sr');
+const { getConnection } = require('../../db/connect');
 
 const URL_GOOGLE_SUGGEST = 'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=es&q=';
 
 module.exports = {
     searchVideoSuggestions,
     getVideos,
+    register,
 };
 
 async function searchVideoSuggestions(req, res) {
@@ -38,4 +40,19 @@ function mapVideos(videos) {
             duration
         };
     });
+}
+
+async function register(req, res) {
+    const { name, password, email } = req.body;
+    const connection = await getConnection();
+    
+    const [rows] = await connection.execute('SELECT * from users where `email` = ?', [email]);
+
+    if (rows.length) {
+        return res.json({ error: true, msg: 'Same email registered.' });
+    }
+
+    await connection.execute('INSERT INTO users VALUES(NULL, ?, ?, ?)', [name, password, email])
+
+    res.json({ error: false, msg: 'You have been registered.' });
 }

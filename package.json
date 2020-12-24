@@ -19,6 +19,7 @@
     "express": "^4.17.1",
     "moment": "^2.29.1",
     "morgan": "^1.10.0",
+    "mysql2": "^2.2.5",
     "node-fetch": "^2.6.0",
     "socket.io": "^2.3.0",
     "youtube-sr": "^2.0.4"
