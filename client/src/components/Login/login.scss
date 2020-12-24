@@ -1,0 +1,24 @@
+.wrapLogin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+
+    .field {
+        margin-bottom: 20px;
+    }
+
+    .btnWrap {
+        margin-top: 50px;
+        position: relative;
+
+        .progress {
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            margin-left: -12px;
+            margin-top: -12px;
+        }
+    }
+
+}

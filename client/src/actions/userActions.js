@@ -1,4 +1,8 @@
-import { SET_NAME } from './actionTypes';
+import { SET_NAME, SET_LOADING } from './actionTypes';
+// import { useSnackbar } from 'notistack';
+import API from '../Http/api';
+
+// const { enqueueSnackbar } = useSnackbar();
 
 export const setName = (name) => {
     window.localStorage.setItem('name', name);
@@ -7,3 +11,17 @@ export const setName = (name) => {
         name,
     }
 };
+
+export const setLoading = (loading) => ({
+    type: SET_LOADING,
+    loading,
+});
+
+
+// ASYNC ACTIONS
+export const register = (payload) => async (dispatch) => {
+    dispatch(setLoading(true));
+    const res = await API.register(payload);
+    dispatch(setLoading(false));
+    return res;
+}

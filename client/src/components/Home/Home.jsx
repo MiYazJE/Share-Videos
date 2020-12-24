@@ -9,11 +9,21 @@ import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
 import DialogJoinRoom from './DialogJoinRoom';
+import Register from '../Register';
+import Login from '../Login';
+import Modal from '../Modal';
 import './home.scss';
+
+const MODAL_TYPE = {
+    LOGIN: 'LOGIN',
+    REGISTER: 'REGISTER',
+    CLOSED: 'CLOSED',
+}
 
 const Home = ({ createRoom, name, setName }) => {
     const [errorNoNickname, setErrorNoNickname] = useState(false);
     const [openDialogJoinRoom, setOpenDialogJoinRoom] = useState(false);
+    const [modalStatus, setModalStatus] = useState(MODAL_TYPE.CLOSED);
     const history = useHistory();    
 
     const handleCreateRoom = () => {
@@ -25,8 +35,27 @@ const Home = ({ createRoom, name, setName }) => {
         }
     }
 
+    const handleOnClose = () => setModalStatus(MODAL_TYPE.CLOSED);
+
     return (
         <div id="home">
+            <div id="wrapLogin">
+                <Button 
+                    variant="outlined" 
+                    size="medium"
+                    onClick={() => setModalStatus(MODAL_TYPE.LOGIN)}
+                >
+                    LOGIN
+                </Button>
+                <Button 
+                    variant="outlined" 
+                    color="secondary"
+                    size="medium"
+                    onClick={() => setModalStatus(MODAL_TYPE.REGISTER)}
+                >
+                    REGISTER
+                </Button>
+            </div>
             <h1>Share Videos</h1>
             <div className="wrap">
                 <FormControl error={errorNoNickname}>
@@ -54,6 +83,14 @@ const Home = ({ createRoom, name, setName }) => {
                     onCancel={() => setOpenDialogJoinRoom(false)}
                 />
             </div>
+            <Modal 
+                open={modalStatus !== MODAL_TYPE.CLOSED}
+                onClose={handleOnClose}
+            >
+                {modalStatus === MODAL_TYPE.REGISTER 
+                    ? <Register onClose={handleOnClose} /> 
+                    : <Login onClose={handleOnClose} />}
+            </Modal>
         </div>
     );
 };
