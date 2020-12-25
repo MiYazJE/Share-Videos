@@ -9,9 +9,9 @@
 - [Known Problems](#problems)
 
 ## How it Works
-This application is very simple to understanding how does it works. A user 'x' create a room and shares a link or a room code with others to join him. When someone seek the video or play/pause he emits an event to everyone who's connected in the same room, same happens when someone adds a video to the playlist.
+An user create a room and shares a link or a room code with others to join him. When someone seek or play/pause a video he emits an event to everyone who's connected in the same room, same happens when someone adds a video to the playlist.
 
-All of this is made with Web Sockets (socket.io) and node.js (express.js).
+All of this its made with Web Sockets (socket.io) and node.js (express.js).
 
 ## Install
 This project uses [node](http://nodejs-org), so you must have installed it.
