@@ -6,7 +6,7 @@
 ## Table of contents
 - [How It Works](#howitworks)
 - [Install](#install)
-- [Problems knowns](#problems)
+- [Known Problems](#problems)
 
 ## How it Works
 This application is very simple to understanding how does it works. A user 'x' create a room and shares a link or a room code with others to join him. When someone seek the video or play/pause he emits an event to everyone who's connected in the same room, same happens when someone adds a video to the playlist.
