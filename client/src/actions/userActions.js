@@ -1,4 +1,4 @@
-import { SET_NAME, SET_LOADING } from './actionTypes';
+import { SET_NAME, SET_LOADING, SET_LOGGED_IN } from './actionTypes';
 import API from '../Http/api';
 
 export const setName = (name) => {
@@ -14,6 +14,11 @@ export const setLoading = (loading) => ({
     loading,
 });
 
+export const setLoggedIn = (payload) => ({
+    type: SET_LOGGED_IN,
+    payload,
+});
+
 
 // ASYNC ACTIONS
 export const register = (payload) => async (dispatch) => {
@@ -27,5 +32,13 @@ export const login = (payload) => async (dispatch) => {
     dispatch(setLoading(true));
     const res = await API.login(payload);
     dispatch(setLoading(false));
-    return res;
+    if (res.user) dispatch(setLoggedIn(res.user));
+    return res.info;
+}
+
+export const whoAmI = () => async (dispatch) => {
+    dispatch(setLoading(true));
+    const res = await API.whoAmI();
+    if (res.user) dispatch(setLoggedIn(res.user));
+    dispatch(setLoading(false));
 }

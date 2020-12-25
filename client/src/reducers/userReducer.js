@@ -15,16 +15,16 @@ const reducer = (state = initialState, action) => {
         case SET_NAME:
             return { ...state, name: action.name };
         case SET_LOGGED_IN:
-            return { ...state, ...action.payload };
+            return { ...state, name: action.payload.name, isLogged: true };
         case SET_LOADING:
-            return { ...state, loading: action.isLoading };
+            return { ...state, loading: action.loading };
         default:
             return { ...state };
     }
 };
 
 export const readUser      = (state) => ({ ...state.userReducer });
-export const readName      = (state) => window.localStorage.getItem('name');
+export const readName      = (state) => state.userReducer.name;
 export const readIsLogged  = (state) => state.userReducer.isLogged;
 export const readIsLoading = (state) => state.userReducer.loading;
 

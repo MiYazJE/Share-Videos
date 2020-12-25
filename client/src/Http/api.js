@@ -52,6 +52,10 @@ async function login(payload) {
     return await (await fetch(request)).json();
 }
 
+async function whoAmI() {
+    return await (await fetch('/api/v1/auth/whoAmI')).json();
+}
+
 export default {
     searchVideoSuggestions,
     searchYoutubeVideos,
@@ -59,4 +63,5 @@ export default {
     isValidRoom,
     register,
     login,
+    whoAmI
 };
