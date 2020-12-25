@@ -14,7 +14,7 @@ import ResultVideos from '../ResultVideos';
 // REDUX
 import { connect } from 'react-redux';
 import { setName, whoAmI } from '../../actions/userActions';
-import { readName, readIsLoading as readIsLoadingUserData } from '../../reducers/userReducer';
+import { readName } from '../../reducers/userReducer';
 import {
     readRoomName,
     readIsLoading,
@@ -37,7 +37,6 @@ import {
 import Scroller from '../Scroller/Scroller';
 import './room.scss';
 import MetaVideoInfo from './MetaVideoInfo';
-import LoadingPage from '../LoadingPage';
 
 const WIDTH_TO_RESIZE = 1300;
 
@@ -58,8 +57,6 @@ const Room = ({
     setSeekVideo,
     removeVideo,
     currentVideoId,
-    loadingUserData,
-    whoAmI
 }) => {
     const [playerHeight, setPlayerHeight] = useState(window.innerWidth < 700 ? '35vh' : '70vh');
     const [openDialog, setOpenDialog] = useState(false);
@@ -69,10 +66,6 @@ const Room = ({
     const refPlayer = useRef();
     const history = useHistory();
     const { id } = useParams();
-
-    useEffect(() => {
-        whoAmI();
-    }, []);
 
     // If the room is not valid it will redirect the user to the homepage
     useEffect(() => {
@@ -143,8 +136,6 @@ const Room = ({
         removeVideo({ idVideo: currentVideoId, idRoom });
     }
 
-    if (loadingUserData) return <LoadingPage />
-
     return (
         <main>
             {isLoading
@@ -198,7 +189,6 @@ const mapStateToProps = state => ({
     urlVideo: readUrlVideo(state),
     idRoom: readRoomName(state),
     isLoading: readIsLoading(state),
-    loadingUserData: readIsLoadingUserData(state),
     name: readName(state),
     isPlaying: readIsPlaying(state),
     host: readHost(state),
@@ -215,7 +205,6 @@ const mapDispatchToProps = dispatch => ({
     sendProgress: (payload) => dispatch(sendProgress(payload)),
     setSeekVideo: (seekVideo) => dispatch(setSeekVideo(seekVideo)),
     removeVideo: (idVideo, idRoom) => dispatch(removeVideo(idVideo, idRoom)),
-    whoAmI: () => dispatch(whoAmI()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Room);

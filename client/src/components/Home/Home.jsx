@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Button from '@material-ui/core/Button';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { setName, whoAmI } from '../../actions/userActions';
+import { setName } from '../../actions/userActions';
 import { createRoom } from '../../actions/roomActions';
-import { readName, readIsLogged, readIsLoading } from '../../reducers/userReducer';
+import { readName, readIsLogged } from '../../reducers/userReducer';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -12,7 +12,6 @@ import DialogJoinRoom from './DialogJoinRoom';
 import Register from '../Register';
 import Login from '../Login';
 import Modal from '../Modal';
-import LoadingPage from '../LoadingPage';
 import './home.scss';
 
 const MODAL_TYPE = {
@@ -21,15 +20,11 @@ const MODAL_TYPE = {
     CLOSED: 'CLOSED',
 }
 
-const Home = ({ createRoom, name, setName, isLogged, whoAmI, loading }) => {
+const Home = ({ createRoom, name, setName, isLogged }) => {
     const [errorNoNickname, setErrorNoNickname] = useState(false);
     const [openDialogJoinRoom, setOpenDialogJoinRoom] = useState(false);
     const [modalStatus, setModalStatus] = useState(MODAL_TYPE.CLOSED);
     const history = useHistory();
-
-    useEffect(() => {
-        whoAmI();
-    }, []);
 
     const handleCreateRoom = () => {
         if (name) createRoom(name, (id) => history.push(`/room/${id}`));
@@ -37,8 +32,6 @@ const Home = ({ createRoom, name, setName, isLogged, whoAmI, loading }) => {
     }
 
     const handleOnClose = () => setModalStatus(MODAL_TYPE.CLOSED);
-
-    if (loading) return <LoadingPage />
 
     return (
         <div id="home">
@@ -107,13 +100,11 @@ const Home = ({ createRoom, name, setName, isLogged, whoAmI, loading }) => {
 const mapStateToProps = (state) => ({
     name: readName(state),
     isLogged: readIsLogged(state),
-    loading: readIsLoading(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
     createRoom: (name, cb) => dispatch(createRoom(name, cb)),
     setName: (name) => dispatch(setName(name)),
-    whoAmI: () => dispatch(whoAmI()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);

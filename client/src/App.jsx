@@ -1,13 +1,26 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import Routes from './routes/Routes';
 import { BrowserRouter as Router } from 'react-router-dom'
-import './app.scss';
 import 'react-toastify/dist/ReactToastify.css';
+import { connect } from 'react-redux';
+import { whoAmI } from './actions/userActions';
+import './app.scss';
 
-const App = () => (
-    <Router>    
-        <Routes />
-    </Router>
-);
+const App = ({ whoAmI }) => {
 
-export default App;
+    useEffect(() => {
+        whoAmI();
+    }, []);
+
+    return (
+        <Router>    
+            <Routes />
+        </Router>
+    );
+};
+
+const mapDispatchToProps = (dispatch) => ({
+    whoAmI: () => dispatch(whoAmI()),
+});
+
+export default connect(null, mapDispatchToProps)(App);

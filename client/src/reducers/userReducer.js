@@ -1,13 +1,9 @@
-import {
-    SET_NAME,
-    SET_LOGGED_IN,
-    SET_LOADING
-} from '../actions/actionTypes';
+import { SET_NAME, SET_LOGGED_IN, SET_LOADING_USER } from '../actions/actionTypes';
 
 const initialState = {
     isLogged: false,
-    name: window.localStorage.getItem('name') || '',
-    loading: true,
+    name: '',
+    loading: false,
 };
 
 const reducer = (state = initialState, action) => {
@@ -16,7 +12,7 @@ const reducer = (state = initialState, action) => {
             return { ...state, name: action.name };
         case SET_LOGGED_IN:
             return { ...state, name: action.payload.name, isLogged: true };
-        case SET_LOADING:
+        case SET_LOADING_USER:
             return { ...state, loading: action.loading };
         default:
             return { ...state };

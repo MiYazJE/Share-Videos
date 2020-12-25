@@ -1,7 +1,7 @@
 import api from '../Http/api';
-import { 
+import {
     SET_ROOM,
-    SET_LOADING,
+    SET_LOADING_ROOM,
     SET_LOADING_VIDEOS,
     SET_URL_VIDEO,
     SET_SUGGESTED_VIDEOS,
@@ -16,17 +16,17 @@ import {
     WS_SEND_PLAYER_STATE,
     WS_JOIN_ROOM,
     WS_SEND_PROGRESS,
-    WS_SEND_MESSAGE
+    WS_SEND_MESSAGE,
 } from './actionTypes';
 
 export const setRoom = (payload) => ({
     type: SET_ROOM,
-    payload
+    payload,
 });
 
-const setLoadingVideos = (loading) =>({
+const setLoadingVideos = (loading) => ({
     type: SET_LOADING_VIDEOS,
-    loading
+    loading,
 });
 
 export const setUrlVideo = (url) => ({
@@ -34,9 +34,9 @@ export const setUrlVideo = (url) => ({
     url,
 });
 
-const setLoading = (loading) => ({
-    type: SET_LOADING,
-    loading
+const setLoadingRoom = (loading) => ({
+    type: SET_LOADING_ROOM,
+    loading,
 });
 
 const setSuggestedVideos = (suggestedVideos) => ({
@@ -56,17 +56,17 @@ export const setPlayVideo = (payload) => ({
 
 export const setSeekVideo = (seekVideo) => ({
     type: SET_SEEK_VIDEO,
-    seekVideo
+    seekVideo,
 });
 
 export const setIsPlaying = (isPlaying) => ({
     type: SET_IS_PLAYING,
-    isPlaying
+    isPlaying,
 });
 
 export const setChat = (chat) => ({
     type: SET_CHAT,
-    chat
+    chat,
 });
 
 /* ASYNC API CALLS */
@@ -77,13 +77,13 @@ export const createRoom = (host, cb) => async (dispatch) => {
 };
 
 export const isValidRoom = (id, cbFailure, cbSuccess) => async (dispatch) => {
-    dispatch(setLoading(true));
+    dispatch(setLoadingRoom(true));
 
     const isValid = await api.isValidRoom(id);
     if (!isValid) cbFailure();
     else cbSuccess && cbSuccess();
-    
-    dispatch(setLoading(false));
+
+    dispatch(setLoadingRoom(false));
 };
 
 export const getSuggestedVideos = (query) => async (dispatch) => {
@@ -103,39 +103,38 @@ export const getVideos = (searched) => async (dispatch) => {
     dispatch(setLoadingVideos(false));
 };
 
-
 /* WEB SOCKETS */
 export const joinRoom = (payload) => ({
     type: WS_JOIN_ROOM,
-    payload
+    payload,
 });
 
 export const enqueueVideo = (payload) => ({
     type: WS_ADD_VIDEO,
-    payload
+    payload,
 });
 
 export const removeVideo = (payload) => ({
     type: WS_REMOVE_VIDEO,
-    payload
+    payload,
 });
 
 export const viewVideo = (payload) => ({
     type: WS_VIEW_VIDEO,
-    payload
+    payload,
 });
 
 export const sendPlayerState = (payload) => ({
     type: WS_SEND_PLAYER_STATE,
-    payload
+    payload,
 });
 
 export const sendProgress = (payload) => ({
     type: WS_SEND_PROGRESS,
-    payload
+    payload,
 });
 
 export const sendMessage = (payload) => ({
     type: WS_SEND_MESSAGE,
-    payload
+    payload,
 });
