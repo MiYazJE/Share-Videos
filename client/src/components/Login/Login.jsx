@@ -6,6 +6,12 @@ import { connect } from 'react-redux';
 import { readIsLoading } from '../../reducers/roomReducer';
 import { login } from '../../actions/userActions';
 import { Button } from '@material-ui/core';
+import { Visibility, VisibilityOff } from '@material-ui/icons';
+import IconButton from '@material-ui/core/IconButton';
+import OutlinedInput from '@material-ui/core/OutlinedInput';
+import InputLabel from '@material-ui/core/InputLabel';
+import InputAdornment from '@material-ui/core/InputAdornment';
+import FormControl from '@material-ui/core/FormControl';
 import './login.scss';
 
 const Login = ({ loading, login, onClose }) => {
@@ -13,6 +19,7 @@ const Login = ({ loading, login, onClose }) => {
 
     const [nameOrEmail, setNameOrEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [showPassword, setShowPassword] = useState(false);
     const [errorNameOrEmail, setErrorNameOrEmail] = useState(false);
     const [errorPassword, setErrorPassword] = useState(false);
 
@@ -23,8 +30,8 @@ const Login = ({ loading, login, onClose }) => {
         if (!password || !nameOrEmail) {
             return enqueueSnackbar('Fields cannot be empty.', { variant: 'error' });
         }
+
         const res = await login({ nameOrEmail, password });
-        
         console.log(res)
         setErrorPassword(res.passwordError);
         setErrorNameOrEmail(res.nameOrEmailError);
@@ -40,20 +47,35 @@ const Login = ({ loading, login, onClose }) => {
     return (
         <form className="wrapLogin" onSubmit={handleLogin} autoComplete="off">
             <TextField
+                style={{ width: '254px' }}
                 onChange={(e) => setNameOrEmail(e.target.value.trim())}
                 error={errorNameOrEmail}
                 className="field"
-                label="Name"
+                label="Name or Email"
                 variant="outlined"
             />
-            <TextField 
-                onChange={(e) => setPassword(e.target.value.trim())}
-                className="field"
-                label="Password"
-                variant="outlined"
-                type="password"
-                error={errorPassword}
-            />
+            <FormControl variant="outlined">
+                <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
+                <OutlinedInput
+                    id="outlined-adornment-password"
+                    type={showPassword ? 'text' : 'password'}
+                    error={errorPassword}
+                    onChange={(e) => setPassword(e.target.value.trim())}
+                    endAdornment={
+                        <InputAdornment position="end">
+                            <IconButton
+                                aria-label="toggle password visibility"
+                                onClick={() => setShowPassword(!showPassword)}
+                                onMouseDown={() => setShowPassword(!showPassword)}
+                                edge="end"
+                            >
+                                {showPassword ? <Visibility /> : <VisibilityOff />}
+                            </IconButton>
+                        </InputAdornment>
+                    }
+                    labelWidth={70}
+                />
+            </FormControl>
             <div className="btnWrap">
                 <Button 
                     variant="contained" 
