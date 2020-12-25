@@ -28,10 +28,14 @@
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
+    "share-video": "file:client",
     "socket.io": "^2.3.0",
     "youtube-sr": "^2.0.4"
   },
   "devDependencies": {
+    "eslint": "^7.16.0",
+    "eslint-config-airbnb-base": "^14.2.1",
+    "eslint-plugin-import": "^2.22.1",
     "nodemon": "^2.0.4"
   }
 }

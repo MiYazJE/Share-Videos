@@ -1,15 +1,6 @@
-const config = require('./config');
 const mysql = require('mysql2/promise');
+const config = require('./config');
 
-let connection;
-
-async function connect() {
-    connection = await mysql.createConnection(config);
-}
-
-async function getConnection() {
-    if (!connection) await connect();
-    return connection;
-}
-
-module.exports = { getConnection };
+module.exports = {
+    getConnection: () => mysql.createPool(config),
+};

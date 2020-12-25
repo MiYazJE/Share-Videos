@@ -1,9 +1,8 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const JwtStrategy    = require('passport-jwt').Strategy;
-const userCtrl = require('../controllers/users.controller');
+const JwtStrategy = require('passport-jwt').Strategy;
+const usersModel = require('../models/users.model');
 const { comparePassword } = require('./auth.helpers');
-const { getConnection } = require('../../db/connect');
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
@@ -21,34 +20,42 @@ const PASSPORT_CONFIG = {
 
 passport.use(
     'local-login',
-    new LocalStrategy(PASSPORT_CONFIG.LOCAL, async (nameOrEmail, password, done) => {
-        const con = await getConnection();
+    new LocalStrategy(
+        PASSPORT_CONFIG.LOCAL,
+        async (nameOrEmail, password, done) => {
+            const user = (await usersModel.find('name', nameOrEmail))
+                || (await usersModel.find('email', nameOrEmail));
 
-        let userExists =
-            (await userCtrl.checkIfUserExists(con, 'name', nameOrEmail)) ||
-            (await userCtrl.checkIfUserExists(con, 'email', nameOrEmail));
+            if (!user) {
+                return done(null, null, {
+                    nameOrEmailError: true,
+                    msg: `There isn't any user registered with ${nameOrEmail}.`,
+                });
+            }
 
-        if (!userExists.length)
-            return done(null, null, {
-                nameOrEmailError: true,
-                msg: `There isn't any user registered with ${nameOrEmail}.`,
-            });
+            const correctPassword = await comparePassword(
+                password,
+                user.password,
+            );
+            if (!correctPassword) {
+                return done(null, null, {
+                    passwordError: true,
+                    msg: "The password isn't correct.",
+                });
+            }
 
-        const correctPassword = await comparePassword(password, userExists[0].password);
-        if (!correctPassword) return done(null, null, { passwordError: true, msg: "The password isn't correct." });
-
-        return done(null, { ...userExists[0] }, { error: false, msg: 'You have logged in.' });
-    })
+            return done(
+                null,
+                { ...user },
+                { error: false, msg: 'You have logged in.' },
+            );
+        },
+    ),
 );
 
 passport.use(
-    new JwtStrategy(
-        PASSPORT_CONFIG.JWT, 
-        async (payload, done) => {
-            console.log(payload);
-            const con = await getConnection();
-            const [user] = await con.execute('SELECT * FROM users WHERE `id` = ?', [payload.id]); 
-            done(null, { ...user[0], password: null });
-        }
-    )
-);    
+    new JwtStrategy(PASSPORT_CONFIG.JWT, async (payload, done) => {
+        const user = await usersModel.find('id', payload.id);
+        done(null, { ...user, password: null });
+    }),
+);

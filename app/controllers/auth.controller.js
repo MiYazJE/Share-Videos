@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { encryptPassword } = require('../lib/auth.helpers');
-const { getConnection } = require('../../db/connect');
+const usersModel = require('../models/users.model');
 
 const OPTS_COOKIE = {
     expires: new Date(Date.now() + 3600000 * 24 * 7),
@@ -8,11 +8,11 @@ const OPTS_COOKIE = {
     httpOnly: true,
 };
 
-module.exports = {
-    login,
-    register,
-    whoAmI,
-};
+function createToken(payload) {
+    return jwt.sign(payload, process.env.ACCESS_SECRET_TOKEN, {
+        expiresIn: '7d',
+    });
+}
 
 function login(req, res) {
     return (err, user, info) => {
@@ -21,39 +21,48 @@ function login(req, res) {
         }
         const token = createToken({ id: user.id });
         res.cookie('jwt', token, OPTS_COOKIE);
-        res.json({ info, user: { name: user.name } });
+        return res.json({ info, user: { name: user.name } });
     };
-}
-
-function createToken(payload) {
-    return jwt.sign(payload, process.env.ACCESS_SECRET_TOKEN, {
-        expiresIn: '7d',
-    });
 }
 
 async function register(req, res) {
     const { name, password, email } = req.body;
-    const connection = await getConnection();
 
-    const [emailAlreadyRegistered] = await connection.execute('SELECT * from users where `email` = ?', [email]);
-    if (emailAlreadyRegistered.length) {
+    let userExists = await usersModel.find('email', email);
+    if (userExists) {
         return res.json({ error: true, msg: 'Same email already registered.' });
     }
 
-    const [nameAlreadyRegistered] = await connection.execute('SELECT * from users where `name` = ?', [name]);
-    if (nameAlreadyRegistered.length) {
+    userExists = await usersModel.find('name', name);
+    if (userExists) {
         return res.json({ error: true, msg: 'That name has been taken.' });
     }
 
-    const encryptedPassword = await encryptPassword(password);
-    await connection.execute('INSERT INTO users VALUES(NULL, ?, ?, ?)', [name, encryptedPassword, email]);
+    if (
+        await usersModel.save({
+            name,
+            password: await encryptPassword(password),
+            email,
+        })
+    ) {
+        return res.json({ error: false, msg: 'You have been registered.' });
+    }
 
-    res.json({ error: false, msg: 'You have been registered.' });
+    return res.json({
+        error: true,
+        msg: 'Unknown problems creating the user.',
+    });
 }
 
 function whoAmI(req, res) {
     const { user } = req;
     if (!user) return res.status(401).json({ auth: false });
     res.cookie('jwt', req.cookies.jwt, OPTS_COOKIE);
-    res.json({ auth: true, user });
+    return res.json({ auth: true, user });
 }
+
+module.exports = {
+    login,
+    register,
+    whoAmI,
+};
