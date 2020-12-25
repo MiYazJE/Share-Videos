@@ -53,7 +53,8 @@ async function login(payload) {
 }
 
 async function whoAmI() {
-    return await (await fetch('/api/v1/auth/whoAmI')).json();
+    const res = await fetch('/api/v1/auth/whoAmI');
+    return res.ok ? (await res.json()) : null;
 }
 
 export default {

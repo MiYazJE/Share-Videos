@@ -7,7 +7,7 @@ import {
 const initialState = {
     isLogged: false,
     name: window.localStorage.getItem('name') || '',
-    loading: false,
+    loading: true,
 };
 
 const reducer = (state = initialState, action) => {
@@ -23,9 +23,9 @@ const reducer = (state = initialState, action) => {
     }
 };
 
-export const readUser      = (state) => ({ ...state.userReducer });
-export const readName      = (state) => state.userReducer.name;
-export const readIsLogged  = (state) => state.userReducer.isLogged;
+export const readUser = (state) => ({ ...state.userReducer });
+export const readName = (state) => state.userReducer.name;
+export const readIsLogged = (state) => state.userReducer.isLogged;
 export const readIsLoading = (state) => state.userReducer.loading;
 
 export default reducer;

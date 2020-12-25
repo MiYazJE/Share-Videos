@@ -39,6 +39,7 @@ export const login = (payload) => async (dispatch) => {
 export const whoAmI = () => async (dispatch) => {
     dispatch(setLoading(true));
     const res = await API.whoAmI();
-    if (res.user) dispatch(setLoggedIn(res.user));
+    console.log(res);
+    if (res && res.user) dispatch(setLoggedIn(res.user));
     dispatch(setLoading(false));
 }

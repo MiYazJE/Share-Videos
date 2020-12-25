@@ -13,22 +13,22 @@ import ResultVideos from '../ResultVideos';
 
 // REDUX
 import { connect } from 'react-redux';
-import { setName } from '../../actions/userActions';
-import { readName } from '../../reducers/userReducer';
-import { 
-    readRoomName, 
-    readIsLoading, 
-    readUrlVideo, 
-    readIsPlaying, 
-    readHost, 
-    readSeekVideo, 
+import { setName, whoAmI } from '../../actions/userActions';
+import { readName, readIsLoading as readIsLoadingUserData } from '../../reducers/userReducer';
+import {
+    readRoomName,
+    readIsLoading,
+    readUrlVideo,
+    readIsPlaying,
+    readHost,
+    readSeekVideo,
     readProgress,
     readCurrentVideoId
 } from '../../reducers/roomReducer';
-import { 
-    isValidRoom, 
-    joinRoom, 
-    sendPlayerState, 
+import {
+    isValidRoom,
+    joinRoom,
+    sendPlayerState,
     sendProgress,
     setSeekVideo,
     removeVideo
@@ -37,11 +37,12 @@ import {
 import Scroller from '../Scroller/Scroller';
 import './room.scss';
 import MetaVideoInfo from './MetaVideoInfo';
+import LoadingPage from '../LoadingPage';
 
 const WIDTH_TO_RESIZE = 1300;
 
-const Room = ({ 
-    urlVideo, 
+const Room = ({
+    urlVideo,
     host,
     name,
     idRoom,
@@ -56,7 +57,9 @@ const Room = ({
     seekVideo,
     setSeekVideo,
     removeVideo,
-    currentVideoId
+    currentVideoId,
+    loadingUserData,
+    whoAmI
 }) => {
     const [playerHeight, setPlayerHeight] = useState(window.innerWidth < 700 ? '35vh' : '70vh');
     const [openDialog, setOpenDialog] = useState(false);
@@ -67,17 +70,21 @@ const Room = ({
     const history = useHistory();
     const { id } = useParams();
 
+    useEffect(() => {
+        whoAmI();
+    }, []);
+
     // If the room is not valid it will redirect the user to the homepage
     useEffect(() => {
         checkIsValidRoom(id, () => history.push('/'));
     }, [history, id, checkIsValidRoom]);
-    
+
     // If the user does not have a name it will ask for it
     useEffect(() => {
         setOpenDialog(id && !name);
         if (id && name) joinRoom({ id, name });
     }, [id, name, joinRoom]);
-    
+
     useEffect(() => {
         if (seekVideo) {
             refPlayer.current.seekTo(progressVideo);
@@ -95,7 +102,7 @@ const Room = ({
 
         window.addEventListener('resize', onResize);
         window.addEventListener('scroll', onScroll);
-        
+
         return () => {
             window.removeEventListener('resize', onResize);
             window.removeEventListener('scroll', onScroll);
@@ -112,7 +119,7 @@ const Room = ({
         if (nickname) {
             setName(nickname);
             setOpenDialog(false);
-        } 
+        }
     }
 
     const handleSendProgress = () => {
@@ -120,14 +127,14 @@ const Room = ({
             sendProgress({ progress: refPlayer.current.getCurrentTime(), idRoom, name });
         }
     }
-    
+
     const handleOnPlay = () => {
         if (Math.abs(refPlayer.current.getCurrentTime() - progressVideo) > 1) {
             sendProgress({ progress: refPlayer.current.getCurrentTime(), idRoom, seekVideo: true, name });
         }
         sendPlayerState({ state: 'play', idRoom, name });
     }
-    
+
     const handleOnPause = () => {
         sendPlayerState({ state: 'pause', idRoom, name });
     }
@@ -136,10 +143,12 @@ const Room = ({
         removeVideo({ idVideo: currentVideoId, idRoom });
     }
 
+    if (loadingUserData) return <LoadingPage />
+
     return (
         <main>
-            {isLoading 
-                ? <CircularProgress style={{ position: 'absolute', top: '50%' }} /> 
+            {isLoading
+                ? <CircularProgress style={{ position: 'absolute', top: '50%' }} />
                 : (
                     <div id="wrapVideoPlayer">
                         <NavBar scrollTo={scrollTo} />
@@ -151,22 +160,22 @@ const Room = ({
                                     display: floatPlayer ? 'block' : 'none'
                                 }}
                             />
-                            <div 
+                            <div
                                 className={`player ${floatPlayer ? 'floatPlayer' : ''}`}
                             >
-                                <ReactPlayer 
+                                <ReactPlayer
                                     ref={refPlayer}
                                     playing={isPlaying}
                                     onPlay={handleOnPlay}
                                     onPause={handleOnPause}
                                     onProgress={handleSendProgress}
                                     onEnded={handleOnEnded}
-                                    width="100%" 
-                                    height={floatPlayer ? null : playerHeight} 
-                                    controls={true} 
-                                    url={urlVideo} 
+                                    width="100%"
+                                    height={floatPlayer ? null : playerHeight}
+                                    controls={true}
+                                    url={urlVideo}
                                 />
-                                {window.innerWidth > WIDTH_TO_RESIZE 
+                                {window.innerWidth > WIDTH_TO_RESIZE
                                     ? (
                                         <MetaVideoInfo />
                                     ) : null
@@ -189,6 +198,7 @@ const mapStateToProps = state => ({
     urlVideo: readUrlVideo(state),
     idRoom: readRoomName(state),
     isLoading: readIsLoading(state),
+    loadingUserData: readIsLoadingUserData(state),
     name: readName(state),
     isPlaying: readIsPlaying(state),
     host: readHost(state),
@@ -204,7 +214,8 @@ const mapDispatchToProps = dispatch => ({
     sendPlayerState: (payload) => dispatch(sendPlayerState(payload)),
     sendProgress: (payload) => dispatch(sendProgress(payload)),
     setSeekVideo: (seekVideo) => dispatch(setSeekVideo(seekVideo)),
-    removeVideo: (idVideo, idRoom) => dispatch(removeVideo(idVideo, idRoom))
+    removeVideo: (idVideo, idRoom) => dispatch(removeVideo(idVideo, idRoom)),
+    whoAmI: () => dispatch(whoAmI()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Room);

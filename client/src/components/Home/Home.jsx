@@ -4,7 +4,7 @@ import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { setName, whoAmI } from '../../actions/userActions';
 import { createRoom } from '../../actions/roomActions';
-import { readName, readIsLogged } from '../../reducers/userReducer';
+import { readName, readIsLogged, readIsLoading } from '../../reducers/userReducer';
 import TextField from '@material-ui/core/TextField';
 import FormControl from '@material-ui/core/FormControl';
 import FormHelperText from '@material-ui/core/FormHelperText';
@@ -12,6 +12,7 @@ import DialogJoinRoom from './DialogJoinRoom';
 import Register from '../Register';
 import Login from '../Login';
 import Modal from '../Modal';
+import LoadingPage from '../LoadingPage';
 import './home.scss';
 
 const MODAL_TYPE = {
@@ -20,11 +21,11 @@ const MODAL_TYPE = {
     CLOSED: 'CLOSED',
 }
 
-const Home = ({ createRoom, name, setName, isLogged, whoAmI }) => {
+const Home = ({ createRoom, name, setName, isLogged, whoAmI, loading }) => {
     const [errorNoNickname, setErrorNoNickname] = useState(false);
     const [openDialogJoinRoom, setOpenDialogJoinRoom] = useState(false);
     const [modalStatus, setModalStatus] = useState(MODAL_TYPE.CLOSED);
-    const history = useHistory();    
+    const history = useHistory();
 
     useEffect(() => {
         whoAmI();
@@ -37,44 +38,46 @@ const Home = ({ createRoom, name, setName, isLogged, whoAmI }) => {
 
     const handleOnClose = () => setModalStatus(MODAL_TYPE.CLOSED);
 
+    if (loading) return <LoadingPage />
+
     return (
         <div id="home">
             <div id="wrapLogin">
-                {isLogged 
-                    ? <h3>Welcome <span style={{color: 'green'}}>{name}</span></h3> 
+                {isLogged
+                    ? <h3>Welcome <span style={{ color: 'green' }}>{name}</span></h3>
                     :
-                        (<>
-                            <Button 
-                                variant="outlined" 
-                                size="medium"
-                                onClick={() => setModalStatus(MODAL_TYPE.LOGIN)}
-                            >
-                                LOGIN
+                    (<>
+                        <Button
+                            variant="outlined"
+                            size="medium"
+                            onClick={() => setModalStatus(MODAL_TYPE.LOGIN)}
+                        >
+                            LOGIN
                             </Button>
-                            <Button 
-                                variant="outlined" 
-                                color="secondary"
-                                size="medium"
-                                onClick={() => setModalStatus(MODAL_TYPE.REGISTER)}
-                            >
-                                REGISTER
+                        <Button
+                            variant="outlined"
+                            color="secondary"
+                            size="medium"
+                            onClick={() => setModalStatus(MODAL_TYPE.REGISTER)}
+                        >
+                            REGISTER
                             </Button>
-                        </>)
+                    </>)
                 }
             </div>
             <h1>Share Videos</h1>
             <div className="wrap">
                 <FormControl error={errorNoNickname}>
-                    <TextField 
-                        value={name} 
-                        onChange={({target}) => setName(target.value)} 
-                        label="Name" 
+                    <TextField
+                        value={name}
+                        onChange={({ target }) => setName(target.value)}
+                        label="Name"
                         variant="outlined"
                     />
                     {errorNoNickname
-                    ? (
-                        <FormHelperText id="component-error-text">Your nickname is empty!</FormHelperText>
-                    ) : null}
+                        ? (
+                            <FormHelperText id="component-error-text">Your nickname is empty!</FormHelperText>
+                        ) : null}
                 </FormControl>
                 <div className="buttons">
                     <Button onClick={handleCreateRoom} variant="contained" color="primary">
@@ -84,17 +87,17 @@ const Home = ({ createRoom, name, setName, isLogged, whoAmI }) => {
                         Join Room
                     </Button>
                 </div>
-                <DialogJoinRoom 
-                    open={openDialogJoinRoom}  
+                <DialogJoinRoom
+                    open={openDialogJoinRoom}
                     onCancel={() => setOpenDialogJoinRoom(false)}
                 />
             </div>
-            <Modal 
+            <Modal
                 open={modalStatus !== MODAL_TYPE.CLOSED}
                 onClose={handleOnClose}
             >
-                {modalStatus === MODAL_TYPE.REGISTER 
-                    ? <Register onClose={handleOnClose} /> 
+                {modalStatus === MODAL_TYPE.REGISTER
+                    ? <Register onClose={handleOnClose} />
                     : <Login onClose={handleOnClose} />}
             </Modal>
         </div>
@@ -104,6 +107,7 @@ const Home = ({ createRoom, name, setName, isLogged, whoAmI }) => {
 const mapStateToProps = (state) => ({
     name: readName(state),
     isLogged: readIsLogged(state),
+    loading: readIsLoading(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
