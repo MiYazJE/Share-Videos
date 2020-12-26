@@ -42,7 +42,7 @@ async function register(req, res) {
         return res.json({
             error: true,
             nameError: true,
-            msg: 'That name has been taken. Please, choose another.',
+            msg: 'That name has been registered. Please, choose another.',
         });
     }
 
@@ -69,8 +69,15 @@ function whoAmI(req, res) {
     return res.json({ auth: true, user });
 }
 
+function logout(req, res) {
+    req.session.destroy();
+    res.clearCookie('jwt');
+    res.json({ logOut: true });
+}
+
 module.exports = {
     login,
     register,
     whoAmI,
+    logout,
 };
