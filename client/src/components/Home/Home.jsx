@@ -1,17 +1,15 @@
 import React, { useState } from 'react';
-import Button from '@material-ui/core/Button';
+import { Button, TextField, FormControl, FormHelperText } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import { connect } from 'react-redux';
-import { setName } from '../../actions/userActions';
-import { createRoom } from '../../actions/roomActions';
-import { readName, readIsLogged } from '../../reducers/userReducer';
-import TextField from '@material-ui/core/TextField';
-import FormControl from '@material-ui/core/FormControl';
-import FormHelperText from '@material-ui/core/FormHelperText';
 import DialogJoinRoom from './DialogJoinRoom';
 import Register from '../Register';
 import Login from '../Login';
 import Modal from '../Modal';
+import AuthenticationNav from '../AuthenticationNav/AuthenticationNav';
+import { connect } from 'react-redux';
+import { setName } from '../../actions/userActions';
+import { createRoom } from '../../actions/roomActions';
+import { readName, readIsLogged } from '../../reducers/userReducer';
 import './home.scss';
 
 const MODAL_TYPE = {
@@ -35,29 +33,10 @@ const Home = ({ createRoom, name, setName, isLogged }) => {
 
     return (
         <div id="home">
-            <div id="wrapLogin">
-                {isLogged
-                    ? <h3>Welcome <span style={{ color: 'green' }}>{name}</span></h3>
-                    :
-                    (<>
-                        <Button
-                            variant="outlined"
-                            size="medium"
-                            onClick={() => setModalStatus(MODAL_TYPE.LOGIN)}
-                        >
-                            LOGIN
-                            </Button>
-                        <Button
-                            variant="outlined"
-                            color="secondary"
-                            size="medium"
-                            onClick={() => setModalStatus(MODAL_TYPE.REGISTER)}
-                        >
-                            REGISTER
-                            </Button>
-                    </>)
-                }
-            </div>
+            <AuthenticationNav
+                openRegister={() => setModalStatus(MODAL_TYPE.REGISTER)}
+                openLogin={() => setModalStatus(MODAL_TYPE.LOGIN)}
+            />
             <h1>Share Videos</h1>
             <div className="wrap">
                 <FormControl error={errorNoNickname}>
@@ -80,18 +59,18 @@ const Home = ({ createRoom, name, setName, isLogged }) => {
                         Join Room
                     </Button>
                 </div>
-                <DialogJoinRoom
-                    open={openDialogJoinRoom}
-                    onCancel={() => setOpenDialogJoinRoom(false)}
-                />
             </div>
+            <DialogJoinRoom
+                open={openDialogJoinRoom}
+                onCancel={() => setOpenDialogJoinRoom(false)}
+            />
             <Modal
                 open={modalStatus !== MODAL_TYPE.CLOSED}
                 onClose={handleOnClose}
             >
                 {modalStatus === MODAL_TYPE.REGISTER
                     ? <Register onClose={handleOnClose} />
-                    : <Login onClose={handleOnClose} />}
+                    : modalStatus === MODAL_TYPE.LOGIN ? <Login onClose={handleOnClose} /> : null}
             </Modal>
         </div>
     );
