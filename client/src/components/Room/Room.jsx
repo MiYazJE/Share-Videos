@@ -13,7 +13,7 @@ import ResultVideos from '../ResultVideos';
 
 // REDUX
 import { connect } from 'react-redux';
-import { setName, whoAmI } from '../../actions/userActions';
+import { setName } from '../../actions/userActions';
 import { readName } from '../../reducers/userReducer';
 import {
     readRoomName,

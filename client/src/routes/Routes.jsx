@@ -2,15 +2,16 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Room from '../components/Room';
 import Home from '../components/Home';
-import { ToastContainer } from 'react-toastify';
 import { SnackbarProvider } from 'notistack';
 import { connect } from 'react-redux';
 import { readIsLoading } from '../reducers/userReducer';
 import LoadingPage from '../components/LoadingPage';
+import Notifier from '../components/Notifier';
 
 const Routes = ({ loadingUserData }) => (
     <div id="app">
         <SnackbarProvider maxSnack={3}>
+            <Notifier />
             {loadingUserData ? <LoadingPage /> 
                 : (
                     <Switch>
@@ -26,7 +27,6 @@ const Routes = ({ loadingUserData }) => (
                     </Switch>
                 )}
         </SnackbarProvider>
-        <ToastContainer closeOnClick />
     </div>
 );
 

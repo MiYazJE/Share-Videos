@@ -10,7 +10,7 @@ const App = ({ whoAmI }) => {
 
     useEffect(() => {
         whoAmI();
-    }, []);
+    }, [whoAmI]);
 
     return (
         <Router>    
