@@ -27,9 +27,10 @@ const Register = ({ loading, register, onClose }) => {
             return enqueueSnackbar('Fields cannot be empty.', { variant: 'error' });
         }
 
-        const { error, msg } = await register({ name, email, password });
+        const { error, msg, emailError, nameError } = await register({ name, email, password });
         enqueueSnackbar(msg, { variant: `${error ? 'error' : 'success'}` });
-        setErrorEmail(error)
+        setErrorEmail(emailError);
+        setErrorName(nameError);
         if (!error) onClose();
     }
 

@@ -30,12 +30,20 @@ async function register(req, res) {
 
     let userExists = await usersModel.find('email', email);
     if (userExists) {
-        return res.json({ error: true, msg: 'Same email already registered.' });
+        return res.json({
+            error: true,
+            emailError: true,
+            msg: 'That email has been registered. Please, choose another.',
+        });
     }
 
     userExists = await usersModel.find('name', name);
     if (userExists) {
-        return res.json({ error: true, msg: 'That name has been taken.' });
+        return res.json({
+            error: true,
+            nameError: true,
+            msg: 'That name has been taken. Please, choose another.',
+        });
     }
 
     if (
