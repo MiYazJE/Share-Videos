@@ -1,6 +1,10 @@
 export const SET_NAME = 'SET_NAME';
 export const SET_LOGGED_IN = 'SET_LOGGED_IN';
+export const SET_IS_LOADING = 'SET_IS_LOADING';
 export const SET_LOADING_USER = 'SET_LOADING_USER';
+export const SET_FORM_ERRORS = 'SET_FORM_ERRORS';
+export const CLEAR_FORM_ERRORS = 'CLEAR_FORM_ERRORS';
+export const LOGOUT = 'LOGOUT';
 
 export const SET_ROOM = 'SET_ROOM';
 export const SET_URL_VIDEO = 'SET_URL_VIDEO';

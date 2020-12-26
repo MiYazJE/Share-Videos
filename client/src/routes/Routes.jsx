@@ -4,7 +4,7 @@ import Room from '../components/Room';
 import Home from '../components/Home';
 import { SnackbarProvider } from 'notistack';
 import { connect } from 'react-redux';
-import { readIsLoading } from '../reducers/userReducer';
+import { readIsLoadingUser } from '../reducers/userReducer';
 import LoadingPage from '../components/LoadingPage';
 import Notifier from '../components/Notifier';
 
@@ -31,7 +31,7 @@ const Routes = ({ loadingUserData }) => (
 );
 
 const mapStateToProps = (state) => ({
-    loadingUserData: readIsLoading(state),
+    loadingUserData: readIsLoadingUser(state),
 });
 
 export default connect(mapStateToProps, null)(Routes);

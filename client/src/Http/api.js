@@ -7,16 +7,13 @@ async function searchYoutubeVideos(q) {
 }
 
 async function createRoom(name) {
-    const request = new Request(
-        '/api/v1/room/create',
-        {
-            method: 'POST',
-            body: JSON.stringify({ name }),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-    );
+    const request = new Request('/api/v1/room/create', {
+        method: 'POST',
+        body: JSON.stringify({ name }),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
     return await (await fetch(request)).json();
 }
 
@@ -25,36 +22,34 @@ async function isValidRoom(id) {
 }
 
 async function register(payload) {
-    const request = new Request(
-        '/api/v1/user/register',
-        {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-    );
+    const request = new Request('/api/v1/auth/register', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
     return await (await fetch(request)).json();
 }
 
 async function login(payload) {
-    const request = new Request(
-        '/api/v1/user/login',
-        {
-            method: 'POST',
-            body: JSON.stringify(payload),
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        }
-    );
+    const request = new Request('/api/v1/auth/login', {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+            'Content-Type': 'application/json',
+        },
+    });
     return await (await fetch(request)).json();
 }
 
 async function whoAmI() {
     const res = await fetch('/api/v1/auth/whoAmI');
-    return res.ok ? (await res.json()) : null;
+    return res.ok ? await res.json() : null;
+}
+
+async function logout() {
+    await fetch('/api/v1/auth/logout');
 }
 
 export default {
@@ -64,5 +59,6 @@ export default {
     isValidRoom,
     register,
     login,
-    whoAmI
+    whoAmI,
+    logout,
 };

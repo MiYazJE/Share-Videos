@@ -1,47 +1,32 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { useSnackbar } from 'notistack';
-import { connect } from 'react-redux';
-import { readIsLoading } from '../../reducers/roomReducer';
-import { login } from '../../actions/userActions';
 import { Button } from '@material-ui/core';
 import { Visibility, VisibilityOff } from '@material-ui/icons';
-import IconButton from '@material-ui/core/IconButton';
-import OutlinedInput from '@material-ui/core/OutlinedInput';
+import { IconButton, OutlinedInput } from '@material-ui/core';
 import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
+import { connect } from 'react-redux';
+import { readFormErrors, readIsLoading } from '../../reducers/userReducer';
+import { clearFormErrors, login } from '../../actions/userActions';
 import './login.scss';
 
-const Login = ({ loading, login, onClose }) => {
-    const { enqueueSnackbar } = useSnackbar();
+const Login = ({ loading, login, onClose, formErrors, clearFormErrors }) => {
+    const { errorName: errorNameOrEmail, errorPassword } = formErrors;
 
     const [nameOrEmail, setNameOrEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
-    const [errorNameOrEmail, setErrorNameOrEmail] = useState(false);
-    const [errorPassword, setErrorPassword] = useState(false);
+
+    useEffect(() => {
+        clearFormErrors();
+    }, [clearFormErrors]);
 
     const handleLogin = async (e) => {
         e.preventDefault();
-        setErrorPassword(!password);
-        setErrorNameOrEmail(!nameOrEmail);
-        if (!password || !nameOrEmail) {
-            return enqueueSnackbar('Fields cannot be empty.', { variant: 'error' });
-        }
 
-        const res = await login({ nameOrEmail, password });
-        console.log(res)
-        setErrorPassword(res.passwordError);
-        setErrorNameOrEmail(res.nameOrEmailError);
-        if (res.error || res.passwordError || res.nameOrEmailError) {
-            enqueueSnackbar(res.msg, { variant: 'error' });
-        }
-        else {
-            enqueueSnackbar(res.msg, { variant: 'success' });
-            onClose();
-        }
+        login({ nameOrEmail, password }, onClose);
     }
 
     return (
@@ -93,11 +78,13 @@ const Login = ({ loading, login, onClose }) => {
 }
 
 const mapStateToProps = (state) => ({
-    loading: readIsLoading(state)
+    loading: readIsLoading(state),
+    formErrors: readFormErrors(state)
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    login: (payload) => dispatch(login(payload))
+    login: (payload, callback) => dispatch(login(payload, callback)),
+    clearFormErrors: () => dispatch(clearFormErrors()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

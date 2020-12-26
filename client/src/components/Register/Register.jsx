@@ -1,37 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Button } from '@material-ui/core';
-import { useSnackbar } from 'notistack';
 import { connect } from 'react-redux';
-import { readIsLoading } from '../../reducers/userReducer';
-import { register } from '../../actions/userActions';
+import { readIsLoading, readFormErrors } from '../../reducers/userReducer';
+import { register, clearFormErrors } from '../../actions/userActions';
 import './register.scss';
 
-const Register = ({ loading, register, onClose }) => {
-    const { enqueueSnackbar } = useSnackbar();
+const Register = ({ loading, register, onClose, formErrors, clearFormErrors }) => {
+    const { errorName, errorEmail, errorPassword } = formErrors;
 
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [errorName, setErrorName] = useState(false);
-    const [errorEmail, setErrorEmail] = useState(false);
-    const [errorPassword, setErrorPassword] = useState(false);
+
+    useEffect(() => {
+        clearFormErrors();
+    }, [clearFormErrors]);
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        setErrorName(!name);
-        setErrorEmail(!email);
-        setErrorPassword(!password);
-        if (!name || !email || !password) {
-            return enqueueSnackbar('Fields cannot be empty.', { variant: 'error' });
-        }
-
-        const { error, msg, emailError, nameError } = await register({ name, email, password });
-        enqueueSnackbar(msg, { variant: `${error ? 'error' : 'success'}` });
-        setErrorEmail(emailError);
-        setErrorName(nameError);
-        if (!error) onClose();
+        register({ name, email, password }, onClose);
     }
 
     return (
@@ -75,11 +64,13 @@ const Register = ({ loading, register, onClose }) => {
 }
 
 const mapStateToProps = (state) => ({
-    isLoading: readIsLoading(state)
+    loading: readIsLoading(state),
+    formErrors: readFormErrors(state),
 });
 
 const mapDispatchToProps = (dispatch) => ({
-    register: (payload) => dispatch(register(payload))
+    register: (payload, callback) => dispatch(register(payload, callback)),
+    clearFormErrors: () => dispatch(clearFormErrors()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register);
