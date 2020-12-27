@@ -5,6 +5,7 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const morgan = require('morgan');
+const { initializeMongoDB } = require('./database/connect');
 const initRoomsCtrl = require('./lib/socketIo');
 const apiRoutes = require('./app/routes/routes.js');
 require('dotenv').config();
@@ -33,6 +34,7 @@ function initServer() {
     app.use(session({ saveUninitialized: true, resave: false, secret: process.env.SECRET_KEY }));
     app.use(cookieParser());
 
+    initializeMongoDB();
     useRoutes();
     initPassport();
 

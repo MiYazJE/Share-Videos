@@ -1,22 +1,22 @@
-const { getConnection } = require('../../db/connect');
+const mongoose = require('mongoose');
 
-async function find(column, nameOrEmail) {
-    const con = await getConnection();
-    const [user] = await con.execute(`SELECT * FROM users WHERE \`${column}\` = ?`, [nameOrEmail]);
-    return user.length ? { ...user[0] } : null;
-}
+const UserSchema = mongoose.Schema({
+    name: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+}, {
+    timestamps: true,
+});
 
-async function save({ name, password, email }) {
-    try {
-        const con = await getConnection();
-        await con.execute('INSERT INTO users VALUES(NULL, ?, ?, ?)', [name, password, email]);
-        return true;
-    } catch (e) {
-        return false;
-    }
-}
-
-module.exports = {
-    find,
-    save,
-};
+module.exports = mongoose.model('User', UserSchema);

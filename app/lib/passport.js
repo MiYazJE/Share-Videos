@@ -1,7 +1,7 @@
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
-const usersModel = require('../models/users.model');
+const User = require('../models/users.model');
 const { comparePassword } = require('./auth.helpers');
 
 passport.serializeUser((user, done) => done(null, user));
@@ -21,7 +21,8 @@ const PASSPORT_CONFIG = {
 passport.use(
     'local-login',
     new LocalStrategy(PASSPORT_CONFIG.LOCAL, async (nameOrEmail, password, done) => {
-        const user = (await usersModel.find('name', nameOrEmail)) || (await usersModel.find('email', nameOrEmail));
+        const user = (await User.findOne({ name: nameOrEmail }))
+            || (await User.findOne({ name: nameOrEmail }));
 
         if (!user) {
             return done(null, null, {
@@ -40,13 +41,18 @@ passport.use(
             });
         }
 
-        return done(null, { ...user }, { error: false, msg: 'You have logged in.' });
-    })
+        return done(null, { ...user._doc }, { error: false, msg: 'You have logged in.' });
+    }),
 );
 
 passport.use(
     new JwtStrategy(PASSPORT_CONFIG.JWT, async (payload, done) => {
-        const user = await usersModel.find('id', payload.id);
-        done(null, { ...user, password: null });
-    })
+        const user = await User.findOne({ _id: payload.id });
+        const parsedUser = user._doc;
+        done(null, {
+            id: parsedUser._id,
+            name: parsedUser.name,
+            email: parsedUser.email,
+        });
+    }),
 );

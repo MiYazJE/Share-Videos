@@ -1,8 +1,7 @@
 const fetch = require('node-fetch');
 const youtube = require('youtube-sr');
 
-const URL_GOOGLE_SUGGEST =
-    'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=es&q=';
+const URL_GOOGLE_SUGGEST = 'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=es&q=';
 
 function mapSuggestions(suggestions) {
     const regexp = /\["[\w\s]+"/gi;
