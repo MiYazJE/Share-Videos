@@ -8,11 +8,12 @@ import InputLabel from '@material-ui/core/InputLabel';
 import InputAdornment from '@material-ui/core/InputAdornment';
 import FormControl from '@material-ui/core/FormControl';
 import { connect } from 'react-redux';
+import { closeModal } from '../../actions/modalActions';
 import { readFormErrors, readIsLoading } from '../../reducers/userReducer';
 import { clearFormErrors, login } from '../../actions/userActions';
 import './login.scss';
 
-const Login = ({ loading, login, onClose, formErrors, clearFormErrors }) => {
+const Login = ({ loading, login, closeModal, formErrors, clearFormErrors }) => {
     const { errorName: errorNameOrEmail, errorPassword } = formErrors;
 
     const [nameOrEmail, setNameOrEmail] = useState('');
@@ -26,7 +27,7 @@ const Login = ({ loading, login, onClose, formErrors, clearFormErrors }) => {
     const handleLogin = async (e) => {
         e.preventDefault();
 
-        login({ nameOrEmail, password }, onClose);
+        login({ nameOrEmail, password }, closeModal);
     }
 
     return (
@@ -85,6 +86,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
     login: (payload, callback) => dispatch(login(payload, callback)),
     clearFormErrors: () => dispatch(clearFormErrors()),
+    closeModal: () => dispatch(closeModal()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Login);

@@ -5,9 +5,10 @@ import { Button } from '@material-ui/core';
 import { connect } from 'react-redux';
 import { readIsLoading, readFormErrors } from '../../reducers/userReducer';
 import { register, clearFormErrors } from '../../actions/userActions';
+import { closeModal } from '../../actions/modalActions';
 import './register.scss';
 
-const Register = ({ loading, register, onClose, formErrors, clearFormErrors }) => {
+const Register = ({ loading, register, closeModal, formErrors, clearFormErrors }) => {
     const { errorName, errorEmail, errorPassword } = formErrors;
 
     const [name, setName] = useState('');
@@ -20,7 +21,7 @@ const Register = ({ loading, register, onClose, formErrors, clearFormErrors }) =
 
     const handleRegister = async (e) => {
         e.preventDefault();
-        register({ name, email, password }, onClose);
+        register({ name, email, password }, closeModal);
     }
 
     return (
@@ -71,6 +72,7 @@ const mapStateToProps = (state) => ({
 const mapDispatchToProps = (dispatch) => ({
     register: (payload, callback) => dispatch(register(payload, callback)),
     clearFormErrors: () => dispatch(clearFormErrors()),
+    closeModal: () => dispatch(closeModal()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Register);

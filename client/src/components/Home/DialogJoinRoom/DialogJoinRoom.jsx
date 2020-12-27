@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { readName } from '../../reducers/userReducer';
-import { isValidRoom } from '../../actions/roomActions';
-import { readIsLoading } from '../../reducers/roomReducer';
+import { readName } from '../../../reducers/userReducer';
+import { isValidRoom } from '../../../actions/roomActions';
+import { readIsLoading } from '../../../reducers/roomReducer';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';

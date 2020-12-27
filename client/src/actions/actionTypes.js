@@ -6,6 +6,10 @@ export const SET_FORM_ERRORS = 'SET_FORM_ERRORS';
 export const CLEAR_FORM_ERRORS = 'CLEAR_FORM_ERRORS';
 export const LOGOUT = 'LOGOUT';
 
+export const SET_OPEN_LOGIN = 'SET_OPEN_LOGIN';
+export const SET_OPEN_REGISTER = 'SET_OPEN_REGISTER';
+export const SET_CLOSE_MODAL = 'SET_CLOSE_MODAL';
+
 export const SET_ROOM = 'SET_ROOM';
 export const SET_URL_VIDEO = 'SET_URL_VIDEO';
 export const SET_SUGGESTED_VIDEOS = 'SET_SUGGESTED_VIDEOS';

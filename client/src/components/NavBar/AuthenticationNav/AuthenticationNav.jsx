@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
 import { Button, Menu, MenuItem } from '@material-ui/core';
 import { connect } from 'react-redux';
-import { logout } from '../../actions/userActions';
-import { readName, readIsLogged } from '../../reducers/userReducer';
+import { logout } from '../../../actions/userActions';
+import { closeModal, openLogin, openRegister } from '../../../actions/modalActions';
+import { readName, readIsLogged } from '../../../reducers/userReducer';
 
-const AuthenticationNav = ({ isLogged, name, openRegister, openLogin, logout }) => {
+const AuthenticationNav = ({ modalStatus, openLogin, openRegister, closeModal, isLogged, name, logout }) => {
     const [anchorEl, setAnchorEl] = useState(null);
 
     const handleClick = (e) => setAnchorEl(e.currentTarget);
@@ -23,7 +24,7 @@ const AuthenticationNav = ({ isLogged, name, openRegister, openLogin, logout }) 
                             onClick={handleClick}
                             size="small"
                             style={{color: 'green', fontWeight: 'bold', marginTop: '13px', fontSize: '15px'}}
-                        >
+                            >
                             {name}
                         </Button>
                         <Menu
@@ -40,22 +41,21 @@ const AuthenticationNav = ({ isLogged, name, openRegister, openLogin, logout }) 
                 ) : (
                     <>
                         <Button
-                            variant="outlined"
                             size="medium"
+                            style={{color: 'white'}}
                             onClick={openLogin}
-                        >
+                            >
                             LOGIN
                         </Button>
                         <Button
-                            variant="outlined"
-                            color="secondary"
                             size="medium"
+                            style={{color: 'white'}}
                             onClick={openRegister}
                         >
                             REGISTER
                         </Button>
                     </>
-                )}
+            )}
         </div>
     );
 };
@@ -67,6 +67,9 @@ const mapStateToProps = (state) => ({
 
 const mapDispatchToProps = (dispatch) => ({
     logout: () => dispatch(logout()),
+    closeModal: () => dispatch(closeModal()),
+    openLogin: () => dispatch(openLogin()),
+    openRegister: () => dispatch(openRegister()),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AuthenticationNav);
