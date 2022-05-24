@@ -9,7 +9,8 @@
     "heroku-postbuild": "npm run install-client && npm run build",
     "client": "cd client && npm start",
     "server": "nodemon server.js",
-    "start": "node server.js"
+    "start": "node server.js",
+    "lint:fix": "eslint --fix server/**/*.js"
   },
   "keywords": [],
   "author": "",
@@ -24,6 +25,7 @@
     "moment": "^2.29.1",
     "mongoose": "^5.11.8",
     "morgan": "^1.10.0",
+    "node-fetch": "^3.2.4",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
@@ -32,9 +34,9 @@
     "youtube-sr": "^2.0.4"
   },
   "devDependencies": {
-    "eslint": "^7.16.0",
-    "eslint-config-airbnb-base": "^14.2.1",
-    "eslint-plugin-import": "^2.22.1",
+    "eslint": "^7.32.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "eslint-plugin-import": "^2.26.0",
     "nodemon": "^2.0.4"
   }
 }
