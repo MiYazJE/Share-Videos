@@ -22,7 +22,7 @@ passport.use(
   'local-login',
   new LocalStrategy(PASSPORT_CONFIG.LOCAL, async (nameOrEmail, password, done) => {
     const user = (await User.findOne({ name: nameOrEmail }))
-            || (await User.findOne({ name: nameOrEmail }));
+            || (await User.findOne({ email: nameOrEmail }));
 
     if (!user) {
       return done(null, null, {

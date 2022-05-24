@@ -5,11 +5,11 @@ const passport = require('passport');
 const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const morgan = require('morgan');
-const { initializeMongoDB } = require('./server/database/connect');
-const initRoomsCtrl = require('./server/lib/socketIo');
-const apiRoutes = require('./server/app/routes/routes');
+const { initializeMongoDB } = require('./database/connect');
+const initRoomsCtrl = require('./lib/socketIo');
+const apiRoutes = require('./app/routes/routes');
 require('dotenv').config();
-require('./server/app/lib/passport');
+require('./app/lib/passport');
 
 const app = express();
 

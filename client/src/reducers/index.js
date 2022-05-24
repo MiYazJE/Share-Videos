@@ -5,8 +5,8 @@ import notifierReducer from './notifierReducer';
 import modalReducer from './modalReducer';
 
 export default combineReducers({
-    userReducer,
-    roomReducer,
-    notifierReducer,
-    modalReducer,
+  userReducer,
+  roomReducer,
+  notifierReducer,
+  modalReducer,
 });

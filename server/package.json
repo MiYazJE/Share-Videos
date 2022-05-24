@@ -7,15 +7,15 @@
     "build": "cd client && npm run build",
     "install-client": "cd client && npm install",
     "heroku-postbuild": "npm run install-client && npm run build",
-    "client": "cd client && npm start",
     "server": "nodemon server.js",
     "start": "node server.js",
-    "lint:fix": "eslint --fix server/**/*.js"
+    "lint:fix": "eslint --fix *.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.27.2",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.5",
     "dotenv": "^8.2.0",
@@ -25,11 +25,9 @@
     "moment": "^2.29.1",
     "mongoose": "^5.11.8",
     "morgan": "^1.10.0",
-    "node-fetch": "^3.2.4",
     "passport": "^0.4.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "share-video": "file:client",
     "socket.io": "^2.3.0",
     "youtube-sr": "^2.0.4"
   },

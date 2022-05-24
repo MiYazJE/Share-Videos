@@ -1,26 +1,27 @@
 import React, { useEffect } from 'react';
-import Routes from './routes/Routes';
-import { BrowserRouter as Router } from 'react-router-dom'
-import 'react-toastify/dist/ReactToastify.css';
+import { BrowserRouter as Router } from 'react-router-dom';
 import { connect } from 'react-redux';
-import { whoAmI } from './actions/userActions';
+
+import Routes from './routes/Routes';
+import { whoAmI as whoAmIFn } from './actions/userActions';
+
+import 'react-toastify/dist/ReactToastify.css';
 import './app.scss';
 
-const App = ({ whoAmI }) => {
+function App({ whoAmI }) {
+  useEffect(() => {
+    whoAmIFn();
+  }, [whoAmI]);
 
-    useEffect(() => {
-        whoAmI();
-    }, [whoAmI]);
-
-    return (
-        <Router>    
-            <Routes />
-        </Router>
-    );
-};
+  return (
+    <Router>
+      <Routes />
+    </Router>
+  );
+}
 
 const mapDispatchToProps = (dispatch) => ({
-    whoAmI: () => dispatch(whoAmI()),
+  whoAmI: () => dispatch(whoAmIFn()),
 });
 
 export default connect(null, mapDispatchToProps)(App);

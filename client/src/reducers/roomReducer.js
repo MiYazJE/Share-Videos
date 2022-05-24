@@ -1,60 +1,60 @@
 import {
-    SET_ROOM,
-    SET_VIDEOS,
-    SET_LOADING_VIDEOS,
-    SET_SUGGESTED_VIDEOS,
-    SET_URL_VIDEO,
-    SET_PLAY_VIDEO,
-    SET_SEEK_VIDEO,
-    SET_IS_PLAYING,
-    SET_CHAT,
+  SET_ROOM,
+  SET_VIDEOS,
+  SET_LOADING_VIDEOS,
+  SET_SUGGESTED_VIDEOS,
+  SET_URL_VIDEO,
+  SET_PLAY_VIDEO,
+  SET_SEEK_VIDEO,
+  SET_IS_PLAYING,
+  SET_CHAT,
 } from '../actions/actionTypes';
 
 const initialState = {
-    id: '',
-    host: '',
-    users: [],
-    queue: [],
-    suggestedVideos: [],
-    videos: [],
-    loadingRoom: false,
-    loadingVideos: false,
-    isPlaying: false,
-    seekVideo: false,
-    progressVideo: 0,
-    currentVideo: {
-        id: null,
-        url: '',
-        title: '',
-        views: null,
-        updatedAt: null,
-    },
-    chat: [],
+  id: '',
+  host: '',
+  users: [],
+  queue: [],
+  suggestedVideos: [],
+  videos: [],
+  loadingRoom: false,
+  loadingVideos: false,
+  isPlaying: false,
+  seekVideo: false,
+  progressVideo: 0,
+  currentVideo: {
+    id: null,
+    url: '',
+    title: '',
+    views: null,
+    updatedAt: null,
+  },
+  chat: [],
 };
 
 const roomReducer = (state = initialState, action) => {
-    switch (action.type) {
-        case SET_ROOM:
-            return { ...state, ...action.payload };
-        case SET_VIDEOS:
-            return { ...state, videos: action.videos };
-        case SET_IS_PLAYING:
-            return { ...state, isPlaying: action.isPlaying };
-        case SET_LOADING_VIDEOS:
-            return { ...state, loadingVideos: action.loading };
-        case SET_SUGGESTED_VIDEOS:
-            return { ...state, suggestedVideos: action.suggestedVideos };
-        case SET_URL_VIDEO:
-            return { ...state, urlVideo: action.url };
-        case SET_PLAY_VIDEO:
-            return { ...state, ...action.payload, isPlaying: true };
-        case SET_SEEK_VIDEO:
-            return { ...state, seekVideo: action.seekVideo };
-        case SET_CHAT:
-            return { ...state, chat: action.chat };
-        default:
-            return { ...state };
-    }
+  switch (action.type) {
+    case SET_ROOM:
+      return { ...state, ...action.payload };
+    case SET_VIDEOS:
+      return { ...state, videos: action.videos };
+    case SET_IS_PLAYING:
+      return { ...state, isPlaying: action.isPlaying };
+    case SET_LOADING_VIDEOS:
+      return { ...state, loadingVideos: action.loading };
+    case SET_SUGGESTED_VIDEOS:
+      return { ...state, suggestedVideos: action.suggestedVideos };
+    case SET_URL_VIDEO:
+      return { ...state, urlVideo: action.url };
+    case SET_PLAY_VIDEO:
+      return { ...state, ...action.payload, isPlaying: true };
+    case SET_SEEK_VIDEO:
+      return { ...state, seekVideo: action.seekVideo };
+    case SET_CHAT:
+      return { ...state, chat: action.chat };
+    default:
+      return { ...state };
+  }
 };
 
 export const readRoom = (state) => ({ ...state.roomReducer.room });

@@ -1,13 +1,13 @@
-import { SET_OPEN_LOGIN, SET_OPEN_REGISTER, SET_CLOSE_MODAL } from '../actions/actionTypes';
+import { SET_OPEN_LOGIN, SET_OPEN_REGISTER, SET_CLOSE_MODAL } from './actionTypes';
 
 export const openLogin = () => ({
-    type: SET_OPEN_LOGIN,
+  type: SET_OPEN_LOGIN,
 });
 
 export const openRegister = () => ({
-    type: SET_OPEN_REGISTER,
+  type: SET_OPEN_REGISTER,
 });
 
 export const closeModal = () => ({
-    type: SET_CLOSE_MODAL,
+  type: SET_CLOSE_MODAL,
 });
