@@ -18,6 +18,7 @@ import {
   WS_SEND_PROGRESS,
   WS_SEND_MESSAGE,
 } from './actionTypes';
+import { setName } from './userActions';
 
 export const setRoom = (payload) => ({
   type: SET_ROOM,
@@ -70,20 +71,18 @@ export const setChat = (chat) => ({
 });
 
 /* ASYNC API CALLS */
-export const createRoom = (host, cb) => async (dispatch) => {
+export const createRoom = (host) => async (dispatch) => {
   const room = await api.createRoom(host);
+  dispatch(setName(host));
   dispatch(setRoom(room));
-  cb(room.id);
+  return room.id;
 };
 
-export const isValidRoom = (id, cbFailure, cbSuccess) => async (dispatch) => {
+export const isValidRoom = (id) => async (dispatch) => {
   dispatch(setLoadingRoom(true));
-
   const isValid = await api.isValidRoom(id);
-  if (!isValid) cbFailure();
-  else cbSuccess?.();
-
   dispatch(setLoadingRoom(false));
+  return isValid;
 };
 
 export const getSuggestedVideos = (query) => async (dispatch) => {

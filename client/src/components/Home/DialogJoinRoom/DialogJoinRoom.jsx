@@ -1,91 +1,92 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { connect } from 'react-redux';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import { DialogActions, DialogContent, FormHelperText } from '@material-ui/core';
-import FormControl from '@material-ui/core/FormControl';
+import { connect, useDispatch } from 'react-redux';
+
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  Input,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  ModalCloseButton,
+  Button,
+  Container,
+} from '@chakra-ui/react';
+
 import { readIsLoading } from '../../../reducers/roomReducer';
 import { isValidRoom } from '../../../actions/roomActions';
 import { readName } from '../../../reducers/userReducer';
 
-const stylesContentDialog = {
-  display: 'flex',
-  justifyContent: 'center',
-  flexDirection: 'column',
-  alignItems: 'center',
-};
-
 function DialogJoinRoom({
-  open, name, onCancel, isLoading, isValidRoom,
+  open,
+  onClose,
+  isLoading,
 }) {
   const [idRoom, setIdRoom] = useState('');
   const [errorRoomId, setErrorRoomId] = useState('');
 
+  const dispatch = useDispatch();
   const history = useHistory();
 
-  const handleJoinRoom = () => {
-    if (!idRoom) {
-      setErrorRoomId('The room id is empty!');
-      return;
-    }
+  const handleJoinRoom = async () => {
+    if (!idRoom) return setErrorRoomId('Room is empty');
 
-    console.log('joining room...');
-    isValidRoom(
-      idRoom,
-      () => setErrorRoomId('The roomID is not valid'),
-      () => {
-        history.push(`/room/${idRoom}`);
-        onCancel();
-      },
-    );
+    const isValid = await dispatch(isValidRoom(idRoom));
+    if (!isValid) setErrorRoomId('The room is not valid');
+    else {
+      history.push(`/room/${idRoom}`);
+      onClose();
+    }
   };
 
   return (
-    <Dialog
-      disableBackdropClick
-      disableEscapeKeyDown
-      open={open}
-      aria-labelledby="form-dialog-title"
-      onKeyDown={({ key }) => key === 'Enter' && handleJoinRoom(name)}
+    <Modal
+      isOpen={open}
+      onClose={onClose}
+      size="md"
+      isCentered
     >
-      <DialogContent style={stylesContentDialog}>
-        <FormControl error={errorRoomId}>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="roomID"
-            label="Room id"
-            type="name"
-            onChange={({ target }) => setIdRoom(target.value)}
-          />
-          {errorRoomId
-            ? (
-              <FormHelperText id="roomID">{errorRoomId}</FormHelperText>
-            ) : null}
-        </FormControl>
-      </DialogContent>
-      <DialogActions>
-        <Button
-          size="small"
-          onClick={onCancel}
-          color="secondary"
-          variant="contained"
-        >
-          CANCEL
-        </Button>
-        <Button
-          size="small"
-          onClick={() => handleJoinRoom()}
-          color="primary"
-          variant="contained"
-          disabled={isLoading}
-        >
-          JOIN
-        </Button>
-      </DialogActions>
-    </Dialog>
+      <ModalOverlay />
+
+      <ModalContent>
+        <ModalHeader>Join room 🚀</ModalHeader>
+        <ModalCloseButton />
+        <Container p={4}>
+          <FormControl isInvalid={errorRoomId}>
+            <FormLabel htmlFor="roomId">Room</FormLabel>
+            <Input
+              autoFocus
+              id="roomId"
+              type="text"
+              placeholder="Enter the room"
+              errorBorderColor={errorRoomId}
+              onChange={({ target }) => setIdRoom(target.value)}
+            />
+            <FormErrorMessage>
+              {errorRoomId && errorRoomId}
+            </FormErrorMessage>
+          </FormControl>
+        </Container>
+
+        <ModalFooter>
+          <Button
+            colorScheme="blue"
+            mr={3}
+            isLoading={isLoading}
+            onClick={handleJoinRoom}
+          >
+            Join
+          </Button>
+          <Button variant="ghost" onClick={onClose}>
+            Close
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }
 
@@ -95,7 +96,7 @@ const mapStateToProps = (state) => ({
 });
 
 const mapDispatchToProps = (dispatch) => ({
-  isValidRoom: (id, cbFailure, cbSuccess) => dispatch(isValidRoom(id, cbFailure, cbSuccess)),
+  isValidRoom: (id) => dispatch(isValidRoom(id)),
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(DialogJoinRoom);
