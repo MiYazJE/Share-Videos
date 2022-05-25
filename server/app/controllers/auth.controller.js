@@ -19,13 +19,13 @@ function createToken(payload) {
 }
 
 function successLogin(req, res) {
-  return (err, user, info) => {
+  return (err, user) => {
     if (err || !user) {
-      return res.json({ info });
+      return res.status(401).json({ msg: 'Password or email/nickname are incorrects' });
     }
     const token = createToken({ id: user._id });
     res.cookie('jwt', token, OPTS_COOKIE);
-    return res.json({ info, user: { name: user.name } });
+    return res.json({ user });
   };
 }
 
