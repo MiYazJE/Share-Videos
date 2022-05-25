@@ -1,14 +1,17 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
-import { connect } from 'react-redux';
-import Room from '../components/Room';
-import Home from '../components/Home';
-import { readIsLoadingUser } from '../reducers/userReducer';
-import LoadingPage from '../components/LoadingPage';
-import Notifier from '../components/Notifier';
+import { useSelector } from 'react-redux';
 
-function Routes({ loadingUserData }) {
+import Home from 'src/pages/Home';
+import Room from 'src/components/Room';
+import LoadingPage from 'src/components/LoadingPage';
+import Notifier from 'src/components/Notifier';
+
+const isLoadingUser = ({ user }) => user.loadingUser;
+
+function Routes() {
+  const loadingUserData = useSelector(isLoadingUser);
   return (
     <div id="app">
       <SnackbarProvider maxSnack={3}>
@@ -19,21 +22,17 @@ function Routes({ loadingUserData }) {
               <Route path="/" exact>
                 <Home />
               </Route>
-              <Route path="/room/:id">
+              {/* <Route path="/room/:id">
                 <Room />
-              </Route>
+              </Route> */}
               <Route path="*">
                 <Home />
               </Route>
             </Switch>
-        )}
+          )}
       </SnackbarProvider>
     </div>
   );
 }
 
-const mapStateToProps = (state) => ({
-  loadingUserData: readIsLoadingUser(state),
-});
-
-export default connect(mapStateToProps, null)(Routes);
+export default Routes;

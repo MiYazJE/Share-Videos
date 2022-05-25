@@ -6,6 +6,9 @@ module.exports = {
   extends: [
     'plugin:react/recommended',
     'airbnb',
+    'plugin:import/errors',
+    'plugin:import/warnings',
+    'plugin:react-hooks/recommended',
   ],
   globals: {
     Atomics: 'readonly',
@@ -18,9 +21,16 @@ module.exports = {
     ecmaVersion: 2020,
     sourceType: 'module',
   },
-  plugins: [
-    'react',
-  ],
+  settings: {
+    plugins: [
+      'react',
+    ],
+    'import/resolver': {
+      node: {
+        paths: ['./'],
+      },
+    },
+  },
   rules: {
     'react/prop-types': 0,
     'consistent-return': 0,
@@ -32,5 +42,6 @@ module.exports = {
     'jsx-a11y/no-static-element-interactions': 0,
     'react/no-this-in-sfc': 1,
     'default-param-last': 0,
+    'import/prefer-default-export': 0,
   },
 };

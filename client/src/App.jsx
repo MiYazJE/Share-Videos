@@ -1,17 +1,17 @@
 import React, { useEffect } from 'react';
 import { BrowserRouter as Router } from 'react-router-dom';
-import { connect } from 'react-redux';
+import { connect, useDispatch } from 'react-redux';
 
 import Routes from './routes/Routes';
-import { whoAmI as whoAmIFn } from './actions/userActions';
 
 import 'react-toastify/dist/ReactToastify.css';
 import './app.scss';
 
-function App({ whoAmI }) {
+function App() {
+  const dispatch = useDispatch();
   useEffect(() => {
-    whoAmIFn();
-  }, [whoAmI]);
+    dispatch.user.whoAmI();
+  }, [dispatch]);
 
   return (
     <Router>
@@ -20,8 +20,4 @@ function App({ whoAmI }) {
   );
 }
 
-const mapDispatchToProps = (dispatch) => ({
-  whoAmI: () => dispatch(whoAmIFn()),
-});
-
-export default connect(null, mapDispatchToProps)(App);
+export default App;

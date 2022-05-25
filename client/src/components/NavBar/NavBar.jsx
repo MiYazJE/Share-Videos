@@ -2,10 +2,10 @@ import React, { useState } from 'react';
 import AppBar from '@material-ui/core/AppBar';
 import Typography from '@material-ui/core/Typography';
 import CircularProgress from '@material-ui/core/CircularProgress';
-import { connect } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { styled } from '@material-ui/core';
 import { useHistory } from 'react-router-dom';
-import { readLoadingVideos } from '../../reducers/roomReducer';
+
 import AutoCompleteSearch from './AutoCompleteSearch/AutoCompleteSearch';
 import AuthenticationNav from './AuthenticationNav/AuthenticationNav';
 
@@ -27,8 +27,14 @@ const StyledWrapAutoComplete = styled('div')({
   padding: '10px',
 });
 
-function NavBar({ loadingVideos }) {
+// TODO
+const readSelectors = () => ({
+  loadingVideos: false,
+});
+
+function NavBar({ openLogin, openRegister }) {
   const history = useHistory();
+  const { loadingVideos } = useSelector(readSelectors);
   const [showSearchBar] = useState(history.location.pathname !== '/');
 
   return (
@@ -41,13 +47,9 @@ function NavBar({ loadingVideos }) {
           <AutoCompleteSearch />
           {loadingVideos ? <CircularProgress style={{ marginLeft: '30px', color: 'white' }} size={30} /> : null}
         </StyledWrapAutoComplete>
-      ) : <AuthenticationNav />}
+      ) : <AuthenticationNav openLogin={openLogin} openRegister={openRegister} />}
     </StyledAppBar>
   );
 }
 
-const mapStateToProps = (state) => ({
-  loadingVideos: readLoadingVideos(state),
-});
-
-export default connect(mapStateToProps, null)(NavBar);
+export default NavBar;

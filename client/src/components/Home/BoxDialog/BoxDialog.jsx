@@ -10,19 +10,18 @@ import {
   FormControl,
 } from '@chakra-ui/react';
 import React, { useState } from 'react';
-import { connect, useDispatch } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import { useHistory } from 'react-router-dom';
 import { createRoom } from '../../../actions/roomActions';
-import { setName } from '../../../actions/userActions';
-import { readName } from '../../../reducers/userReducer';
 import DialogJoinRoom from '../DialogJoinRoom/DialogJoinRoom';
 
 const yupSchema = Yup.object().shape({
-  nickName: Yup.string().required('Nickname is empty'),
+  nickName: Yup.string()
+    .required('Nickname is empty'),
 });
 
 function BoxDialog() {
@@ -65,6 +64,7 @@ function BoxDialog() {
             <FormControl isInvalid={errors.nickName}>
               <Input
                 placeholder="Enter your nickname"
+                errorBorderColor="red.300"
                 {...register('nickName')}
               />
               <FormErrorMessage>
@@ -90,13 +90,4 @@ function BoxDialog() {
   );
 }
 
-const mapStateToProps = (state) => ({
-  name: readName(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  createRoom: (name, callback) => dispatch(createRoom(name, callback)),
-  setName: (name) => dispatch(setName(name)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(BoxDialog);
+export default BoxDialog;

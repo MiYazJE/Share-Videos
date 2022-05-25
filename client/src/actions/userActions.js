@@ -8,7 +8,8 @@ import {
   CLEAR_FORM_ERRORS,
 } from './actionTypes';
 import addNotification from './notifierAction';
-import API from '../Http/api';
+import api from '../Http/api';
+import { closeModal } from './modalActions';
 
 export const setName = (name) => ({
   type: SET_NAME,
@@ -50,7 +51,7 @@ export const register = (payload, callback) => async (dispatch) => {
   dispatch(setLoading(true));
   const {
     error, nameError, emailError, msg,
-  } = await API.register(payload);
+  } = await api.register(payload);
   dispatch(addNotification({ msg, variant: !error ? 'success' : 'error' }));
 
   if (!error) callback();
@@ -58,37 +59,15 @@ export const register = (payload, callback) => async (dispatch) => {
   dispatch(setLoading(false));
 };
 
-export const login = (payload, callback) => async (dispatch) => {
-  const { nameOrEmail, password } = payload;
-  dispatch(setFormErrors(!nameOrEmail, false, !password));
-  if (!nameOrEmail || !password) { return dispatch(addNotification({ msg: 'Fields cannot be empty.', variant: 'error' })); }
-
-  dispatch(setLoading(true));
-  const {
-    info: {
-      msg, nameOrEmailError, passwordError, error,
-    },
-    user,
-  } = await API.login(payload);
-  dispatch(addNotification({ msg, variant: !error ? 'success' : 'error' }));
-
-  if (user) {
-    dispatch(setLoggedIn(user));
-    callback();
-  }
-  dispatch(setFormErrors(nameOrEmailError, false, passwordError));
-  dispatch(setLoading(false));
-};
-
 export const whoAmI = () => async (dispatch) => {
   dispatch(setLoadingUser(true));
-  const res = await API.whoAmI();
+  const res = await api.whoAmI();
   dispatch(setLoadingUser(false));
   if (res && res.user) dispatch(setLoggedIn(res.user));
 };
 
 export const logout = () => async (dispatch) => {
-  await API.logout();
+  await api.logout();
   dispatch(setLogout());
   dispatch(addNotification({ msg: 'You have logged out.', variant: 'error' }));
 };

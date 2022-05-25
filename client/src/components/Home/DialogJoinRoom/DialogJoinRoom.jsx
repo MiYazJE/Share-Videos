@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { connect, useDispatch } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import {
   Modal,
@@ -17,15 +17,20 @@ import {
   Container,
 } from '@chakra-ui/react';
 
-import { readIsLoading } from '../../../reducers/roomReducer';
 import { isValidRoom } from '../../../actions/roomActions';
-import { readName } from '../../../reducers/userReducer';
+
+// todo: room is loading
+const readSelectors = ({ user }) => ({
+  isLoading: false,
+  name: user.name,
+
+});
 
 function DialogJoinRoom({
   open,
   onClose,
-  isLoading,
 }) {
+  const { name, isLoading } = useSelector(readSelectors);
   const [idRoom, setIdRoom] = useState('');
   const [errorRoomId, setErrorRoomId] = useState('');
 
@@ -33,14 +38,14 @@ function DialogJoinRoom({
   const history = useHistory();
 
   const handleJoinRoom = async () => {
-    if (!idRoom) return setErrorRoomId('Room is empty');
+    // if (!idRoom) return setErrorRoomId('Room is empty');
 
-    const isValid = await dispatch(isValidRoom(idRoom));
-    if (!isValid) setErrorRoomId('The room is not valid');
-    else {
-      history.push(`/room/${idRoom}`);
-      onClose();
-    }
+    // const isValid = await dispatch(isValidRoom(idRoom));
+    // if (!isValid) setErrorRoomId('The room is not valid');
+    // else {
+    //   history.push(`/room/${idRoom}`);
+    //   onClose();
+    // }
   };
 
   return (
@@ -73,16 +78,15 @@ function DialogJoinRoom({
         </Container>
 
         <ModalFooter>
+          <Button variant="ghost" mr={3} onClick={onClose}>
+            Close
+          </Button>
           <Button
-            colorScheme="blue"
-            mr={3}
+            colorScheme="facebook"
             isLoading={isLoading}
             onClick={handleJoinRoom}
           >
             Join
-          </Button>
-          <Button variant="ghost" onClick={onClose}>
-            Close
           </Button>
         </ModalFooter>
       </ModalContent>
@@ -90,13 +94,4 @@ function DialogJoinRoom({
   );
 }
 
-const mapStateToProps = (state) => ({
-  name: readName(state),
-  isLoading: readIsLoading(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  isValidRoom: (id) => dispatch(isValidRoom(id)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(DialogJoinRoom);
+export default DialogJoinRoom;

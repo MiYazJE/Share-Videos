@@ -1,18 +1,19 @@
 import React, { useState } from 'react';
 import { Button, Menu, MenuItem } from '@material-ui/core';
-import { connect } from 'react-redux';
-import { logout } from '../../../actions/userActions';
-import { closeModal, openLogin, openRegister } from '../../../actions/modalActions';
-import { readName, readIsLogged } from '../../../reducers/userReducer';
+import { useDispatch, useSelector } from 'react-redux';
+
+const readSelectors = ({ user }) => ({
+  isLogged: user.isLogged,
+  name: user.name,
+});
 
 function AuthenticationNav({
   openLogin,
   openRegister,
-  isLogged,
-  name,
-  logout,
 }) {
   const [anchorEl, setAnchorEl] = useState(null);
+  const dispatch = useDispatch();
+  const { isLogged, name } = useSelector(readSelectors);
 
   const handleClick = (e) => setAnchorEl(e.currentTarget);
 
@@ -43,7 +44,7 @@ function AuthenticationNav({
               onClose={handleClose}
               style={{ marginTop: '50px' }}
             >
-              <MenuItem onClick={logout}>Logout</MenuItem>
+              <MenuItem onClick={dispatch.user.logout}>Logout</MenuItem>
             </Menu>
           </div>
         ) : (
@@ -68,16 +69,4 @@ function AuthenticationNav({
   );
 }
 
-const mapStateToProps = (state) => ({
-  name: readName(state),
-  isLogged: readIsLogged(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  logout: () => dispatch(logout()),
-  closeModal: () => dispatch(closeModal()),
-  openLogin: () => dispatch(openLogin()),
-  openRegister: () => dispatch(openRegister()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(AuthenticationNav);
+export default AuthenticationNav;

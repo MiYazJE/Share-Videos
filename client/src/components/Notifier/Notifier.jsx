@@ -1,10 +1,12 @@
 import { useEffect } from 'react';
-import { connect } from 'react-redux';
 import { useSnackbar } from 'notistack';
-import { readNotification } from '../../reducers/notifierReducer';
+import { useSelector } from 'react-redux';
 
-function Notifier({ notification }) {
+const readNotification = ({ notifier }) => notifier.notification;
+
+function Notifier() {
   const { enqueueSnackbar } = useSnackbar();
+  const notification = useSelector(readNotification);
 
   useEffect(() => {
     if (notification) enqueueSnackbar(notification.msg, { variant: notification.variant });
@@ -13,8 +15,4 @@ function Notifier({ notification }) {
   return null;
 }
 
-const mapStateToProps = (state) => ({
-  notification: readNotification(state),
-});
-
-export default connect(mapStateToProps, null)(Notifier);
+export default Notifier;

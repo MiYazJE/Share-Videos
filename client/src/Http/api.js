@@ -45,8 +45,9 @@ async function login(payload) {
       'Content-Type': 'application/json',
     },
   });
-  const res = await fetch(request);
-  return res.json();
+  return fetch(request)
+    .then((res) => res.json())
+    .catch((err) => err);
 }
 
 async function whoAmI() {

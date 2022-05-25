@@ -1,94 +1,121 @@
 import React, { useEffect, useState } from 'react';
-import TextField from '@material-ui/core/TextField';
-import CircularProgress from '@material-ui/core/CircularProgress';
-import { Button, IconButton, OutlinedInput } from '@material-ui/core';
-import { Visibility, VisibilityOff } from '@material-ui/icons';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import {
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalFooter,
+  Input,
+  FormControl,
+  FormLabel,
+  FormErrorMessage,
+  ModalCloseButton,
+  Button,
+  VStack,
+  InputRightElement,
+  InputGroup,
+} from '@chakra-ui/react';
+import { useForm } from 'react-hook-form';
+import { useSelector } from 'react-redux';
 
-import InputLabel from '@material-ui/core/InputLabel';
-import InputAdornment from '@material-ui/core/InputAdornment';
-import FormControl from '@material-ui/core/FormControl';
-import { connect } from 'react-redux';
-import { closeModal } from '../../actions/modalActions';
-import { readFormErrors, readIsLoading } from '../../reducers/userReducer';
-import { clearFormErrors, login } from '../../actions/userActions';
-import './login.scss';
+const schema = Yup.object().shape({
+  nameOrEmail: Yup.string()
+    .required('Nickname or email is empty'),
+  password: Yup.string()
+    .required('Password is empty'),
+});
+
+const readIsLoggedIn = ({ user }) => ({
+  isLoggedIn: user.isLogged,
+});
 
 function Login({
-  loading, login, closeModal, formErrors, clearFormErrors,
+  loading,
+  onClose,
+  open,
+  onLogin,
 }) {
-  const { errorName: errorNameOrEmail, errorPassword } = formErrors;
-
-  const [nameOrEmail, setNameOrEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const { isLoggedIn } = useSelector(readIsLoggedIn);
   const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
-    clearFormErrors();
-  }, [clearFormErrors]);
+    if (isLoggedIn) onClose();
+  }, [isLoggedIn, onClose]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-
-    login({ nameOrEmail, password }, closeModal);
-  };
+  const {
+    handleSubmit,
+    formState: { errors },
+    register,
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   return (
-    <form className="wrapLogin" onSubmit={handleLogin} autoComplete="off">
-      <TextField
-        style={{ width: '254px' }}
-        onChange={(e) => setNameOrEmail(e.target.value.trim())}
-        error={errorNameOrEmail}
-        className="field"
-        label="Name or Email"
-        variant="outlined"
-      />
-      <FormControl variant="outlined">
-        <InputLabel htmlFor="outlined-adornment-password">Password</InputLabel>
-        <OutlinedInput
-          id="outlined-adornment-password"
-          type={showPassword ? 'text' : 'password'}
-          error={errorPassword}
-          onChange={(e) => setPassword(e.target.value.trim())}
-          endAdornment={(
-            <InputAdornment position="end">
-              <IconButton
-                aria-label="toggle password visibility"
-                onClick={() => setShowPassword(!showPassword)}
-                onMouseDown={() => setShowPassword(!showPassword)}
-                edge="end"
-              >
-                {showPassword ? <Visibility /> : <VisibilityOff />}
-              </IconButton>
-            </InputAdornment>
-                      )}
-          labelWidth={70}
-        />
-      </FormControl>
-      <div className="btnWrap">
-        <Button
-          variant="contained"
-          color="primary"
-          size="large"
-          disabled={loading}
-          type="submit"
-        >
-          Login
-        </Button>
-        {loading && <CircularProgress size={24} className="progress" />}
-      </div>
-    </form>
+    <Modal
+      isOpen={open}
+      onClose={onClose}
+      size="md"
+      isCentered
+    >
+
+      <ModalOverlay />
+
+      <ModalContent>
+        <ModalHeader>Login 🎵</ModalHeader>
+        <ModalCloseButton />
+        <VStack p={4} spacing={3}>
+          <FormControl isInvalid={errors?.nameOrEmail}>
+            <FormLabel htmlFor="nameOrEmail">Nickname or email</FormLabel>
+            <Input
+              id="nameOrEmail"
+              autoFocus
+              {...register('nameOrEmail')}
+              placeholder="Enter your nickname or email"
+              errorBorderColor="red.300"
+            />
+            <FormErrorMessage>
+              {errors?.nameOrEmail?.message}
+            </FormErrorMessage>
+          </FormControl>
+          <FormControl isInvalid={errors?.password}>
+            <FormLabel htmlFor="password">Password</FormLabel>
+            <InputGroup>
+              <Input
+                id="password"
+                {...register('password')}
+                type={showPassword ? 'text' : 'password'}
+                placeholder="Enter your password"
+                errorBorderColor="red.300"
+              />
+              <InputRightElement width="4.5rem">
+                <Button h="1.75rem" size="sm" onClick={() => setShowPassword(!showPassword)}>
+                  {showPassword ? 'Hide' : 'Show'}
+                </Button>
+              </InputRightElement>
+            </InputGroup>
+            <FormErrorMessage>
+              {errors?.password?.message}
+            </FormErrorMessage>
+          </FormControl>
+        </VStack>
+
+        <ModalFooter>
+          <Button variant="ghost" mr={3} onClick={onClose}>
+            Close
+          </Button>
+          <Button
+            colorScheme="facebook"
+            isLoading={loading}
+            onClick={handleSubmit(onLogin)}
+          >
+            Login
+          </Button>
+        </ModalFooter>
+      </ModalContent>
+    </Modal>
   );
 }
 
-const mapStateToProps = (state) => ({
-  loading: readIsLoading(state),
-  formErrors: readFormErrors(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  login: (payload, callback) => dispatch(login(payload, callback)),
-  clearFormErrors: () => dispatch(clearFormErrors()),
-  closeModal: () => dispatch(closeModal()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Login);
+export default Login;
