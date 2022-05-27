@@ -1,5 +1,5 @@
-import { HttpInstance } from '../utils';
-import { API_ROUTES } from '../enums';
+import { HttpInstance } from 'src/utils';
+import { API_ROUTES } from 'src/enums';
 
 const http = new HttpInstance();
 
@@ -16,12 +16,11 @@ export default {
   },
   effects: (dispatch) => ({
     async register(payload) {
-      const res = await http.post(API_ROUTES.REGISTER, payload);
-      console.log({ request: res });
+      const res = await http.post(API_ROUTES.AUTH.REGISTER, payload);
     },
     async login(payload) {
       try {
-        const { user } = await http.post(API_ROUTES.LOGIN, payload);
+        const { user } = await http.post(API_ROUTES.AUTH.LOGIN, payload);
         dispatch.notifier.ADD_NOTIFICATION({ msg: 'Logged in successfully', variant: 'success' });
         dispatch.user.SET_PROP({ name: user.name, isLogged: true });
       } catch (err) {
@@ -30,11 +29,10 @@ export default {
       }
     },
     async logout() {
-      await http.get(API_ROUTES.LOGOUT);
+      await http.get(API_ROUTES.AUTH.LOGOUT);
     },
     async whoAmI() {
-      const res = await http.get(API_ROUTES.WHO_AM_I);
-      console.log({ res });
+      const res = await http.get(API_ROUTES.AUTH.WHO_AM_I);
     },
   }),
 };

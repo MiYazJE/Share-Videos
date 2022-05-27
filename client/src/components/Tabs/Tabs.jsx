@@ -1,13 +1,15 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { FaUsers, FaPhotoVideo } from 'react-icons/fa';
 import { FiSettings } from 'react-icons/fi';
 import { AppBar } from '@material-ui/core';
 import Tab from '@material-ui/core/Tab';
 import Tabs from '@material-ui/core/Tabs';
 import Box from '@material-ui/core/Box';
-import VideosGrid from '../VideosGrid';
-import UsersGrid from '../UsersGrid';
-import Settings from '../Settings/Settings';
+
+import VideosGrid from 'src/components/VideosGrid';
+import UsersGrid from 'src/components/UsersGrid';
+import Settings from 'src/components/Settings/Settings';
+
 import './tabs.scss';
 
 function TabPanel({

@@ -1,5 +1,4 @@
-import React from 'react';
-import useVideoMetadata from '../../hooks/useVideoMetadata';
+import useVideoMetadata from 'src/hooks/useVideoMetadata';
 
 function MetaVideoInfo() {
   const {

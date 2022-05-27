@@ -1,89 +1,76 @@
-import React, { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-
-// IMPORT COMPONENTS
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactPlayer from 'react-player';
+import { useDispatch, useSelector } from 'react-redux';
 
-// CUSTOM COMPONENTS
-import { connect } from 'react-redux';
-import DialogName from './DialogName';
-import CustomTabs from '../Tabs';
-import NavBar from '../NavBar';
-import ResultVideos from '../ResultVideos';
+import DialogName from 'src/components/Room/DialogName';
+import CustomTabs from 'src/components/Tabs';
+import NavBar from 'src/components/NavBar';
+import ResultVideos from 'src/components/ResultVideos';
+import Scroller from 'src/components/Scroller/Scroller';
+import MetaVideoInfo from 'src/components/Room/MetaVideoInfo';
 
-// REDUX
-import { setName } from '../../actions/userActions';
-import { readName } from '../../reducers/userReducer';
-import {
-  readRoomName,
-  readIsLoading,
-  readUrlVideo,
-  readIsPlaying,
-  readHost,
-  readSeekVideo,
-  readProgress,
-  readCurrentVideoId,
-} from '../../reducers/roomReducer';
-import {
-  isValidRoom,
-  joinRoom,
-  sendPlayerState,
-  sendProgress,
-  setSeekVideo,
-  removeVideo,
-} from '../../actions/roomActions';
+import useRoom from 'src/hooks/useRoom';
 
-import Scroller from '../Scroller/Scroller';
 import './room.scss';
-import MetaVideoInfo from './MetaVideoInfo';
 
 const WIDTH_TO_RESIZE = 1300;
 
-function Room({
-  urlVideo,
-  host,
-  name,
-  idRoom,
-  isLoading,
-  joinRoom,
-  isPlaying,
-  setName,
-  checkIsValidRoom,
-  sendPlayerState,
-  sendProgress,
-  progressVideo,
-  seekVideo,
-  setSeekVideo,
-  removeVideo,
-  currentVideoId,
-}) {
+const readSelector = ({ room, user }) => ({
+  urlVideo: room.currentVideo.url,
+  idRoom: room.id,
+  isLoading: room.loadingRoom,
+  name: user.name,
+  isPlaying: room.isPlaying,
+  host: room.host,
+  seekVideo: room.seekVideo,
+  progressVideo: room.progressVideo,
+  currentVideoId: room.currentVideo.id,
+});
+
+function Room() {
   const [playerHeight, setPlayerHeight] = useState(window.innerWidth < 700 ? '35vh' : '70vh');
   const [openDialog, setOpenDialog] = useState(false);
   const [floatPlayer, setFLoatPlayer] = useState(false);
 
+  const {
+    urlVideo,
+    host,
+    name,
+    idRoom,
+    isLoading,
+    isPlaying,
+    progressVideo,
+    seekVideo,
+    currentVideoId,
+  } = useSelector(readSelector);
+
+  const dispatch = useDispatch();
   const refVideoResults = useRef();
   const refPlayer = useRef();
   const history = useHistory();
   const { id } = useParams();
+  const { isValidRoom } = useRoom({ id });
 
-  // If the room is not valid it will redirect the user to the homepage
   useEffect(() => {
-    checkIsValidRoom(id, () => history.push('/'));
-  }, [history, id, checkIsValidRoom]);
+    if (!isValidRoom) history.push('/');
+  }, [isValidRoom, history]);
 
-  // If the user does not have a name it will ask for it
   useEffect(() => {
-    setOpenDialog(id && !name);
-    if (id && name) joinRoom({ id, name });
-  }, [id, name, joinRoom]);
+    if (id && !name) {
+      setOpenDialog(true);
+    } else {
+      dispatch.room.joinRoom({ id, name });
+    }
+  }, [id, name, dispatch]);
 
   useEffect(() => {
     if (seekVideo) {
       refPlayer.current.seekTo(progressVideo);
-      setSeekVideo(false);
+      dispatch.room.setSeekVideo(false);
     }
-  }, [seekVideo, progressVideo, setSeekVideo]);
+  }, [seekVideo, progressVideo, dispatch]);
 
   useEffect(() => {
     function onResize() {
@@ -110,32 +97,50 @@ function Room({
 
   const onAcceptDialog = (nickname) => {
     if (nickname) {
-      setName(nickname);
+      dispatch.user.SET_NAME({ name: nickname });
       setOpenDialog(false);
     }
   };
 
   const handleSendProgress = () => {
     if (name === host) {
-      sendProgress({ progress: refPlayer.current.getCurrentTime(), idRoom, name });
+      dispatch.room.sendProgress({
+        progress: refPlayer.current.getCurrentTime(),
+        idRoom,
+        name,
+      });
     }
   };
 
   const handleOnPlay = () => {
     if (Math.abs(refPlayer.current.getCurrentTime() - progressVideo) > 1) {
-      sendProgress({
-        progress: refPlayer.current.getCurrentTime(), idRoom, seekVideo: true, name,
+      dispatch.room.sendProgress({
+        progress: refPlayer.current.getCurrentTime(),
+        idRoom,
+        seekVideo: true,
+        name,
       });
     }
-    sendPlayerState({ state: 'play', idRoom, name });
+    dispatch.room.sendPlayerState({
+      state: 'play',
+      idRoom,
+      name,
+    });
   };
 
   const handleOnPause = () => {
-    sendPlayerState({ state: 'pause', idRoom, name });
+    dispatch.room.sendPlayerState({
+      state: 'pause',
+      idRoom,
+      name,
+    });
   };
 
   const handleOnEnded = () => {
-    removeVideo({ idVideo: currentVideoId, idRoom });
+    dispatch.room.removeVideo({
+      idVideo: currentVideoId,
+      idRoom,
+    });
   };
 
   return (
@@ -187,27 +192,4 @@ function Room({
     </main>
   );
 }
-
-const mapStateToProps = (state) => ({
-  urlVideo: readUrlVideo(state),
-  idRoom: readRoomName(state),
-  isLoading: readIsLoading(state),
-  name: readName(state),
-  isPlaying: readIsPlaying(state),
-  host: readHost(state),
-  seekVideo: readSeekVideo(state),
-  progressVideo: readProgress(state),
-  currentVideoId: readCurrentVideoId(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  checkIsValidRoom: (id, redirect) => dispatch(isValidRoom(id, redirect)),
-  joinRoom: (payload) => dispatch(joinRoom(payload)),
-  setName: (name) => dispatch(setName(name)),
-  sendPlayerState: (payload) => dispatch(sendPlayerState(payload)),
-  sendProgress: (payload) => dispatch(sendProgress(payload)),
-  setSeekVideo: (seekVideo) => dispatch(setSeekVideo(seekVideo)),
-  removeVideo: (idVideo, idRoom) => dispatch(removeVideo(idVideo, idRoom)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Room);
+export default Room;

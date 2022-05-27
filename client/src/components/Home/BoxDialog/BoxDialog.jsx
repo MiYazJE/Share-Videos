@@ -9,25 +9,19 @@ import {
   FormErrorMessage,
   FormControl,
 } from '@chakra-ui/react';
-import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useState } from 'react';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 
-import { useHistory } from 'react-router-dom';
-import { createRoom } from '../../../actions/roomActions';
-import DialogJoinRoom from '../DialogJoinRoom/DialogJoinRoom';
+import DialogJoinRoom from 'src/components/Home/DialogJoinRoom/DialogJoinRoom';
 
 const yupSchema = Yup.object().shape({
   nickName: Yup.string()
     .required('Nickname is empty'),
 });
 
-function BoxDialog() {
-  const dispatch = useDispatch();
-  const history = useHistory();
-
+function BoxDialog({ onCreateRoom, isLoading }) {
   const [openDialogJoinRoom, setOpenDialogJoinRoom] = useState(false);
 
   const {
@@ -38,13 +32,8 @@ function BoxDialog() {
     resolver: yupResolver(yupSchema),
   });
 
-  const handleCreateRoom = async ({ nickName }) => {
-    const idRoom = await dispatch(createRoom(nickName));
-    history.push(`/room/${idRoom}`);
-  };
-
   return (
-    <form onSubmit={handleSubmit(handleCreateRoom)}>
+    <form onSubmit={handleSubmit(onCreateRoom)}>
       <VStack p={10} boxSize="100%">
         <Container maxW="container.xl">
           <Heading textAlign="center" color="gray.700">
@@ -72,7 +61,11 @@ function BoxDialog() {
               </FormErrorMessage>
             </FormControl>
             <Flex gap={6}>
-              <Button colorScheme="facebook" onClick={handleSubmit(handleCreateRoom)}>
+              <Button
+                colorScheme="facebook"
+                type="submit"
+                isLoading={isLoading}
+              >
                 Create room
               </Button>
               <Button colorScheme="facebook" variant="link" onClick={() => setOpenDialogJoinRoom(true)}>

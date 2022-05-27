@@ -1,11 +1,14 @@
-import React from 'react';
-import { connect } from 'react-redux';
 import { Input } from '@material-ui/core';
 import { toast } from 'react-toastify';
-import { readRoomName } from '../../reducers/roomReducer';
+import { useSelector } from 'react-redux';
+
 import './settings.scss';
 
-function Settings({ roomId }) {
+const readRoomId = ({ room }) => room.id;
+
+function Settings() {
+  const roomId = useSelector(readRoomId);
+
   const clipBoardUrl = () => {
     navigator.clipboard.writeText(window.location);
     toast.dark('✅ Url is on your clipboard.', {
@@ -46,8 +49,4 @@ function Settings({ roomId }) {
   );
 }
 
-const mapStateToProps = (state) => ({
-  roomId: readRoomName(state),
-});
-
-export default connect(mapStateToProps, {})(Settings);
+export default Settings;

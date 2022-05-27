@@ -1,54 +1,50 @@
-import React, { useEffect, useState } from 'react';
+import { useState } from 'react';
+import { useDispatch } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { Button } from '@material-ui/core';
-import { connect } from 'react-redux';
-import { readIsLoading, readFormErrors } from '../../reducers/userReducer';
-import { register, clearFormErrors } from '../../actions/userActions';
-import { closeModal } from '../../actions/modalActions';
+
 import './register.scss';
 
-function Register({
-  loading, register, closeModal, formErrors, clearFormErrors,
-}) {
-  const { errorName, errorEmail, errorPassword } = formErrors;
-
+function Register() {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  useEffect(() => {
-    clearFormErrors();
-  }, [clearFormErrors]);
+  const dispatch = useDispatch();
 
   const handleRegister = async (e) => {
     e.preventDefault();
-    register({ name, email, password }, closeModal);
+    dispatch.user.register({
+      name,
+      email,
+      password,
+    });
   };
 
   return (
     <form className="wrapRegister" onSubmit={handleRegister} noValidate autoComplete="nope">
       <TextField
         onChange={(e) => setName(e.target.value.trim())}
-        error={errorName}
+        // error={errorName}
         className="field"
         label="Name"
         variant="outlined"
       />
       <TextField
         onChange={(e) => setEmail(e.target.value.trim())}
-        error={errorEmail}
+        // error={errorEmail}
         className="field"
         label="Email"
         variant="outlined"
       />
       <TextField
         onChange={(e) => setPassword(e.target.value.trim())}
+        // error={errorPassword}
         className="field"
         type="password"
         label="Password"
         variant="outlined"
-        error={errorPassword}
       />
       <div className="btnWrap">
         <Button
@@ -56,25 +52,14 @@ function Register({
           color="primary"
           size="large"
           type="submit"
-          disabled={loading}
+          // disabled={loading}
         >
           Register
         </Button>
-        {loading && <CircularProgress size={24} className="progress" />}
+        {/* {loading && <CircularProgress size={24} className="progress" />} */}
       </div>
     </form>
   );
 }
 
-const mapStateToProps = (state) => ({
-  loading: readIsLoading(state),
-  formErrors: readFormErrors(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  register: (payload, callback) => dispatch(register(payload, callback)),
-  clearFormErrors: () => dispatch(clearFormErrors()),
-  closeModal: () => dispatch(closeModal()),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(Register);
+export default Register;

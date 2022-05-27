@@ -1,14 +1,19 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { connect } from 'react-redux';
+import { useState, useRef, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
 import SendIcon from '@material-ui/icons/Send';
 import IconButton from '@material-ui/core/IconButton';
-import { readName } from '../../reducers/userReducer';
-import { readUsers, readRoomName, readChat } from '../../reducers/roomReducer';
-import { sendMessage } from '../../actions/roomActions';
+
 import './usersGrid.scss';
+
+const readSelector = ({ room, user }) => ({
+  users: room.users,
+  me: user.name,
+  chat: room.chat,
+  idRoom: room.id,
+});
 
 function Message({
   isAdmin,
@@ -37,15 +42,20 @@ function Message({
   );
 }
 
-function UsersGrid({
-  chat, me, users, sendMessage, idRoom,
-}) {
+function UsersGrid() {
   const [msg, setMessage] = useState('');
-  // const [isWriting, setIsWriting] = useState(false);
+
+  const {
+    users,
+    me,
+    chat,
+    idRoom,
+  } = useSelector(readSelector);
+
+  const dispatch = useDispatch();
   const refScroll = useRef(null);
 
   const scrollToBottom = () => {
-    // if (!isWriting) return;
     refScroll?.current?.scrollIntoView?.({ behavior: 'smooth', block: 'end' });
   };
 
@@ -54,7 +64,11 @@ function UsersGrid({
   const handleSubmit = (e) => {
     e?.preventDefault?.();
     if (msg.trim()) {
-      sendMessage({ name: me, msg, idRoom });
+      dispatch.room.sendMessage({
+        name: me,
+        msg,
+        idRoom,
+      });
       setMessage('');
     }
   };
@@ -80,8 +94,6 @@ function UsersGrid({
       <form onSubmit={handleSubmit} noValidate autoComplete="off">
         <TextField
           value={msg}
-          // onFocus={() => setIsWriting(true)}
-          // onBlur={() => setIsWriting(false)}
           onInput={(e) => setMessage(e.target.value)}
           fullWidth
           id="standard-basic"
@@ -95,15 +107,4 @@ function UsersGrid({
   );
 }
 
-const mapStateToProps = (state) => ({
-  users: readUsers(state),
-  me: readName(state),
-  chat: readChat(state),
-  idRoom: readRoomName(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  sendMessage: (payload) => dispatch(sendMessage(payload)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(UsersGrid);
+export default UsersGrid;

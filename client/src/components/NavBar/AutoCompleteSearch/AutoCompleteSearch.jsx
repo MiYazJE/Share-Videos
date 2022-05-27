@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import Autocomplete from '@material-ui/lab/Autocomplete';
 import SearchIcon from '@material-ui/icons/Search';
 import { InputBase } from '@material-ui/core';
-import { connect } from 'react-redux';
-import { getVideos, getSuggestedVideos } from '../../../actions/roomActions';
-import { readVideos, readSuggestedVideos, readLoadingVideos } from '../../../reducers/roomReducer';
+import { useDispatch, useSelector } from 'react-redux';
 
-function AutoCompleteSearch({
-  getVideos,
-  videosSuggested,
-  getSuggestedVideos,
-}) {
+const readSelector = ({ room, loading }) => ({
+  videosSuggested: room.suggestedVideos,
+  loadingVideos: loading.effects.getVideos,
+  videos: room.videos,
+});
+
+function AutoCompleteSearch() {
   const [search, setSearch] = useState('');
+
+  const { videosSuggested } = useSelector(readSelector);
+  const dispatch = useDispatch();
 
   const handleGetVideos = () => {
     if (!search) return;
-    // scrollTo();
-    getVideos(search);
+    dispatch.room.getVideos(search);
   };
 
   const handleOnKeyPress = ({ key }) => {
@@ -25,12 +27,12 @@ function AutoCompleteSearch({
 
   const handleOnChangeAutoComplete = (_, search) => {
     if (!search) return;
-    getVideos(search);
+    dispatch.room.getVideos(search);
   };
 
   const handleOnChangeInput = ({ target }) => {
     setSearch(target.value);
-    getSuggestedVideos(target.value);
+    dispatch.room.getSuggestedVideos(target.value);
   };
 
   return (
@@ -59,15 +61,4 @@ function AutoCompleteSearch({
   );
 }
 
-const mapStateToProps = (state) => ({
-  videosSuggested: readSuggestedVideos(state),
-  videos: readVideos(state),
-  loadingVideos: readLoadingVideos(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  getVideos: (query) => dispatch(getVideos(query)),
-  getSuggestedVideos: (query) => dispatch(getSuggestedVideos(query)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(AutoCompleteSearch);
+export default AutoCompleteSearch;

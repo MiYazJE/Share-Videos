@@ -1,9 +1,12 @@
 import io from 'socket.io-client';
-import {
-  WS_UPDATE_ROOM, WS_VIEW_VIDEO, WS_NOTIFY_MESSAGE, WS_UPDATE_CHAT,
-} from '../actions/actionTypes';
-import { setRoom, setPlayVideo, setChat } from '../actions/roomActions';
-import addNotification from '../actions/notifierAction';
+import { WS_MESSAGES } from 'src/enums';
+
+const {
+  WS_UPDATE_ROOM,
+  WS_VIEW_VIDEO,
+  WS_NOTIFY_MESSAGE,
+  WS_UPDATE_CHAT,
+} = WS_MESSAGES;
 
 const isDev = process.env.NODE_ENV === 'development';
 
@@ -11,19 +14,19 @@ const socket = isDev ? io.connect('http://localhost:5000', { path: '/socket-io' 
 
 const socketMiddleware = () => (store) => {
   socket.on(WS_UPDATE_ROOM, (room) => {
-    store.dispatch(setRoom(room));
+    store.dispatch.room.SET_PROP(room);
   });
 
   socket.on(WS_UPDATE_CHAT, (chat) => {
-    store.dispatch(setChat(chat));
+    store.dispatch.room.SET_PROP({ chat });
   });
 
   socket.on(WS_VIEW_VIDEO, (payload) => {
-    store.dispatch(setPlayVideo(payload));
+    store.dispatch.room.SET_PROP({ ...payload, isPlaying: true });
   });
 
   socket.on(WS_NOTIFY_MESSAGE, (notification) => {
-    store.dispatch(addNotification(notification));
+    store.dispatch.notifier.ADD_NOTIFICATION(notification);
   });
 
   return (next) => (action) => {

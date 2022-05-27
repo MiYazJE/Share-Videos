@@ -1,6 +1,5 @@
-import React, { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 
 import {
   Modal,
@@ -17,35 +16,29 @@ import {
   Container,
 } from '@chakra-ui/react';
 
-import { isValidRoom } from '../../../actions/roomActions';
-
-// todo: room is loading
-const readSelectors = ({ user }) => ({
-  isLoading: false,
-  name: user.name,
-
-});
+import useRoom from 'src/hooks/useRoom';
 
 function DialogJoinRoom({
   open,
   onClose,
 }) {
-  const { name, isLoading } = useSelector(readSelectors);
   const [idRoom, setIdRoom] = useState('');
   const [errorRoomId, setErrorRoomId] = useState('');
 
-  const dispatch = useDispatch();
+  const { isValidRoom } = useRoom({ id: idRoom });
+
   const history = useHistory();
 
-  const handleJoinRoom = async () => {
-    // if (!idRoom) return setErrorRoomId('Room is empty');
+  useEffect(() => {
+    if (!idRoom) setErrorRoomId('Room is empty');
+    else if (!isValidRoom) setErrorRoomId(`Room ${idRoom} not exists`);
+  }, [isValidRoom, idRoom]);
 
-    // const isValid = await dispatch(isValidRoom(idRoom));
-    // if (!isValid) setErrorRoomId('The room is not valid');
-    // else {
-    //   history.push(`/room/${idRoom}`);
-    //   onClose();
-    // }
+  const handleJoinRoom = () => {
+    if (!idRoom || !isValidRoom) return;
+
+    history.push(`/room/${idRoom}`);
+    onClose();
   };
 
   return (
@@ -83,7 +76,6 @@ function DialogJoinRoom({
           </Button>
           <Button
             colorScheme="facebook"
-            isLoading={isLoading}
             onClick={handleJoinRoom}
           >
             Join

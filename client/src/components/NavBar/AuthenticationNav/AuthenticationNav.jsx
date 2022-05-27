@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { Button, Menu, MenuItem } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
 

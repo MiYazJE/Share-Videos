@@ -1,20 +1,24 @@
 import { useSelector } from 'react-redux';
 import { useEffect, useCallback, useState } from 'react';
 
-import { readCurrentVideo } from '../reducers/roomReducer';
+import { stringFormat } from 'src/utils';
 
-const ONE_MILLION = 1000000;
+const readCurrentVideo = ({ room }) => room.currentVideo;
 
 const useVideoMetadata = () => {
   const currentVideo = useSelector(readCurrentVideo);
   const [viewsFormatted, setViewsFormatted] = useState('');
-  const formatNumber = (views) => views.toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1.');
 
   const formatViews = useCallback(() => {
-    const formatted = currentVideo.views < ONE_MILLION
-      ? `${formatNumber(currentVideo.views)} views`
-      : `${(currentVideo.views / ONE_MILLION).toFixed(1)} M views`;
-    setViewsFormatted(formatted);
+    if (!currentVideo?.views === null
+      || currentVideo?.views === undefined
+    ) {
+      return;
+    }
+
+    setViewsFormatted(
+      stringFormat.formatViews(currentVideo.views),
+    );
   }, [currentVideo]);
 
   useEffect(() => {

@@ -1,25 +1,42 @@
-import React from 'react';
 import FlipMove from 'react-flip-move';
-import { connect } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { FaPlay } from 'react-icons/fa';
 import { FiDelete } from 'react-icons/fi';
-import { readQueue, readRoomName, readCurrentVideoId } from '../../reducers/roomReducer';
-import { readName } from '../../reducers/userReducer';
-import { removeVideo, viewVideo } from '../../actions/roomActions';
-import useTitle from '../../hooks/useTitle';
+
+import { stringFormat } from 'src/utils';
+
 import './videosGrid.scss';
 
-function VideosGrid({
-  videos, removeVideo, idRoom, viewVideo, currentVideoId, name,
-}) {
-  const formatTitle = useTitle();
+const readSelector = ({ room, user }) => ({
+  videos: room.queue,
+  idRoom: room.id,
+  currentVideoId: room.currentVideo.id,
+  name: user.name,
+});
+
+function VideosGrid() {
+  const {
+    videos,
+    idRoom,
+    currentVideoId,
+    name,
+  } = useSelector(readSelector);
+
+  const dispatch = useDispatch();
 
   const handleRemoveVideo = (idVideo) => {
-    removeVideo({ idVideo, idRoom, name });
+    dispatch.room.removeVideo({
+      idVideo,
+      idRoom,
+      name,
+    });
   };
 
   const handleViewVideo = (idVideo) => {
-    viewVideo({ idVideo, idRoom });
+    dispatch.room.viewVideo({
+      idVideo,
+      idRoom,
+    });
   };
 
   return (
@@ -43,7 +60,7 @@ function VideosGrid({
               <img src={urlThumbnail} alt="thumbnail" />
             </div>
             <div className="meta">
-              <span className="title" title={title}>{formatTitle(title)}</span>
+              <span className="title">{stringFormat.truncateText(title)}</span>
               <div className="icons">
                 <FaPlay className="play" onClick={() => handleViewVideo(id)} />
                 <FiDelete className="remove" onClick={() => handleRemoveVideo(id)} />
@@ -55,16 +72,4 @@ function VideosGrid({
   );
 }
 
-const mapStateToProps = (state) => ({
-  videos: readQueue(state),
-  idRoom: readRoomName(state),
-  currentVideoId: readCurrentVideoId(state),
-  name: readName(state),
-});
-
-const mapDispatchToProps = (dispatch) => ({
-  removeVideo: (payload) => dispatch(removeVideo(payload)),
-  viewVideo: (payload) => dispatch(viewVideo(payload)),
-});
-
-export default connect(mapStateToProps, mapDispatchToProps)(VideosGrid);
+export default VideosGrid;
