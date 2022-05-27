@@ -8,7 +8,7 @@ function mapSuggestions(suggestions) {
   return suggestions.match(regexp).map((w) => w.substring(2, w.length - 1));
 }
 
-async function searchVideoSuggestions(req, res) {
+async function autocompleteYoutube(req, res) {
   const { q } = req.params;
   const response = await axios.get(`${URL_GOOGLE_SUGGEST}${q}`);
   const suggestions = mapSuggestions(await response.text());
@@ -36,13 +36,13 @@ function mapVideos(videos) {
   });
 }
 
-async function getVideos(req, res) {
+async function getYoutubeVideos(req, res) {
   const { q } = req.params;
   const videos = await youtube.search(q, { limit: 20 });
   return res.json(mapVideos(videos));
 }
 
 module.exports = {
-  searchVideoSuggestions,
-  getVideos,
+  autocompleteYoutube,
+  getYoutubeVideos,
 };

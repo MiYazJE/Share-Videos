@@ -1,21 +1,13 @@
 const router = require('express').Router();
-const userCtrl = require('../controllers/users.controller');
-const authCtrl = require('../controllers/auth.controller');
-const roomsCtrl = require('../controllers/rooms.controller');
-const playlistsCtrl = require('../controllers/playlists.controller');
-const { jwtMiddleware } = require('../middlewares/authMiddlewares');
 
-router.post('/auth/register', authCtrl.register);
-router.post('/auth/login', authCtrl.login);
-router.get('/auth/logout', authCtrl.logout);
-router.get('/auth/whoAmI', jwtMiddleware, authCtrl.whoAmI);
+const authRouter = require('../api/auth/auth.router');
+const playListsRouter = require('../api/playlists/playlists.router');
+const roomsRouter = require('../api/rooms/rooms.router');
+const videosRouter = require('../videos/videos.router');
 
-router.get('/playlists/getAll/', jwtMiddleware, playlistsCtrl.getAllUserPlaylists);
-
-router.get('/search/autocomplete/:q', userCtrl.searchVideoSuggestions);
-router.get('/youtube/:q', userCtrl.getVideos);
-
-router.post('/room/create', roomsCtrl.create);
-router.get('/room/isValid/:id', roomsCtrl.isValid);
+router.use('/auth', authRouter);
+router.use('/playlists/', playListsRouter);
+router.use('/rooms', roomsRouter);
+router.use('/videos', videosRouter);
 
 module.exports = router;

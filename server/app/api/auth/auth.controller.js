@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const Playlist = require('../models/playlists.model');
-const { encryptPassword } = require('../lib/auth.helpers');
-const User = require('../models/users.model');
+
+const Playlist = require('../../models/playlists.model');
+const { encryptPassword } = require('../../lib/auth.helpers');
+const User = require('../../models/users.model');
 
 const OPTS_COOKIE = {
   expires: new Date(Date.now() + 3600000 * 24 * 7),

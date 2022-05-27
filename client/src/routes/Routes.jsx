@@ -1,10 +1,9 @@
-import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import { SnackbarProvider } from 'notistack';
 import { useSelector } from 'react-redux';
 
 import Home from 'src/pages/Home';
-import Room from 'src/components/Room';
+import { Room } from 'src/pages/Room';
 import LoadingPage from 'src/components/LoadingPage';
 import Notifier from 'src/components/Notifier';
 
@@ -22,9 +21,9 @@ function Routes() {
               <Route path="/" exact>
                 <Home />
               </Route>
-              {/* <Route path="/room/:id">
+              <Route path="/room/:id">
                 <Room />
-              </Route> */}
+              </Route>
               <Route path="*">
                 <Home />
               </Route>
