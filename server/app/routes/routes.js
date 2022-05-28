@@ -3,7 +3,7 @@ const router = require('express').Router();
 const authRouter = require('../api/auth/auth.router');
 const playListsRouter = require('../api/playlists/playlists.router');
 const roomsRouter = require('../api/rooms/rooms.router');
-const videosRouter = require('../videos/videos.router');
+const videosRouter = require('../api/videos/videos.router');
 
 router.use('/auth', authRouter);
 router.use('/playlists/', playListsRouter);

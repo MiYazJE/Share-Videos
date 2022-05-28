@@ -1,0 +1,39 @@
+version: '2.2'
+
+services:
+  share-videos:
+    image: share-videos:local
+    build:
+      network: host
+      context: ./server
+      dockerfile: Dockerfile.dev
+    stdin_open: true
+    tty: true
+    volumes:
+      - "./server:/app"
+      - "~/.npmrc:/root/.npmrc:ro"
+    networks:
+      - backend
+    ports:
+      - "5000:3000"
+    restart: unless-stopped
+
+  mongo:
+    image: mongo:4.0
+    volumes:
+      - "mongo_data:/data/db"
+      - "mongo_configsvr:/data/configdb"
+    networks:
+      - backend
+    ports:
+      - "27018:27017"
+    restart: unless-stopped
+
+volumes:
+  mongo_data:
+  mongo_configsvr:
+
+
+networks:
+  backend:
+    driver: bridge

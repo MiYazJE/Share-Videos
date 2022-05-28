@@ -1,4 +1,3 @@
-const axios = require('axios');
 const youtube = require('youtube-sr');
 
 const URL_GOOGLE_SUGGEST = 'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=es&q=';
@@ -10,9 +9,10 @@ function mapSuggestions(suggestions) {
 
 async function autocompleteYoutube(req, res) {
   const { q } = req.params;
-  const response = await axios.get(`${URL_GOOGLE_SUGGEST}${q}`);
-  const suggestions = mapSuggestions(await response.text());
-  res.json([...suggestions]);
+  const response = await fetch(`${URL_GOOGLE_SUGGEST}${q}`);
+  const suggestions = await response.text();
+  const sanitizedSuggestions = mapSuggestions(suggestions);
+  res.json([...sanitizedSuggestions]);
 }
 
 function mapVideos(videos) {

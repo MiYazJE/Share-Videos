@@ -1,0 +1,10 @@
+FROM node:18-alpine
+
+RUN apk add --no-cache tzdata
+ENV TZ Europe/Madrid
+
+WORKDIR /app
+
+EXPOSE 5000
+
+CMD ["npm", "run", "dev"]
