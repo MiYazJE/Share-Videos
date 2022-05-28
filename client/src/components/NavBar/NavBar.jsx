@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import AppBar from '@material-ui/core/AppBar';
-import Typography from '@material-ui/core/Typography';
+import { Link, useHistory } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useSelector } from 'react-redux';
 import { styled } from '@material-ui/core';
-import { useHistory } from 'react-router-dom';
+import styledComponents from 'styled-components';
 
 import AutoCompleteSearch from './AutoCompleteSearch/AutoCompleteSearch';
 import AuthenticationNav from './AuthenticationNav/AuthenticationNav';
@@ -27,6 +27,15 @@ const StyledWrapAutoComplete = styled('div')({
   padding: '10px',
 });
 
+const StyledLink = styledComponents(Link)`
+  color: white;
+  font-size: 30px;
+  text-decoration: none;
+  &:hover {
+    text-decoration: none;
+  }
+`;
+
 // TODO
 const readSelectors = () => ({
   loadingVideos: false,
@@ -39,9 +48,9 @@ function NavBar({ openLogin, openRegister }) {
 
   return (
     <StyledAppBar position="sticky">
-      <Typography variant="h4" align="center" noWrap>
+      <StyledLink to="/">
         Share Videos
-      </Typography>
+      </StyledLink>
       {showSearchBar ? (
         <StyledWrapAutoComplete>
           <AutoCompleteSearch />

@@ -2,9 +2,10 @@ import { useParams } from 'react-router-dom';
 import Skeleton from '@material-ui/lab/Skeleton';
 import Box from '@material-ui/core/Box';
 import Typography from '@material-ui/core/Typography';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 
 import { stringFormat } from 'src/utils';
+import { useSocketEvents } from 'src/context/socketEvents';
 
 import './resultVideos.scss';
 
@@ -31,10 +32,10 @@ const getSekeletonVideos = () => Array(20).fill().map((_, i) => (
 const readSelector = ({ room, user, loading }) => ({
   name: user.name,
   videos: room.videos,
-  loadingVideos: loading.room.getVideos,
+  loadingVideos: loading.effects.room.getVideos,
 });
 
-function Video({ video }) {
+function Video({ video, onClick }) {
   const {
     title,
     urlThumbnail,
@@ -43,8 +44,6 @@ function Video({ video }) {
     uploadedAt,
   } = video;
 
-  const dispatch = useDispatch();
-
   const metaInfoString = `${stringFormat.formatViews(views)} ${uploadedAt ? `| ${uploadedAt}` : ''}`;
 
   return (
@@ -52,7 +51,7 @@ function Video({ video }) {
       <div className="top" title="Add video">
         <img
           alt="Thumbnail"
-          onClick={() => dispatch.room.addVideo(video)}
+          onClick={() => onClick(video)}
           src={urlThumbnail}
         />
         <div className="duration">{duration}</div>
@@ -75,10 +74,10 @@ function ResultVideos({ refVideoResults }) {
   } = useSelector(readSelector);
 
   const { id } = useParams();
-  const dispatch = useDispatch();
+  const socketEvents = useSocketEvents();
 
   const handleAddVideo = (video) => {
-    dispatch.room.enqueueVideo({
+    socketEvents.enqueueVideo({
       video,
       id,
       name,
@@ -94,8 +93,8 @@ function ResultVideos({ refVideoResults }) {
             .map((video) => (
               <Video
                 key={video.url}
-                addVideo={handleAddVideo}
                 video={video}
+                onClick={handleAddVideo}
               />
             ))
         ) : null}

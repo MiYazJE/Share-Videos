@@ -13,7 +13,7 @@ const useRoom = ({ id }) => {
     if (!id) return;
     async function check() {
       setLoading(true);
-      const isValidRoom = await http.get(`${API_ROUTES.ROOM.BASE}/${id}`);
+      const isValidRoom = await http.get(`${API_ROUTES.ROOM.BASE}/${id}/isValid`);
       setLoading(false);
       setIsValidRoom(isValidRoom);
     }

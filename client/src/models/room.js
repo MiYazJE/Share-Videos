@@ -1,15 +1,5 @@
-import { WS_MESSAGES, API_ROUTES } from 'src/enums';
+import { API_ROUTES } from 'src/enums';
 import { HttpInstance } from 'src/utils';
-
-const {
-  WS_VIEW_VIDEO,
-  WS_JOIN_ROOM,
-  WS_ADD_VIDEO,
-  WS_REMOVE_VIDEO,
-  WS_SEND_PLAYER_STATE,
-  WS_SEND_PROGRESS,
-  WS_SEND_MESSAGE,
-} = WS_MESSAGES;
 
 const http = new HttpInstance();
 
@@ -59,49 +49,6 @@ export default {
       dispatch.room.getSuggestedVideos(search);
       const videos = await http.get(`${API_ROUTES.VIDEOS.GET_VIDEOS}/${search}`);
       dispatch.room.SET_PROP({ videos });
-    },
-
-    joinRoom(payload) {
-      dispatch({
-        type: WS_JOIN_ROOM,
-        payload,
-      });
-    },
-    enqueueVideo(payload) {
-      dispatch({
-        type: WS_ADD_VIDEO,
-        payload,
-      });
-    },
-    removeVideo(payload) {
-      dispatch({
-        type: WS_REMOVE_VIDEO,
-        payload,
-      });
-    },
-    viewVideo(payload) {
-      dispatch({
-        type: WS_VIEW_VIDEO,
-        payload,
-      });
-    },
-    sendPlayerState(payload) {
-      dispatch({
-        type: WS_SEND_PLAYER_STATE,
-        payload,
-      });
-    },
-    sendProgress(payload) {
-      dispatch({
-        type: WS_SEND_PROGRESS,
-        payload,
-      });
-    },
-    sendMessage(payload) {
-      dispatch({
-        type: WS_SEND_MESSAGE,
-        payload,
-      });
     },
   }),
 };

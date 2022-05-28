@@ -4,6 +4,7 @@ import { ChakraProvider } from '@chakra-ui/react';
 
 import App from './App';
 import store from './store';
+import SocketEventsProvider from './context/socketEvents';
 
 const container = document.getElementById('root');
 const root = createRoot(container);
@@ -11,7 +12,9 @@ const root = createRoot(container);
 root.render(
   <ReduxProvider store={store}>
     <ChakraProvider>
-      <App />
+      <SocketEventsProvider>
+        <App />
+      </SocketEventsProvider>
     </ChakraProvider>
   </ReduxProvider>,
 );

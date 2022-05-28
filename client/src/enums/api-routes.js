@@ -6,8 +6,8 @@ export default {
     WHO_AM_I: '/auth/whoAmI',
   },
   ROOM: {
-    BASE: '/room',
-    CREATE_ROOM: '/room/create',
+    BASE: '/rooms',
+    CREATE_ROOM: '/rooms/create',
   },
   VIDEOS: {
     GET_VIDEOS: '/videos/youtube',

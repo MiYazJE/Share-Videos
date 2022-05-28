@@ -4,7 +4,7 @@ import { stringify } from 'qs';
 const DATA_BLOB_PDF = 'data:application/pdf;base64,';
 
 function initUrl() {
-  return '/api/v1';
+  return 'http://localhost:5000/api/v1';
 }
 
 function blobToBase64(file) {

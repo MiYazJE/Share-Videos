@@ -1,9 +1,10 @@
 import FlipMove from 'react-flip-move';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { FaPlay } from 'react-icons/fa';
 import { FiDelete } from 'react-icons/fi';
 
 import { stringFormat } from 'src/utils';
+import { useSocketEvents } from 'src/context/socketEvents';
 
 import './videosGrid.scss';
 
@@ -22,10 +23,10 @@ function VideosGrid() {
     name,
   } = useSelector(readSelector);
 
-  const dispatch = useDispatch();
+  const socketEvents = useSocketEvents();
 
   const handleRemoveVideo = (idVideo) => {
-    dispatch.room.removeVideo({
+    socketEvents.removeVideo({
       idVideo,
       idRoom,
       name,
@@ -33,7 +34,7 @@ function VideosGrid() {
   };
 
   const handleViewVideo = (idVideo) => {
-    dispatch.room.viewVideo({
+    socketEvents.viewVideo({
       idVideo,
       idRoom,
     });

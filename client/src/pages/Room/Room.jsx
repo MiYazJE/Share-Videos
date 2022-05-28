@@ -14,6 +14,7 @@ import MetaVideoInfo from 'src/components/Room/MetaVideoInfo';
 import useRoom from 'src/hooks/useRoom';
 
 import './room.scss';
+import { useSocketEvents } from 'src/context/socketEvents';
 
 const WIDTH_TO_RESIZE = 1300;
 
@@ -46,6 +47,7 @@ function Room() {
     currentVideoId,
   } = useSelector(readSelector);
 
+  const socketEvents = useSocketEvents();
   const dispatch = useDispatch();
   const refVideoResults = useRef();
   const refPlayer = useRef();
@@ -61,16 +63,16 @@ function Room() {
     if (id && !name) {
       setOpenDialog(true);
     } else {
-      dispatch.room.joinRoom({ id, name });
+      socketEvents.joinRoom({ id, name });
     }
-  }, [id, name, dispatch]);
+  }, [id, name, socketEvents]);
 
   useEffect(() => {
     if (seekVideo) {
       refPlayer.current.seekTo(progressVideo);
-      dispatch.room.setSeekVideo(false);
+      socketEvents.setSeekVideo(false);
     }
-  }, [seekVideo, progressVideo, dispatch]);
+  }, [seekVideo, progressVideo, socketEvents]);
 
   useEffect(() => {
     function onResize() {
@@ -97,14 +99,14 @@ function Room() {
 
   const onAcceptDialog = (nickname) => {
     if (nickname) {
-      dispatch.user.SET_NAME({ name: nickname });
+      dispatch.user.SET_NAME(nickname);
       setOpenDialog(false);
     }
   };
 
   const handleSendProgress = () => {
     if (name === host) {
-      dispatch.room.sendProgress({
+      socketEvents.sendProgress({
         progress: refPlayer.current.getCurrentTime(),
         idRoom,
         name,
@@ -114,14 +116,14 @@ function Room() {
 
   const handleOnPlay = () => {
     if (Math.abs(refPlayer.current.getCurrentTime() - progressVideo) > 1) {
-      dispatch.room.sendProgress({
+      socketEvents.sendProgress({
         progress: refPlayer.current.getCurrentTime(),
         idRoom,
         seekVideo: true,
         name,
       });
     }
-    dispatch.room.sendPlayerState({
+    socketEvents.sendPlayerState({
       state: 'play',
       idRoom,
       name,
@@ -129,7 +131,7 @@ function Room() {
   };
 
   const handleOnPause = () => {
-    dispatch.room.sendPlayerState({
+    socketEvents.sendPlayerState({
       state: 'pause',
       idRoom,
       name,
@@ -137,7 +139,7 @@ function Room() {
   };
 
   const handleOnEnded = () => {
-    dispatch.room.removeVideo({
+    socketEvents.removeVideo({
       idVideo: currentVideoId,
       idRoom,
     });

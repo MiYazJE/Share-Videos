@@ -1,10 +1,12 @@
 import { useState, useRef, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import TextField from '@material-ui/core/TextField';
 import Avatar from '@material-ui/core/Avatar';
 import Chip from '@material-ui/core/Chip';
 import SendIcon from '@material-ui/icons/Send';
 import IconButton from '@material-ui/core/IconButton';
+
+import { useSocketEvents } from 'src/context/socketEvents';
 
 import './usersGrid.scss';
 
@@ -52,7 +54,7 @@ function UsersGrid() {
     idRoom,
   } = useSelector(readSelector);
 
-  const dispatch = useDispatch();
+  const socketEvents = useSocketEvents();
   const refScroll = useRef(null);
 
   const scrollToBottom = () => {
@@ -64,7 +66,7 @@ function UsersGrid() {
   const handleSubmit = (e) => {
     e?.preventDefault?.();
     if (msg.trim()) {
-      dispatch.room.sendMessage({
+      socketEvents.sendMessage({
         name: me,
         msg,
         idRoom,
