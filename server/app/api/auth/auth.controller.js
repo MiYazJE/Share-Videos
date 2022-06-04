@@ -22,7 +22,7 @@ function createToken(payload) {
 function successLogin(req, res) {
   return (err, user) => {
     if (err || !user) {
-      return res.status(401).json({ msg: 'Password or email/nickname are incorrects' });
+      return res.status(401).json({ msg: 'Password or nickname are incorrects' });
     }
     const token = createToken({ id: user._id });
     res.cookie('jwt', token, OPTS_COOKIE);
@@ -35,29 +35,18 @@ function login(req, res) {
 }
 
 const register = async (req, res) => {
-  const { name, password, email } = req.body;
+  const { name, password } = req.body;
 
-  let userExists = await User.exists({ name });
+  const userExists = await User.exists({ name });
   if (userExists) {
     return res.json({
       error: true,
-      emailError: true,
-      msg: 'That email has been registered. Please, choose another.',
-    });
-  }
-
-  userExists = await User.exists({ email });
-  if (userExists) {
-    return res.json({
-      error: true,
-      nameError: true,
-      msg: 'That name has been registered. Please, choose another.',
+      msg: 'That nickname already exists. Please, choose another.',
     });
   }
 
   const user = new User({
     name,
-    email,
     password: await encryptPassword(password),
   });
 
@@ -66,8 +55,11 @@ const register = async (req, res) => {
     user: user._doc._id,
   });
 
-  await user.save();
-  await playlist.save();
+  await Promise.all([
+    user.save(),
+    playlist.save(),
+  ]);
+
   return res.json({ error: false, msg: 'You have been registered.' });
 };
 

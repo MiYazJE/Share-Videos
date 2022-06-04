@@ -9,7 +9,7 @@ passport.deserializeUser((user, done) => done(null, user));
 
 const PASSPORT_CONFIG = {
   LOCAL: {
-    usernameField: 'nameOrEmail',
+    usernameField: 'name',
     passwordField: 'password',
   },
   JWT: {
@@ -20,15 +20,13 @@ const PASSPORT_CONFIG = {
 
 passport.use(
   'local-login',
-  new LocalStrategy(PASSPORT_CONFIG.LOCAL, async (nameOrEmail, password, done) => {
-    const user = (await User.findOne({ name: nameOrEmail }))
-            || (await User.findOne({ email: nameOrEmail }));
+  new LocalStrategy(PASSPORT_CONFIG.LOCAL, async (name, password, done) => {
+    const user = (await User.findOne({ name }));
 
     if (!user) {
       return done(null, null, {
         error: true,
-        nameOrEmailError: true,
-        msg: `There isn't any user registered with ${nameOrEmail}.`,
+        msg: `User ${name} not exists.`,
       });
     }
 
@@ -52,7 +50,6 @@ passport.use(
     done(null, {
       id: parsedUser._id,
       name: parsedUser.name,
-      email: parsedUser.email,
     });
   }),
 );

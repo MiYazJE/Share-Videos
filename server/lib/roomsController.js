@@ -54,7 +54,7 @@ function roomsController(io) {
     io.to(id).emit(UPDATE_ROOM, { host: name, chat: room.chat, users: room.users });
 
     socket.to(id).emit(NOTIFY_MESSAGE, { msg: `${name.toUpperCase()} has joined!`, variant: 'success' });
-    socket.emit(NOTIFY_MESSAGE, { msg: `✅ You just joined to ${id}`, variant: 'success' });
+    socket.emit(NOTIFY_MESSAGE, { msg: `You just joined to ${id}`, variant: 'success' });
   }
 
   function addVideo({ video, id, name }, socket) {

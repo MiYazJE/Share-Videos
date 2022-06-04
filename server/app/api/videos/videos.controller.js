@@ -4,7 +4,10 @@ const URL_GOOGLE_SUGGEST = 'http://suggestqueries.google.com/complete/search?cli
 
 function mapSuggestions(suggestions) {
   const regexp = /\["[\w\s]+"/gi;
-  return suggestions.match(regexp).map((w) => w.substring(2, w.length - 1));
+  const suggestionsFiltered = suggestions
+    .match(regexp)
+    .map((w) => w.substring(2, w.length - 1));
+  return new Set(suggestionsFiltered).values();
 }
 
 async function autocompleteYoutube(req, res) {
