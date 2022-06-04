@@ -6,7 +6,7 @@ import Chip from '@material-ui/core/Chip';
 import SendIcon from '@material-ui/icons/Send';
 import IconButton from '@material-ui/core/IconButton';
 
-import { useSocketEvents } from 'src/context/socketEvents';
+import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
 
 import './usersGrid.scss';
 

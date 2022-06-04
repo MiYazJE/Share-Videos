@@ -3,20 +3,19 @@ import { useParams, useHistory } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactPlayer from 'react-player';
 import { useDispatch, useSelector } from 'react-redux';
+import { Container, VStack } from '@chakra-ui/react';
 
-import DialogName from 'src/components/Room/DialogName';
+import RoomNameModal from 'src/components/Room/RoomNameModal';
 import CustomTabs from 'src/components/Tabs';
-import NavBar from 'src/components/NavBar';
-import ResultVideos from 'src/components/ResultVideos';
 import Scroller from 'src/components/Scroller/Scroller';
 import MetaVideoInfo from 'src/components/Room/MetaVideoInfo';
 
 import useRoom from 'src/hooks/useRoom';
 
-import './room.scss';
-import { useSocketEvents } from 'src/context/socketEvents';
-
-const WIDTH_TO_RESIZE = 1300;
+import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
+import RoomActionsBar from 'src/components/Room/RoomActionsBar';
+import { WrapPlayer } from './Room.styles';
+import RoomModals from './modals';
 
 const readSelector = ({ room, user }) => ({
   urlVideo: room.currentVideo.url,
@@ -31,9 +30,7 @@ const readSelector = ({ room, user }) => ({
 });
 
 function Room() {
-  const [playerHeight, setPlayerHeight] = useState(window.innerWidth < 700 ? '35vh' : '70vh');
-  const [openDialog, setOpenDialog] = useState(false);
-  const [floatPlayer, setFLoatPlayer] = useState(false);
+  const [showNameModal, setShowNameModal] = useState(false);
 
   const {
     urlVideo,
@@ -49,7 +46,6 @@ function Room() {
 
   const socketEvents = useSocketEvents();
   const dispatch = useDispatch();
-  const refVideoResults = useRef();
   const refPlayer = useRef();
   const history = useHistory();
   const { id } = useParams();
@@ -61,7 +57,7 @@ function Room() {
 
   useEffect(() => {
     if (id && !name) {
-      setOpenDialog(true);
+      setShowNameModal(true);
     } else {
       socketEvents.joinRoom({ id, name });
     }
@@ -74,33 +70,12 @@ function Room() {
     }
   }, [seekVideo, progressVideo, socketEvents]);
 
-  useEffect(() => {
-    function onResize() {
-      setPlayerHeight(window.innerWidth < 700 ? '35vh' : '70vh');
-    }
-    function onScroll() {
-      setFLoatPlayer(window.innerWidth < WIDTH_TO_RESIZE && this.scrollY > 900);
-    }
-
-    window.addEventListener('resize', onResize);
-    window.addEventListener('scroll', onScroll);
-
-    return () => {
-      window.removeEventListener('resize', onResize);
-      window.removeEventListener('scroll', onScroll);
-    };
-  }, []);
-
-  const scrollTo = () => {
-    refVideoResults.current.scrollIntoView({ behavior: 'smooth' });
-  };
-
   const onCancelDialog = () => history.push('/');
 
   const onAcceptDialog = (nickname) => {
     if (nickname) {
       dispatch.user.SET_NAME(nickname);
-      setOpenDialog(false);
+      setShowNameModal(false);
     }
   };
 
@@ -146,52 +121,35 @@ function Room() {
   };
 
   return (
-    <main>
+    <VStack height="100vh" justifyContent="space-between" p={5}>
       {isLoading
         ? <CircularProgress style={{ position: 'absolute', top: '50%' }} />
-        : (
-          <div id="wrapVideoPlayer">
-            <NavBar scrollTo={scrollTo} />
-            <div className="reactPlayer">
-              <div
-                style={{
-                  height: playerHeight,
-                  width: '100%',
-                  display: floatPlayer ? 'block' : 'none',
-                }}
-              />
-              <div
-                className={`player ${floatPlayer ? 'floatPlayer' : ''}`}
-              >
-                <ReactPlayer
-                  ref={refPlayer}
-                  playing={isPlaying}
-                  onPlay={handleOnPlay}
-                  onPause={handleOnPause}
-                  onProgress={handleSendProgress}
-                  onEnded={handleOnEnded}
-                  width="100%"
-                  height={floatPlayer ? null : playerHeight}
-                  controls
-                  url={urlVideo}
-                />
-                {window.innerWidth > WIDTH_TO_RESIZE
-                  ? (
-                    <MetaVideoInfo />
-                  ) : null}
-              </div>
-              <div className="tabs">
-                <CustomTabs />
-              </div>
-            </div>
-            <ResultVideos refVideoResults={refVideoResults} />
-            {openDialog
-              ? <DialogName open={openDialog} onCancel={onCancelDialog} onAccept={onAcceptDialog} />
-              : null}
-            <Scroller />
-          </div>
-        )}
-    </main>
+        : null}
+
+      <Container width="100%" maxW="100%" p={0}>
+        <WrapPlayer alignItems="flex-start">
+          <ReactPlayer
+            ref={refPlayer}
+            playing={isPlaying}
+            onPlay={handleOnPlay}
+            onPause={handleOnPause}
+            onProgress={handleSendProgress}
+            onEnded={handleOnEnded}
+            width="100%"
+            height="700px"
+            controls
+            url={urlVideo}
+          />
+          <MetaVideoInfo />
+        </WrapPlayer>
+      </Container>
+      <RoomActionsBar />
+      <RoomModals
+        showNameModal={showNameModal}
+        onCloseNameModal={onCancelDialog}
+        onAcceptNameModal={onAcceptDialog}
+      />
+    </VStack>
   );
 }
 export default Room;

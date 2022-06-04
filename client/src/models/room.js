@@ -23,6 +23,7 @@ const INITIAL_STATE = {
     updatedAt: null,
   },
   chat: [],
+  avtiveModal: null,
 };
 
 export default {
@@ -46,8 +47,8 @@ export default {
       dispatch.room.SET_PROP({ suggestedVideos });
     },
     async getVideos(search) {
-      dispatch.room.getSuggestedVideos(search);
       const videos = await http.get(`${API_ROUTES.VIDEOS.GET_VIDEOS}/${search}`);
+      dispatch.room.getSuggestedVideos(search);
       dispatch.room.SET_PROP({ videos });
     },
   }),

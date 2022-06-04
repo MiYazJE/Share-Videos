@@ -1,0 +1,8 @@
+const ROOM_MODALS = {
+  CHAT: 'CHAT',
+  PLAYLIST: 'PLAYLIST',
+  PEOPLE: 'PEOPLE',
+  SEARCH: 'SEARCH',
+};
+
+export default ROOM_MODALS;

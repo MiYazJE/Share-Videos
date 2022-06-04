@@ -1,16 +1,24 @@
 import { useEffect } from 'react';
-import { useSnackbar } from 'notistack';
+import { useToast } from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
 
 const readNotification = ({ notifier }) => notifier.notification;
 
 function Notifier() {
-  const { enqueueSnackbar } = useSnackbar();
   const notification = useSelector(readNotification);
+  const toast = useToast({
+    isClosable: true,
+    position: 'top',
+  });
 
   useEffect(() => {
-    if (notification) enqueueSnackbar(notification.msg, { variant: notification.variant });
-  }, [notification, enqueueSnackbar]);
+    if (notification) {
+      toast({
+        title: notification.msg,
+        status: notification.variant,
+      });
+    }
+  }, [notification, toast]);
 
   return null;
 }

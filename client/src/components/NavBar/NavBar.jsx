@@ -1,22 +1,13 @@
 import { useState } from 'react';
-import AppBar from '@material-ui/core/AppBar';
 import { Link, useHistory } from 'react-router-dom';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import { useSelector } from 'react-redux';
 import { styled } from '@material-ui/core';
 import styledComponents from 'styled-components';
 
-import AutoCompleteSearch from './AutoCompleteSearch/AutoCompleteSearch';
+import { HStack } from '@chakra-ui/react';
+import AutoCompleteSearch from '../Room/AutoCompleteSearch';
 import AuthenticationNav from './AuthenticationNav/AuthenticationNav';
-
-const StyledAppBar = styled(AppBar)({
-  width: '100%',
-  display: 'flex',
-  justifyContent: 'space-between',
-  alignItems: 'center',
-  flexDirection: 'row',
-  padding: '10px 20px',
-});
 
 const StyledWrapAutoComplete = styled('div')({
   display: 'flex',
@@ -28,7 +19,8 @@ const StyledWrapAutoComplete = styled('div')({
 });
 
 const StyledLink = styledComponents(Link)`
-  color: white;
+  color: #385898;
+  font-weight: bold;
   font-size: 30px;
   text-decoration: none;
   &:hover {
@@ -36,9 +28,8 @@ const StyledLink = styledComponents(Link)`
   }
 `;
 
-// TODO
-const readSelectors = () => ({
-  loadingVideos: false,
+const readSelectors = ({ loading }) => ({
+  loadingVideos: loading.effects.room.getVideos,
 });
 
 function NavBar({ openLogin, openRegister }) {
@@ -47,7 +38,7 @@ function NavBar({ openLogin, openRegister }) {
   const [showSearchBar] = useState(history.location.pathname !== '/');
 
   return (
-    <StyledAppBar position="sticky">
+    <HStack width="100%" p={3} position="sticky" justifyContent="space-between">
       <StyledLink to="/">
         Share Videos
       </StyledLink>
@@ -57,7 +48,7 @@ function NavBar({ openLogin, openRegister }) {
           {loadingVideos ? <CircularProgress style={{ marginLeft: '30px', color: 'white' }} size={30} /> : null}
         </StyledWrapAutoComplete>
       ) : <AuthenticationNav openLogin={openLogin} openRegister={openRegister} />}
-    </StyledAppBar>
+    </HStack>
   );
 }
 

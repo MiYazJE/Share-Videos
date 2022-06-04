@@ -4,11 +4,14 @@ import { useDispatch, useSelector } from 'react-redux';
 
 import BoxDialog from 'src/components/Home/BoxDialog/BoxDialog';
 import NavBar from 'src/components/NavBar/NavBar';
+import Register from 'src/components/Register';
 import Login from 'src/components/Login';
+
 import './home.scss';
 
 const readSelectors = ({ loading }) => ({
-  isLoading: loading.effects.user.login,
+  loginIsLoading: loading.effects.user.login,
+  registerIsLoading: loading.effects.user.register,
   creatingRoom: loading.effects.room.createRoom,
 });
 
@@ -16,15 +19,29 @@ function Home() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
 
-  const { isLoading, creatingRoom } = useSelector(readSelectors);
+  const {
+    loginIsLoading,
+    registerIsLoading,
+    creatingRoom,
+  } = useSelector(readSelectors);
+
   const dispatch = useDispatch();
   const history = useHistory();
 
   const closeLoginModal = useCallback(() => setShowLoginModal(false), []);
+  const closeRegisterModal = useCallback(() => setShowRegisterModal(false), []);
 
   const handleCreateRoom = async ({ nickName }) => {
     const idRoom = await dispatch.room.createRoom(nickName);
     history.push(`/room/${idRoom}`);
+  };
+
+  const handleRegister = (payload) => {
+    const { name, password } = payload;
+    dispatch.user.register({
+      name,
+      password,
+    });
   };
 
   return (
@@ -34,18 +51,18 @@ function Home() {
         openRegister={() => setShowRegisterModal(true)}
       />
       <BoxDialog onCreateRoom={handleCreateRoom} isLoading={creatingRoom} />
-      {/* <Modal
-        open={modalStatus !== MODAL_STATUS.CLOSED}
-        onClose={closeModal}
-      >
-        {modalStatus === MODAL_STATUS.REGISTER ? <Register /> : null}
-      </Modal> */}
 
+      <Register
+        open={showRegisterModal}
+        onClose={closeRegisterModal}
+        onRegister={handleRegister}
+        loading={registerIsLoading}
+      />
       <Login
         open={showLoginModal}
         onClose={closeLoginModal}
         onLogin={dispatch.user.login}
-        loading={isLoading}
+        loading={loginIsLoading}
       />
     </div>
   );

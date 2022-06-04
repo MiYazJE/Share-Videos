@@ -13,10 +13,15 @@ export default {
   reducers: {
     SET_PROP: (state, payload) => ({ ...state, ...payload }),
     SET_NAME: (state, payload) => ({ ...state, name: payload }),
+    RESET: () => INITIAL_STATE,
   },
   effects: (dispatch) => ({
     async register(payload) {
-      const res = await http.post(API_ROUTES.AUTH.REGISTER, payload);
+      const { error, msg } = await http.post(API_ROUTES.AUTH.REGISTER, payload);
+      dispatch.notifier.ADD_NOTIFICATION({ msg, variant: error ? 'error' : 'success' });
+      if (!error) {
+        await dispatch.user.login(payload);
+      }
     },
     async login(payload) {
       try {
@@ -30,9 +35,10 @@ export default {
     },
     async logout() {
       await http.get(API_ROUTES.AUTH.LOGOUT);
+      dispatch.user.RESET();
     },
     async whoAmI() {
-      const res = await http.get(API_ROUTES.AUTH.WHO_AM_I);
+      const user = await http.get(API_ROUTES.AUTH.WHO_AM_I);
     },
   }),
 };

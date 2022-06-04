@@ -4,7 +4,7 @@ import { FaPlay } from 'react-icons/fa';
 import { FiDelete } from 'react-icons/fi';
 
 import { stringFormat } from 'src/utils';
-import { useSocketEvents } from 'src/context/socketEvents';
+import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
 
 import './videosGrid.scss';
 

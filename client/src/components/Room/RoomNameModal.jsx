@@ -12,7 +12,7 @@ const stylesContentDialog = {
   alignItems: 'center',
 };
 
-function DialogName({ open, onAccept, onCancel }) {
+function RoomNameModal({ open, onAccept, onCancel }) {
   const [nickname, setNickname] = useState(false);
 
   return (
@@ -45,4 +45,4 @@ function DialogName({ open, onAccept, onCancel }) {
   );
 }
 
-export default DialogName;
+export default RoomNameModal;

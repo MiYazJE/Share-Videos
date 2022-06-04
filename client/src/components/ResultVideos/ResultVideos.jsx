@@ -1,39 +1,43 @@
 import { useParams } from 'react-router-dom';
-import Skeleton from '@material-ui/lab/Skeleton';
-import Box from '@material-ui/core/Box';
-import Typography from '@material-ui/core/Typography';
 import { useSelector } from 'react-redux';
+import {
+  Box,
+  Grid,
+  IconButton,
+  Image,
+  Stack,
+  Text,
+  Tooltip,
+  VStack,
+  Skeleton,
+} from '@chakra-ui/react';
+import { MdPlaylistAdd } from 'react-icons/md';
+import { forwardRef } from 'react';
 
 import { stringFormat } from 'src/utils';
-import { useSocketEvents } from 'src/context/socketEvents';
-
-import './resultVideos.scss';
-
-const getSekeletonVideos = () => Array(20).fill().map((_, i) => (
-  <div key={i} style={{ width: '250px', margin: '10px' }}>
-    <Skeleton variant="rect" width="100%">
-      <div style={{ paddingTop: '50%' }} />
-    </Skeleton>
-    <Box display="flex" flexDirection="column" alignItems="center">
-      <Box width="100%">
-        <Skeleton width="100%">
-          <Typography>.</Typography>
-        </Skeleton>
-      </Box>
-      <Box width="100%">
-        <Skeleton width="100%">
-          <Typography>.</Typography>
-        </Skeleton>
-      </Box>
-    </Box>
-  </div>
-));
+import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
+import Scroller from 'src/components/Scroller';
+import { WrapAddButon, WrapDuration } from './ResultVideos.styles';
 
 const readSelector = ({ room, user, loading }) => ({
   name: user.name,
   videos: room.videos,
   loadingVideos: loading.effects.room.getVideos,
 });
+
+const getSekeletonVideos = () => Array(20).fill().map((_, i) => (
+  <Box key={i}>
+    <Grid height="100%" gridTemplateRows="150px 80px">
+      <Stack position="relative">
+        <Skeleton height="100%" />
+      </Stack>
+      <VStack height="100%" p={3} justifyContent="space-between" alignItems="flex-start">
+        <Skeleton height="30px" width="100%" />
+        <Skeleton height="10px" width="50%" />
+      </VStack>
+    </Grid>
+  </Box>
+));
 
 function Video({ video, onClick }) {
   const {
@@ -44,29 +48,48 @@ function Video({ video, onClick }) {
     uploadedAt,
   } = video;
 
-  const metaInfoString = `${stringFormat.formatViews(views)} ${uploadedAt ? `| ${uploadedAt}` : ''}`;
+  const metaInfoString = `${stringFormat.formatViews(views)} ${uploadedAt ? `• ${uploadedAt}` : ''}`;
 
   return (
-    <div className="video">
-      <div className="top" title="Add video">
-        <img
-          alt="Thumbnail"
-          onClick={() => onClick(video)}
-          src={urlThumbnail}
-        />
-        <div className="duration">{duration}</div>
-      </div>
-      <div className="bottom" title={title}>
-        <p className="title">{stringFormat.truncateText(title)}</p>
-        <div className="metaInfo">
-          <p>{metaInfoString}</p>
-        </div>
-      </div>
-    </div>
+    <Box position="relative" borderWidth="1px" borderRadius="lg" overflow="hidden">
+      <Grid height="100%" gridTemplateRows="1fr 1fr">
+        <Stack position="relative">
+          <Image
+            alt="Thumbnail"
+            src={urlThumbnail}
+            objectFit="cover"
+            width="100%"
+          />
+          <WrapDuration>
+            <Text fontSize="xs" letterSpacing="1px" color="white">
+              {duration}
+            </Text>
+          </WrapDuration>
+          <WrapAddButon>
+            <Tooltip label="Add to playlist">
+              <IconButton
+                fontSize="2xl"
+                display="flex"
+                alignItems="center"
+                variant="unstyled"
+                color="white"
+                background="rgba(0, 0, 0, 0.8)"
+                onClick={() => onClick(video)}
+                icon={<MdPlaylistAdd />}
+              />
+            </Tooltip>
+          </WrapAddButon>
+        </Stack>
+        <VStack height="100%" p={3} justifyContent="space-between" alignItems="flex-start">
+          <Text fontSize="md" fontWeight="bold">{title}</Text>
+          <Text fontSize="xs">{metaInfoString}</Text>
+        </VStack>
+      </Grid>
+    </Box>
   );
 }
 
-function ResultVideos({ refVideoResults }) {
+const ResultVideos = forwardRef((_, ref) => {
   const {
     name,
     loadingVideos,
@@ -85,7 +108,7 @@ function ResultVideos({ refVideoResults }) {
   };
 
   return (
-    <div ref={refVideoResults} className="videosContainer">
+    <Grid position="relative" gridTemplateColumns="1fr 1fr" gridAutoRows="300px" gap={6}>
       {loadingVideos ? getSekeletonVideos() : null}
       {videos.length && !loadingVideos
         ? (
@@ -98,8 +121,9 @@ function ResultVideos({ refVideoResults }) {
               />
             ))
         ) : null}
-    </div>
+      <Scroller ref={ref} />
+    </Grid>
   );
-}
+});
 
 export default ResultVideos;

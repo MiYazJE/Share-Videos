@@ -1,6 +1,13 @@
-import { useState } from 'react';
-import { Button, Menu, MenuItem } from '@material-ui/core';
 import { useDispatch, useSelector } from 'react-redux';
+import {
+  Button,
+  MenuButton,
+  Menu,
+  MenuList,
+  MenuItem,
+  ButtonGroup,
+} from '@chakra-ui/react';
+import { ChevronDownIcon } from '@chakra-ui/icons';
 
 const readSelectors = ({ user }) => ({
   isLogged: user.isLogged,
@@ -11,61 +18,44 @@ function AuthenticationNav({
   openLogin,
   openRegister,
 }) {
-  const [anchorEl, setAnchorEl] = useState(null);
   const dispatch = useDispatch();
   const { isLogged, name } = useSelector(readSelectors);
 
-  const handleClick = (e) => setAnchorEl(e.currentTarget);
-
-  const handleClose = () => setAnchorEl(null);
-
   return (
-    <div id="wrapLogin">
-      {isLogged
-        ? (
-          <div style={{ display: 'flex', alignItems: 'center' }}>
-            <h3 style={{ marginRight: '0px' }}>Welcome</h3>
-            <Button
-              aria-haspopup="true"
-              aria-controls="simple-menu"
-              onClick={handleClick}
-              size="small"
-              style={{
-                color: 'green', fontWeight: 'bold', marginTop: '13px', fontSize: '15px',
-              }}
-            >
-              {name}
-            </Button>
-            <Menu
-              id="simple-menu"
-              anchorEl={anchorEl}
-              keepMounted
-              open={Boolean(anchorEl)}
-              onClose={handleClose}
-              style={{ marginTop: '50px' }}
-            >
-              <MenuItem onClick={dispatch.user.logout}>Logout</MenuItem>
-            </Menu>
-          </div>
-        ) : (
-          <>
-            <Button
-              size="medium"
-              style={{ color: 'white' }}
-              onClick={openLogin}
-            >
-              LOGIN
-            </Button>
-            <Button
-              size="medium"
-              style={{ color: 'white' }}
-              onClick={openRegister}
-            >
-              REGISTER
-            </Button>
-          </>
-        )}
-    </div>
+    isLogged
+      ? (
+        <Menu>
+          <MenuButton
+            variant="outline"
+            as={Button}
+            rightIcon={<ChevronDownIcon />}
+          >
+            Welcome
+            {' '}
+            {name}
+          </MenuButton>
+          <MenuList>
+            <MenuItem nClick={dispatch.user.logout}>Logout</MenuItem>
+          </MenuList>
+        </Menu>
+      ) : (
+        <ButtonGroup spacing={2}>
+          <Button
+            variant="outline"
+            colorScheme="facebook"
+            onClick={openLogin}
+          >
+            LOGIN
+          </Button>
+          <Button
+            variant="solid"
+            colorScheme="facebook"
+            onClick={openRegister}
+          >
+            REGISTER
+          </Button>
+        </ButtonGroup>
+      )
   );
 }
 

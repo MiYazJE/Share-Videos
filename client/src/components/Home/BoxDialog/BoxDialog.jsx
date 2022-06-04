@@ -69,7 +69,7 @@ function BoxDialog({ onCreateRoom, isLoading }) {
                 Create room
               </Button>
               <Button colorScheme="facebook" variant="link" onClick={() => setOpenDialogJoinRoom(true)}>
-                Or join a room
+                Or join room
               </Button>
             </Flex>
           </VStack>

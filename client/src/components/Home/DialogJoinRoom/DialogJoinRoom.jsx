@@ -30,12 +30,13 @@ function DialogJoinRoom({
   const history = useHistory();
 
   useEffect(() => {
-    if (!idRoom) setErrorRoomId('Room is empty');
-    else if (!isValidRoom) setErrorRoomId(`Room ${idRoom} not exists`);
+    if (!idRoom) return;
+    if (!isValidRoom) setErrorRoomId('Room not exists');
   }, [isValidRoom, idRoom]);
 
   const handleJoinRoom = () => {
-    if (!idRoom || !isValidRoom) return;
+    if (!idRoom) return setErrorRoomId('Room is empty');
+    if (!isValidRoom) return;
 
     history.push(`/room/${idRoom}`);
     onClose();
@@ -61,7 +62,7 @@ function DialogJoinRoom({
               id="roomId"
               type="text"
               placeholder="Enter the room"
-              errorBorderColor={errorRoomId}
+              errorBorderColor="red.300"
               onChange={({ target }) => setIdRoom(target.value)}
             />
             <FormErrorMessage>

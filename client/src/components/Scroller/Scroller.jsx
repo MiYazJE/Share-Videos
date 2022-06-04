@@ -1,33 +1,39 @@
-import { useCallback, useEffect, useState } from 'react';
-import { FaArrowUp } from 'react-icons/fa';
-import './scroller.scss';
+import {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+import { IconButton } from '@chakra-ui/react';
+import { MdArrowUpward } from 'react-icons/md';
 
-function Scroller() {
+const Scroller = forwardRef((_, ref) => {
   const [show, setShow] = useState(false);
 
   const toggleShow = useCallback(() => {
-    setShow(window.pageYOffset >= 300);
-  }, []);
+    setShow(ref.current.scrollTop >= 300);
+  }, [ref]);
 
   useEffect(() => {
-    window.addEventListener('scroll', toggleShow);
-    return () => window.removeEventListener('scroll', toggleShow);
-  }, [toggleShow]);
+    ref.current.addEventListener('scroll', toggleShow);
+    return () => ref.current.removeEventListener('scroll', toggleShow);
+  }, [ref, toggleShow]);
 
   return (
-    <div
-      className="wrapScroller"
-      style={{ opacity: show ? 1 : 0 }}
-      onClick={
-        () => window.scrollTo({
+    show ? (
+      <IconButton
+        colorScheme="facebook"
+        position="fixed"
+        bottom={1}
+        right={3}
+        onClick={() => ref.current?.scrollTo?.({
           top: 0,
           behavior: 'smooth',
-        })
-      }
-    >
-      <FaArrowUp className="arrow" size={25} />
-    </div>
+        })}
+        icon={<MdArrowUpward size={25} />}
+      />
+    ) : null
   );
-}
+});
 
 export default Scroller;

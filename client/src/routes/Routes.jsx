@@ -1,5 +1,4 @@
 import { Switch, Route } from 'react-router-dom';
-import { SnackbarProvider } from 'notistack';
 import { useSelector } from 'react-redux';
 
 import Home from 'src/pages/Home';
@@ -13,23 +12,21 @@ function Routes() {
   const loadingUserData = useSelector(isLoadingUser);
   return (
     <div id="app">
-      <SnackbarProvider maxSnack={3}>
-        <Notifier />
-        {loadingUserData ? <LoadingPage />
-          : (
-            <Switch>
-              <Route path="/" exact>
-                <Home />
-              </Route>
-              <Route path="/room/:id">
-                <Room />
-              </Route>
-              <Route path="*">
-                <Home />
-              </Route>
-            </Switch>
-          )}
-      </SnackbarProvider>
+      <Notifier />
+      {loadingUserData ? <LoadingPage />
+        : (
+          <Switch>
+            <Route path="/" exact>
+              <Home />
+            </Route>
+            <Route path="/room/:id">
+              <Room />
+            </Route>
+            <Route path="*">
+              <Home />
+            </Route>
+          </Switch>
+        )}
     </div>
   );
 }
