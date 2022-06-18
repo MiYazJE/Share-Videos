@@ -15,8 +15,9 @@ const Scroller = forwardRef((_, ref) => {
   }, [ref]);
 
   useEffect(() => {
-    ref.current.addEventListener('scroll', toggleShow);
-    return () => ref.current.removeEventListener('scroll', toggleShow);
+    const { current } = ref;
+    current.addEventListener('scroll', toggleShow);
+    return () => current.removeEventListener('scroll', toggleShow);
   }, [ref, toggleShow]);
 
   return (

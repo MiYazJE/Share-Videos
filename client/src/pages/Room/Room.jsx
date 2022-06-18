@@ -5,15 +5,11 @@ import ReactPlayer from 'react-player';
 import { useDispatch, useSelector } from 'react-redux';
 import { Container, VStack } from '@chakra-ui/react';
 
-import RoomNameModal from 'src/components/Room/RoomNameModal';
-import CustomTabs from 'src/components/Tabs';
-import Scroller from 'src/components/Scroller/Scroller';
 import MetaVideoInfo from 'src/components/Room/MetaVideoInfo';
-
 import useRoom from 'src/hooks/useRoom';
-
 import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
 import RoomActionsBar from 'src/components/Room/RoomActionsBar';
+import { VIDEOS } from 'src/enums';
 import { WrapPlayer } from './Room.styles';
 import RoomModals from './modals';
 
@@ -27,6 +23,7 @@ const readSelector = ({ room, user }) => ({
   seekVideo: room.seekVideo,
   progressVideo: room.progressVideo,
   currentVideoId: room.currentVideo.id,
+  isLogged: user.isLogged,
 });
 
 function Room() {
@@ -42,6 +39,7 @@ function Room() {
     progressVideo,
     seekVideo,
     currentVideoId,
+    isLogged,
   } = useSelector(readSelector);
 
   const socketEvents = useSocketEvents();
@@ -56,19 +54,25 @@ function Room() {
   }, [isValidRoom, history]);
 
   useEffect(() => {
-    if (id && !name) {
-      setShowNameModal(true);
-    } else {
-      socketEvents.joinRoom({ id, name });
+    if (!name) {
+      return setShowNameModal(true);
     }
-  }, [id, name, socketEvents]);
+    socketEvents.joinRoom({ id, name, isLogged });
+    setShowNameModal(false);
+  }, [id, name, isLogged, socketEvents]);
 
   useEffect(() => {
-    if (seekVideo) {
+    if (
+      seekVideo
+      && Math.abs(
+        refPlayer.current.getCurrentTime() - progressVideo,
+      ) > VIDEOS.MAXIMUM_TIME_GAP_TO_SEEK
+    ) {
       refPlayer.current.seekTo(progressVideo);
-      socketEvents.setSeekVideo(false);
+      dispatch.room.SET_PROP({ seekVideo: false });
     }
-  }, [seekVideo, progressVideo, socketEvents]);
+    if (seekVideo) dispatch.room.SET_PROP({ seekVideo: false });
+  }, [seekVideo, progressVideo, dispatch]);
 
   const onCancelDialog = () => history.push('/');
 
@@ -85,21 +89,21 @@ function Room() {
         progress: refPlayer.current.getCurrentTime(),
         idRoom,
         name,
+        seekVideo: Math.abs(
+          progressVideo - refPlayer.current.getCurrentTime(),
+        ) > VIDEOS.MAXIMUM_TIME_GAP_TO_SEEK,
       });
     }
   };
 
   const handleOnPlay = () => {
-    if (Math.abs(refPlayer.current.getCurrentTime() - progressVideo) > 1) {
-      socketEvents.sendProgress({
-        progress: refPlayer.current.getCurrentTime(),
-        idRoom,
-        seekVideo: true,
-        name,
-      });
-    }
+    socketEvents.sendProgress({
+      progress: refPlayer.current.getCurrentTime(),
+      idRoom,
+      name,
+    });
     socketEvents.sendPlayerState({
-      state: 'play',
+      state: VIDEOS.STATE.PLAY,
       idRoom,
       name,
     });
@@ -107,7 +111,7 @@ function Room() {
 
   const handleOnPause = () => {
     socketEvents.sendPlayerState({
-      state: 'pause',
+      state: VIDEOS.STATE.PAUSE,
       idRoom,
       name,
     });

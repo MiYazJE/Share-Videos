@@ -1,9 +1,9 @@
 const MAX_LENGTH_FOR_TRUNATE = 60;
 const ONE_MILLION = 1000000;
 
-function truncateText(text = '') {
-  if (text <= MAX_LENGTH_FOR_TRUNATE) return text;
-  return `${text.substring(0, MAX_LENGTH_FOR_TRUNATE)}...`;
+function truncateText(text = '', maxLength = MAX_LENGTH_FOR_TRUNATE) {
+  if (text <= maxLength) return text;
+  return `${text.substring(0, maxLength)}...`;
 }
 
 function numberToString(num = 0) {

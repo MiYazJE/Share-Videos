@@ -10,19 +10,14 @@ const useVideoMetadata = () => {
   const [viewsFormatted, setViewsFormatted] = useState('');
 
   const formatViews = useCallback(() => {
-    if (!currentVideo?.views === null
-      || currentVideo?.views === undefined
-    ) {
-      return;
-    }
-
+    const views = currentVideo?.views || 0;
     setViewsFormatted(
-      stringFormat.formatViews(currentVideo.views),
+      stringFormat.formatViews(views),
     );
   }, [currentVideo]);
 
   useEffect(() => {
-    setViewsFormatted();
+    formatViews();
   }, [formatViews]);
 
   return {

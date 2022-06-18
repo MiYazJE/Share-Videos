@@ -8,7 +8,7 @@ import {
 import { useDispatch } from 'react-redux';
 import io from 'socket.io-client';
 
-import { WS_MESSAGES } from 'src/enums';
+import { WS_MESSAGES, VIDEOS } from 'src/enums';
 
 const {
   WS_VIEW_VIDEO,
@@ -41,9 +41,8 @@ function SocketEventsProvider({ children }) {
   useEffect(() => {
     if (!socket) return;
 
-    socket.on(WS_UPDATE_ROOM, (room) => dispatch.room.SET_PROP(room));
+    socket.on(WS_UPDATE_ROOM, (room) => dispatch.room.SET_PROP({ ...room }));
     socket.on(WS_UPDATE_CHAT, (chat) => dispatch.room.SET_PROP({ chat }));
-    socket.on(WS_VIEW_VIDEO, (payload) => dispatch.room.SET_PROP({ ...payload, isPlaying: true }));
     socket.on(
       WS_NOTIFY_MESSAGE,
       (notification) => dispatch.notifier.ADD_NOTIFICATION(notification),
@@ -58,6 +57,8 @@ function SocketEventsProvider({ children }) {
     sendPlayerState: (payload) => socket.emit(WS_SEND_PLAYER_STATE, payload),
     sendProgress: (payload) => socket.emit(WS_SEND_PROGRESS, payload),
     sendMessage: (payload) => socket.emit(WS_SEND_MESSAGE, payload),
+    pauseVideo:
+    (idRoom) => socket.emit(WS_SEND_PLAYER_STATE, { idRoom, state: VIDEOS.STATE.PAUSE }),
   }), [socket]);
 
   return (

@@ -3,7 +3,6 @@ import { useSelector } from 'react-redux';
 
 import Home from 'src/pages/Home';
 import { Room } from 'src/pages/Room';
-import LoadingPage from 'src/components/LoadingPage';
 import Notifier from 'src/components/Notifier';
 
 const isLoadingUser = ({ user }) => user.loadingUser;
@@ -13,7 +12,7 @@ function Routes() {
   return (
     <div id="app">
       <Notifier />
-      {loadingUserData ? <LoadingPage />
+      {loadingUserData ? (<div>Loading...</div>)
         : (
           <Switch>
             <Route path="/" exact>

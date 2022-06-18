@@ -1,47 +1,84 @@
-import { useState } from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
+import {
+  Button,
+  Modal,
+  Input,
+  ModalOverlay,
+  ModalFooter,
+  ModalHeader,
+  ModalContent,
+  ModalCloseButton,
+  VStack,
+  FormLabel,
+  FormControl,
+  FormErrorMessage,
+} from '@chakra-ui/react';
+import * as Yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm } from 'react-hook-form';
 
-const stylesContentDialog = {
-  display: 'flex',
-  justifyContent: 'center',
-  flexDirection: 'column',
-  alignItems: 'center',
-};
+const schema = Yup.object().shape({
+  name: Yup.string().required('Nickname is empty'),
+});
 
-function RoomNameModal({ open, onAccept, onCancel }) {
-  const [nickname, setNickname] = useState(false);
+function RoomNameModal({
+  open,
+  onAccept,
+  onCancel,
+}) {
+  const {
+    handleSubmit,
+    register,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(schema),
+  });
+
+  const onSubmit = (data) => {
+    onAccept(data.name);
+  };
 
   return (
-    <Dialog
-      disableBackdropClick
-      disableEscapeKeyDown
-      open={open}
-      aria-labelledby="form-dialog-title"
-      onKeyDown={({ key }) => key === 'Enter' && onAccept(nickname)}
+    <Modal
+      isOpen={open}
+      onClose={onCancel}
+      size="md"
+      isCentered
     >
-      <DialogContent style={stylesContentDialog}>
-        <TextField
-          autoFocus
-          margin="dense"
-          id="name"
-          label="nickname"
-          type="name"
-          onChange={({ target }) => setNickname(target.value)}
-        />
-      </DialogContent>
-      <DialogActions>
-        <Button size="small" onClick={onCancel} color="secondary" variant="contained">
-          CANCEL
-        </Button>
-        <Button size="small" onClick={() => onAccept(nickname)} color="primary" variant="contained">
-          ACCEPT
-        </Button>
-      </DialogActions>
-    </Dialog>
+      <ModalOverlay />
+
+      <ModalContent>
+        <ModalHeader>Enter your nickname</ModalHeader>
+        <ModalCloseButton />
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <VStack p={6}>
+            <FormControl isInvalid={errors.name}>
+              <FormLabel htmlFor="name">Nickname</FormLabel>
+              <Input
+                autoFocus
+                errorBorderColor="red.300"
+                placeholder="Enter your nickname"
+                {...register('name')}
+              />
+              <FormErrorMessage>
+                {errors.name && errors.name.message}
+              </FormErrorMessage>
+            </FormControl>
+          </VStack>
+
+          <ModalFooter>
+            <Button variant="ghost" mr={3} onClick={onCancel}>
+              Exit
+            </Button>
+            <Button
+              colorScheme="facebook"
+              type="submit"
+            >
+              Join
+            </Button>
+          </ModalFooter>
+        </form>
+      </ModalContent>
+    </Modal>
   );
 }
 

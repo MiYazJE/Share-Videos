@@ -1,10 +1,15 @@
 import axios from 'axios';
 import { stringify } from 'qs';
+import tokenStorage from './token-storage';
 
 const DATA_BLOB_PDF = 'data:application/pdf;base64,';
 
 function initUrl() {
   return 'http://localhost:5000/api/v1';
+}
+
+function getAuth() {
+  return tokenStorage.extractToken(tokenStorage.JWT_TOKEN);
 }
 
 function blobToBase64(file) {
@@ -36,7 +41,13 @@ class HttpInstance {
     );
 
     this.instance.interceptors.request.use(
-      (config) => config,
+      (config) => ({
+        ...config,
+        headers: {
+          ...config.headers,
+          Authorization: getAuth(),
+        },
+      }),
       (error) => Promise.reject(error),
     );
   }

@@ -6,12 +6,15 @@ import {
   MenuList,
   MenuItem,
   ButtonGroup,
+  Avatar,
+  Spinner,
 } from '@chakra-ui/react';
-import { ChevronDownIcon } from '@chakra-ui/icons';
 
-const readSelectors = ({ user }) => ({
+const readSelectors = ({ user, loading }) => ({
   isLogged: user.isLogged,
   name: user.name,
+  avatarBase64: user.avatarBase64,
+  loadingAuth: loading.effects.user.whoAmI || loading.effects.user.login,
 });
 
 function AuthenticationNav({
@@ -19,7 +22,14 @@ function AuthenticationNav({
   openRegister,
 }) {
   const dispatch = useDispatch();
-  const { isLogged, name } = useSelector(readSelectors);
+  const {
+    isLogged,
+    name,
+    avatarBase64,
+    loadingAuth,
+  } = useSelector(readSelectors);
+
+  if (loadingAuth) return <Spinner />;
 
   return (
     isLogged
@@ -28,14 +38,16 @@ function AuthenticationNav({
           <MenuButton
             variant="outline"
             as={Button}
-            rightIcon={<ChevronDownIcon />}
+            rightIcon={(
+              <Avatar size="sm" name={name} src={avatarBase64} />
+            )}
           >
             Welcome
             {' '}
             {name}
           </MenuButton>
           <MenuList>
-            <MenuItem nClick={dispatch.user.logout}>Logout</MenuItem>
+            <MenuItem onClick={dispatch.user.logout}>Logout</MenuItem>
           </MenuList>
         </Menu>
       ) : (

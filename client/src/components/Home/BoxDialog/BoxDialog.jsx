@@ -8,13 +8,20 @@ import {
   Container,
   FormErrorMessage,
   FormControl,
+  FormLabel,
 } from '@chakra-ui/react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
+import { useSelector } from 'react-redux';
 import { yupResolver } from '@hookform/resolvers/yup';
 
 import DialogJoinRoom from 'src/components/Home/DialogJoinRoom/DialogJoinRoom';
+
+const readUser = ({ user }) => ({
+  name: user.name,
+  isLogged: user.isLogged,
+});
 
 const yupSchema = Yup.object().shape({
   nickName: Yup.string()
@@ -25,12 +32,24 @@ function BoxDialog({ onCreateRoom, isLoading }) {
   const [openDialogJoinRoom, setOpenDialogJoinRoom] = useState(false);
 
   const {
+    name,
+    isLogged,
+  } = useSelector(readUser);
+
+  const {
     handleSubmit,
-    formState: { errors },
     register,
+    formState: { errors },
+    setValue,
   } = useForm({
     resolver: yupResolver(yupSchema),
   });
+
+  useEffect(() => {
+    if (name) {
+      setValue('nickName', name);
+    }
+  }, [name, setValue]);
 
   return (
     <form onSubmit={handleSubmit(onCreateRoom)}>
@@ -51,10 +70,13 @@ function BoxDialog({ onCreateRoom, isLoading }) {
         <Container pt={35}>
           <VStack spacing={6} alignItems="flex-start">
             <FormControl isInvalid={errors.nickName}>
+              <FormLabel htmlFor="nickName">Nickname</FormLabel>
               <Input
                 placeholder="Enter your nickname"
                 errorBorderColor="red.300"
                 {...register('nickName')}
+                id="nickName"
+                isDisabled={isLogged}
               />
               <FormErrorMessage>
                 {errors.nickName && errors.nickName.message}

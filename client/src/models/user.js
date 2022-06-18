@@ -1,11 +1,14 @@
 import { HttpInstance } from 'src/utils';
 import { API_ROUTES } from 'src/enums';
+import tokenStorage from 'src/utils/token-storage';
 
 const http = new HttpInstance();
 
 const INITIAL_STATE = {
   isLogged: false,
   name: '',
+  avatarBase64: '',
+  id: null,
 };
 
 export default {
@@ -25,9 +28,15 @@ export default {
     },
     async login(payload) {
       try {
-        const { user } = await http.post(API_ROUTES.AUTH.LOGIN, payload);
+        const { user, token } = await http.post(API_ROUTES.AUTH.LOGIN, payload);
         dispatch.notifier.ADD_NOTIFICATION({ msg: 'Logged in successfully', variant: 'success' });
-        dispatch.user.SET_PROP({ name: user.name, isLogged: true });
+        tokenStorage.saveToken(tokenStorage.JWT_TOKEN, token);
+        dispatch.user.SET_PROP({
+          name: user.name,
+          avatarBase64: user.avatarBase64,
+          id: user.id,
+          isLogged: true,
+        });
       } catch (err) {
         const { msg } = err.response.data;
         dispatch.notifier.ADD_NOTIFICATION({ msg, variant: 'error' });
@@ -38,7 +47,13 @@ export default {
       dispatch.user.RESET();
     },
     async whoAmI() {
-      const user = await http.get(API_ROUTES.AUTH.WHO_AM_I);
+      const { user } = await http.get(API_ROUTES.AUTH.WHO_AM_I);
+      dispatch.user.SET_PROP({
+        name: user.name,
+        avatarBase64: user.avatarBase64,
+        id: user.id,
+        isLogged: true,
+      });
     },
   }),
 };

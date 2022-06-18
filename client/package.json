@@ -19,7 +19,6 @@
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.27.2",
-    "chakra-ui-autocomplete": "^1.4.5",
     "dotenv": "^8.2.0",
     "framer-motion": "^4.1.17",
     "qs": "^6.10.3",
@@ -31,10 +30,6 @@
     "react-player": "^2.6.0",
     "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
-    "react-toastify": "^6.0.8",
-    "redux": "^4.0.5",
-    "redux-devtools-extension": "^2.13.8",
-    "redux-thunk": "^2.3.0",
     "socket.io-client": "^2.3.0",
     "styled-components": "^5.2.1",
     "yup": "^0.32.11"

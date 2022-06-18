@@ -4,9 +4,6 @@ import { useDispatch } from 'react-redux';
 
 import Routes from './routes/Routes';
 
-import 'react-toastify/dist/ReactToastify.css';
-import './app.scss';
-
 function App() {
   const dispatch = useDispatch();
   useEffect(() => {
