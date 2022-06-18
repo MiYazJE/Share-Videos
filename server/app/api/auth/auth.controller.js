@@ -4,10 +4,12 @@ const passport = require('passport');
 const Playlist = require('../../models/playlists.model');
 const { encryptPassword } = require('../../lib/auth.helpers');
 const User = require('../../models/users.model');
+const usersBll = require('../users/users.bll');
+const generateAvatar = require('../../helpers/generateAvatar');
 
 const OPTS_COOKIE = {
   expires: new Date(Date.now() + 3600000 * 24 * 7),
-  secure: process.env.ENVIROMENT === 'production',
+  secure: true,
   httpOnly: true,
 };
 
@@ -24,9 +26,8 @@ function successLogin(req, res) {
     if (err || !user) {
       return res.status(401).json({ msg: 'Password or nickname are incorrects' });
     }
-    const token = createToken({ id: user._id });
-    res.cookie('jwt', token, OPTS_COOKIE);
-    return res.json({ user });
+    const token = `Bearer ${createToken({ id: user._id })}`;
+    return res.json({ user: usersBll.mapUser(user), token });
   };
 }
 
@@ -45,9 +46,13 @@ const register = async (req, res) => {
     });
   }
 
+  const avatarBase64 = generateAvatar(name);
+  const encryptedPassword = await encryptPassword(password);
+
   const user = new User({
     name,
-    password: await encryptPassword(password),
+    avatarBase64,
+    password: encryptedPassword,
   });
 
   const playlist = new Playlist({
@@ -65,20 +70,11 @@ const register = async (req, res) => {
 
 function whoAmI(req, res) {
   const { user } = req;
-  if (!user) return res.status(401).json({ auth: false });
-  res.cookie('jwt', req.cookies.jwt, OPTS_COOKIE);
-  return res.json({ auth: true, user });
-}
-
-function logout(req, res) {
-  req.session.destroy();
-  res.clearCookie('jwt');
-  res.json({ logOut: true });
+  return res.json({ auth: true, user: usersBll.mapUser(user) });
 }
 
 module.exports = {
   login,
   register,
   whoAmI,
-  logout,
 };

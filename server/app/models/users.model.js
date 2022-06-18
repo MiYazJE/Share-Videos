@@ -10,6 +10,10 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: true,
   },
+  avatarBase64: {
+    type: String,
+    required: false,
+  },
 }, {
   timestamps: true,
 });

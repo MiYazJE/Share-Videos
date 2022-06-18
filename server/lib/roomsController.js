@@ -1,6 +1,11 @@
 const {
-  UPDATE_ROOM, NOTIFY_MESSAGE, UPDATE_CHAT,
+  UPDATE_ROOM,
+  NOTIFY_MESSAGE,
+  UPDATE_CHAT,
 } = require('./constants');
+
+const usersBll = require('../app/api/users/users.bll');
+const generateAvatar = require('../app/helpers/generateAvatar');
 
 const { generateId } = require('./utils/generateID');
 const { getTimeNow } = require('./utils/getDate');
@@ -31,14 +36,21 @@ function roomsController(io) {
     return room;
   }
 
-  function join(payload, socket) {
-    const { id, name } = payload;
+  async function join(payload, socket) {
+    const { id, name, isLogged } = payload;
     const room = rooms.get(id);
     if (!room) return;
 
     users.set(socket.id, payload);
-    room.users.push(name);
-    room.host = name;
+    if (!room.users.find((u) => u.name === name)) {
+      if (isLogged) {
+        const user = await usersBll.getUserByName(name);
+        room.users.push(user);
+      } else {
+        room.users.push({ name, avatarBase64: generateAvatar() });
+      }
+    }
+
     room.chat = [
       ...room.chat,
       {
@@ -51,7 +63,7 @@ function roomsController(io) {
 
     socket.join(id);
     socket.emit(UPDATE_ROOM, { ...room, seekVideo: room.isPlaying });
-    io.to(id).emit(UPDATE_ROOM, { host: name, chat: room.chat, users: room.users });
+    io.to(id).emit(UPDATE_ROOM, { chat: room.chat, users: room.users });
 
     socket.to(id).emit(NOTIFY_MESSAGE, { msg: `${name.toUpperCase()} has joined!`, variant: 'success' });
     socket.emit(NOTIFY_MESSAGE, { msg: `You just joined to ${id}`, variant: 'success' });
@@ -114,30 +126,29 @@ function roomsController(io) {
     io.to(idRoom).emit(UPDATE_ROOM, {
       currentVideo: room.currentVideo,
       progressVideo: room.progressVideo,
+      isPlaying: true,
     });
     io.to(idRoom).emit(NOTIFY_MESSAGE, { msg: `🎵 Playing '${video.title}'...`, variant: 'success' });
   }
 
-  function sendPlayerState({ state, idRoom, name }) {
+  function sendPlayerState({ state, idRoom }) {
     const room = rooms.get(idRoom);
     if (!room) return;
     room.isPlaying = state === 'play';
-    room.host = name;
     rooms.set(idRoom, room);
     io.to(idRoom).emit(UPDATE_ROOM, {
-      host: name,
       isPlaying: room.isPlaying,
     });
   }
 
   function sendProgress({
-    progress, idRoom, name, seekVideo,
+    progress, idRoom, seekVideo,
   }, socket) {
     const room = rooms.get(idRoom);
     if (!room) return;
     room.progressVideo = progress;
     rooms.set(idRoom, room);
-    io.to(idRoom).emit(UPDATE_ROOM, { progressVideo: progress, host: name });
+    io.to(idRoom).emit(UPDATE_ROOM, { progressVideo: progress });
     socket.to(idRoom).emit(UPDATE_ROOM, { seekVideo });
   }
 
@@ -162,7 +173,10 @@ function roomsController(io) {
 
     const room = rooms.get(user.id);
     users.delete(socket.id);
-    room.users = room.users.filter((u) => u !== user.name);
+    room.users = room.users.filter((u) => u.name !== user.name);
+    if (room.users.length) {
+      room.host = room.users[Math.floor(Math.random() * room.users.length)].name;
+    }
     rooms.set(user.id, room);
 
     io.to(user.id).emit(UPDATE_ROOM, { users: room.users });
