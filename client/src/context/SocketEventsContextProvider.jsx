@@ -23,7 +23,7 @@ const {
   WS_NOTIFY_MESSAGE,
 } = WS_MESSAGES;
 
-const isDev = process.env.NODE_ENV === 'development';
+const apiUrl = process.env.REACT_APP_API_URL;
 
 const SocketEventsContext = createContext({});
 
@@ -32,9 +32,7 @@ function SocketEventsProvider({ children }) {
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const socketConnection = isDev
-      ? io.connect('http://localhost:5000', { path: '/socket-io' })
-      : io.connect({ path: '/socket-io' });
+    const socketConnection = io.connect(apiUrl || 'http://localhost:5000', { path: '/socket-io' });
     setSocket(socketConnection);
   }, []);
 
