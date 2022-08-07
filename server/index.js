@@ -1,4 +1,3 @@
-const path = require('path');
 const express = require('express');
 const socketIO = require('socket.io');
 const passport = require('passport');
@@ -15,14 +14,8 @@ require('./app/lib/passport');
 const app = express();
 app.use(cors());
 
-const isDev = process.env.ENVIROMENT !== 'production';
-
 function useRoutes() {
   app.use('/', apiRoutes);
-  if (!isDev) {
-    app.use(express.static(path.resolve(__dirname, 'client/build')));
-    app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'client/build', 'index.html')));
-  }
 }
 
 function initPassport() {
