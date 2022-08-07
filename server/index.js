@@ -18,7 +18,7 @@ app.use(cors());
 const isDev = process.env.ENVIROMENT !== 'production';
 
 function useRoutes() {
-  app.use('/api/v1/', apiRoutes);
+  app.use('/api/', apiRoutes);
   if (!isDev) {
     app.use(express.static(path.resolve(__dirname, 'client/build')));
     app.get('*', (req, res) => res.sendFile(path.resolve(__dirname, 'client/build', 'index.html')));
