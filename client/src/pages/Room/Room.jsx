@@ -31,7 +31,6 @@ function Room() {
 
   const {
     urlVideo,
-    host,
     name,
     idRoom,
     isLoading,
