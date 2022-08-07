@@ -8,7 +8,11 @@ import {
   ButtonGroup,
   Avatar,
   Spinner,
+  IconButton,
+  HStack,
+  useColorMode,
 } from '@chakra-ui/react';
+import { MoonIcon, SunIcon } from '@chakra-ui/icons';
 
 const readSelectors = ({ user, loading }) => ({
   isLogged: user.isLogged,
@@ -22,6 +26,7 @@ function AuthenticationNav({
   openRegister,
 }) {
   const dispatch = useDispatch();
+  const { colorMode, toggleColorMode } = useColorMode();
   const {
     isLogged,
     name,
@@ -32,8 +37,8 @@ function AuthenticationNav({
   if (loadingAuth) return <Spinner />;
 
   return (
-    isLogged
-      ? (
+    <HStack>
+      {isLogged ? (
         <Menu>
           <MenuButton
             variant="outline"
@@ -67,7 +72,12 @@ function AuthenticationNav({
             REGISTER
           </Button>
         </ButtonGroup>
-      )
+      )}
+      <IconButton
+        onClick={toggleColorMode}
+        icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
+      />
+    </HStack>
   );
 }
 

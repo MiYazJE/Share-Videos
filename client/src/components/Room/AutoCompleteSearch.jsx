@@ -50,36 +50,37 @@ const readSelector = ({ room, loading }) => ({
   suggestedVideos: room.suggestedVideos,
   loadingVideos: loading.effects.getVideos,
   videos: room.videos,
+  search: room.videoSearch,
 });
 
-function AutoCompleteSearch({ title }) {
-  const [search, setSearch] = useState('');
+function AutoCompleteSearch({ title, onSearch, resetPagination }) {
   const [showList, setShowList] = useState(false);
-  const { suggestedVideos } = useSelector(readSelector);
+  const { suggestedVideos, search } = useSelector(readSelector);
   const dispatch = useDispatch();
 
   const debouncedSearch = useDebounce(search);
 
   useEffect(() => {
     dispatch.room.getSuggestedVideos(debouncedSearch);
-  }, [debouncedSearch, dispatch]);
+    resetPagination();
+  }, [debouncedSearch, dispatch, resetPagination]);
 
   const handleOnChangeInput = (event) => {
-    const search = event.target.value;
-    setSearch(search);
+    const videoSearch = event.target.value;
+    dispatch.room.SET_PROP({ videoSearch });
   };
 
   const handleOnKeyDown = (event) => {
     if (event.key === 'Enter' && search) {
-      dispatch.room.getVideos(search);
+      onSearch();
       setShowList(false);
     }
   };
 
-  const handleOnClickItem = (e, video) => {
+  const handleOnClickItem = (e, videoSearch) => {
     e.stopPropagation();
-    dispatch.room.getVideos(video);
-    setSearch(video);
+    dispatch.room.SET_PROP({ videoSearch });
+    dispatch.room.getVideos();
     setShowList(false);
   };
 

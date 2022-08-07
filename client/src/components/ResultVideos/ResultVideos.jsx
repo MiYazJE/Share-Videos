@@ -10,22 +10,25 @@ import {
   Tooltip,
   VStack,
   Skeleton,
+  HStack,
 } from '@chakra-ui/react';
 import { MdPlaylistAdd } from 'react-icons/md';
-import { forwardRef } from 'react';
+import { forwardRef, useCallback } from 'react';
 
 import { stringFormat } from 'src/utils';
 import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
 import Scroller from 'src/components/Scroller';
 import { WrapAddButon, WrapDuration } from './ResultVideos.styles';
+import Pagination from '../Pagination';
 
 const readSelector = ({ room, user, loading }) => ({
   name: user.name,
   videos: room.videos,
+  isLastPage: room.isLastPage,
   loadingVideos: loading.effects.room.getVideos,
 });
 
-const getSekeletonVideos = () => Array(20).fill().map((_, i) => (
+const getSekeletonVideos = (many = 20) => Array(many).fill().map((_, i) => (
   <Box key={i}>
     <Grid height="100%" gridTemplateRows="150px 80px">
       <Stack position="relative">
@@ -89,11 +92,19 @@ function Video({ video, onClick }) {
   );
 }
 
-const ResultVideos = forwardRef((_, ref) => {
+const ResultVideos = forwardRef((props, ref) => {
+  const {
+    loadingWithPagination,
+    getNextPage,
+    getPreviousPage,
+    page,
+  } = props;
+
   const {
     name,
     loadingVideos,
     videos,
+    isLastPage,
   } = useSelector(readSelector);
 
   const { id } = useParams();
@@ -107,22 +118,45 @@ const ResultVideos = forwardRef((_, ref) => {
     });
   };
 
+  const handleNextPage = () => {
+    getNextPage();
+    ref.current.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  const handlePrevPage = () => {
+    getPreviousPage();
+    ref.current.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
   return (
-    <Grid position="relative" gridTemplateColumns="1fr 1fr" gridAutoRows="300px" gap={6}>
-      {loadingVideos ? getSekeletonVideos() : null}
-      {videos.length && !loadingVideos
-        ? (
-          videos
-            .map((video) => (
-              <Video
-                key={video.url}
-                video={video}
-                onClick={handleAddVideo}
-              />
-            ))
-        ) : null}
-      <Scroller ref={ref} />
-    </Grid>
+    <>
+      <Grid position="relative" gridTemplateColumns="1fr 1fr" gridAutoRows="300px" gap={6}>
+        {(loadingVideos && !loadingWithPagination) ? getSekeletonVideos(20) : null}
+        {(videos.length && (!loadingVideos || loadingWithPagination))
+          ? (
+            videos
+              .map((video) => (
+                <Video
+                  key={video.url}
+                  video={video}
+                  onClick={handleAddVideo}
+                />
+              ))
+          ) : null}
+        {(loadingWithPagination && !loadingVideos) ? getSekeletonVideos(8) : null}
+        <Scroller ref={ref} />
+      </Grid>
+      {videos.length ? (
+        <HStack justifyContent="center" p={5}>
+          <Pagination
+            showNextPage={!isLastPage}
+            getNextPage={handleNextPage}
+            getPreviousPage={handlePrevPage}
+            page={page}
+          />
+        </HStack>
+      ) : null}
+    </>
   );
 });
 

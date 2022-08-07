@@ -24,6 +24,7 @@ const INITIAL_STATE = {
   },
   chat: [],
   avtiveModal: null,
+  videoSearch: '',
 };
 
 export default {
@@ -46,10 +47,13 @@ export default {
       const suggestedVideos = await http.get(`${API_ROUTES.VIDEOS.SUGGESTED_VIDEOS}/${query}`);
       dispatch.room.SET_PROP({ suggestedVideos });
     },
-    async getVideos(search) {
-      const videos = await http.get(`${API_ROUTES.VIDEOS.GET_VIDEOS}/${search}`);
-      dispatch.room.getSuggestedVideos(search);
-      dispatch.room.SET_PROP({ videos });
+    async getVideos({ limit = 10, offset = 0 } = {}, state) {
+      const { videoSearch } = state.room;
+      const { data: videos, isLastPage } = await http.get(`${API_ROUTES.VIDEOS.GET_VIDEOS}/${videoSearch}`, {
+        params: { limit, offset },
+      });
+      dispatch.room.getSuggestedVideos(videoSearch);
+      dispatch.room.SET_PROP({ videos, isLastPage });
     },
   }),
 };
