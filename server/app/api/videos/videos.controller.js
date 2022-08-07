@@ -41,8 +41,19 @@ function mapVideos(videos) {
 
 async function getYoutubeVideos(req, res) {
   const { q } = req.params;
-  const videos = await youtube.search(q, { limit: 20 });
-  return res.json(mapVideos(videos));
+  const { offset = 0, limit = 10 } = req.query;
+
+  const limitSearch = +offset + +limit;
+  const videos = await youtube.search(q, { limit: limitSearch + 1 });
+  const isLastPage = videos.length <= limitSearch;
+
+  const paginatedVideos = videos.slice(offset, offset + limit);
+  const data = mapVideos(paginatedVideos);
+
+  return res.json({
+    data,
+    isLastPage,
+  });
 }
 
 module.exports = {

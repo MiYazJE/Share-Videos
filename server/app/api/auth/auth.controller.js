@@ -7,12 +7,6 @@ const User = require('../../models/users.model');
 const usersBll = require('../users/users.bll');
 const generateAvatar = require('../../helpers/generateAvatar');
 
-const OPTS_COOKIE = {
-  expires: new Date(Date.now() + 3600000 * 24 * 7),
-  secure: true,
-  httpOnly: true,
-};
-
 const DEFAULT_PLAYLIST_TITLE = 'Default Playlist';
 
 function createToken(payload) {
