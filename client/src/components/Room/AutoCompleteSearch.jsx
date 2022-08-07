@@ -1,6 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import {
+  Button,
   FormControl,
   FormLabel,
   HStack,
@@ -13,6 +14,7 @@ import {
 import styled from 'styled-components';
 
 import useDebounce from 'src/hooks/useDebounce';
+import { ROOM_MODALS } from 'src/enums';
 
 const WrapAutocomplete = styled(HStack)`
   position: relative;
@@ -46,16 +48,15 @@ const StyledItem = styled(ListItem)`
   }
 `;
 
-const readSelector = ({ room, loading }) => ({
+const readSelector = ({ room }) => ({
   suggestedVideos: room.suggestedVideos,
-  loadingVideos: loading.effects.getVideos,
-  videos: room.videos,
   search: room.videoSearch,
+  playlist: room.queue,
 });
 
 function AutoCompleteSearch({ title, onSearch, resetPagination }) {
   const [showList, setShowList] = useState(false);
-  const { suggestedVideos, search } = useSelector(readSelector);
+  const { suggestedVideos, search, playlist } = useSelector(readSelector);
   const dispatch = useDispatch();
 
   const debouncedSearch = useDebounce(search);
@@ -86,18 +87,32 @@ function AutoCompleteSearch({ title, onSearch, resetPagination }) {
 
   return (
     <WrapAutocomplete width="100%">
-      <FormControl>
-        <FormLabel htmlFor="searchVideo">{title}</FormLabel>
-        <Input
-          onKeyDown={handleOnKeyDown}
-          placeholder="Search a video..."
-          id="searchVideo"
-          size="lg"
-          onClick={() => setShowList(true)}
-          onChange={handleOnChangeInput}
-          value={search}
-        />
-      </FormControl>
+      <VStack w="100%" alignItems="left">
+        <FormControl>
+          <FormLabel htmlFor="searchVideo">
+            <Text fontSize="large">
+              {title}
+            </Text>
+          </FormLabel>
+          <Input
+            mt="1em"
+            onKeyDown={handleOnKeyDown}
+            placeholder="Search a video..."
+            id="searchVideo"
+            size="lg"
+            onClick={() => setShowList(true)}
+            onChange={handleOnChangeInput}
+            value={search}
+          />
+        </FormControl>
+        {playlist.length ? (
+          <HStack>
+            <Button onClick={() => dispatch.room.SET_PROP({ activeModal: ROOM_MODALS.PLAYLIST })}>
+              View playlist
+            </Button>
+          </HStack>
+        ) : null}
+      </VStack>
       {showList ? (
         <StyledList>
           {suggestedVideos.map((videoSuggestion) => (

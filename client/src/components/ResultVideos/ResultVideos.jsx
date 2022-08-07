@@ -13,7 +13,7 @@ import {
   HStack,
 } from '@chakra-ui/react';
 import { MdPlaylistAdd } from 'react-icons/md';
-import { forwardRef, useCallback } from 'react';
+import { forwardRef } from 'react';
 
 import { stringFormat } from 'src/utils';
 import { useSocketEvents } from 'src/context/SocketEventsContextProvider';

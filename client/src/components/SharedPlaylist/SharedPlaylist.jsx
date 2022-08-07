@@ -8,11 +8,12 @@ import {
   VStack,
   CloseButton,
 } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
 import { stringFormat } from 'src/utils';
 import { WrapDuration } from 'src/components/ResultVideos/ResultVideos.styles';
+import { ROOM_MODALS } from 'src/enums';
 
 const getPlaylist = ({ room, user }) => ({
   playlist: room.queue,
@@ -30,10 +31,27 @@ function SharedPlaylist() {
     idRoom,
     name,
   } = useSelector(getPlaylist);
+  const dispatch = useDispatch();
   const socketEvents = useSocketEvents();
+
+  const handleAddVideos = () => {
+    dispatch.room.SET_PROP({
+      activeModal: ROOM_MODALS.SEARCH,
+    });
+  };
 
   return (
     <Grid position="relative" gridTemplateColumns="1fr" gap={6}>
+      {!playlist.length ? (
+        <VStack alignItems="center" justifyContent="center" height="100%">
+          <Text fontSize="lg" fontWeight="bold">
+            No videos in playlist yet 😴
+          </Text>
+          <Button onClick={handleAddVideos}>
+            Add videos
+          </Button>
+        </VStack>
+      ) : null}
       {playlist
         .map((video) => {
           const isVideoPlaying = currentVideo.id === video.id && isPlaying;

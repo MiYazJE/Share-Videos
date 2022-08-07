@@ -62,16 +62,10 @@ function Room() {
   }, [id, name, isLogged, socketEvents]);
 
   useEffect(() => {
-    if (
-      seekVideo
-      && Math.abs(
-        refPlayer.current.getCurrentTime() - progressVideo,
-      ) > VIDEOS.MAXIMUM_TIME_GAP_TO_SEEK
-    ) {
+    if (seekVideo) {
       refPlayer.current.seekTo(progressVideo);
       dispatch.room.SET_PROP({ seekVideo: false });
     }
-    if (seekVideo) dispatch.room.SET_PROP({ seekVideo: false });
   }, [seekVideo, progressVideo, dispatch]);
 
   const onCancelDialog = () => history.push('/');
@@ -84,24 +78,27 @@ function Room() {
   };
 
   const handleSendProgress = () => {
-    if (name === host) {
-      socketEvents.sendProgress({
-        progress: refPlayer.current.getCurrentTime(),
-        idRoom,
-        name,
-        seekVideo: Math.abs(
-          progressVideo - refPlayer.current.getCurrentTime(),
-        ) > VIDEOS.MAXIMUM_TIME_GAP_TO_SEEK,
-      });
-    }
-  };
-
-  const handleOnPlay = () => {
     socketEvents.sendProgress({
       progress: refPlayer.current.getCurrentTime(),
       idRoom,
       name,
     });
+  };
+
+  const handleOnPlay = () => {
+    const seekVideo = Math.abs(
+      refPlayer.current.getCurrentTime() - progressVideo,
+    ) > VIDEOS.MAXIMUM_TIME_GAP_TO_SEEK;
+
+    if (seekVideo) {
+      socketEvents.sendProgress({
+        progress: refPlayer.current.getCurrentTime(),
+        idRoom,
+        seekVideo: true,
+        name,
+      });
+    }
+
     socketEvents.sendPlayerState({
       state: VIDEOS.STATE.PLAY,
       idRoom,
