@@ -4,7 +4,7 @@ const {
   UPDATE_CHAT,
 } = require('./constants');
 
-const usersBll = require('../api/users/users.bll');
+const usersBll = require('../app/api/users/users.bll');
 const generateAvatar = require('../app/helpers/generateAvatar');
 
 const { generateId } = require('./utils/generateID');

@@ -1,11 +1,11 @@
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
-const Playlist = require('../../app/models/playlists.model');
-const { encryptPassword } = require('../../app/lib/auth.helpers');
-const User = require('../../app/models/users.model');
+const Playlist = require('../../models/playlists.model');
+const { encryptPassword } = require('../../lib/auth.helpers');
+const User = require('../../models/users.model');
 const usersBll = require('../users/users.bll');
-const generateAvatar = require('../../app/helpers/generateAvatar');
+const generateAvatar = require('../../helpers/generateAvatar');
 
 const DEFAULT_PLAYLIST_TITLE = 'Default Playlist';
 

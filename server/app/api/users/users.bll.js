@@ -1,4 +1,4 @@
-const users = require('../../app/models/users.model');
+const users = require('../../models/users.model');
 
 function mapUser(user) {
   return {

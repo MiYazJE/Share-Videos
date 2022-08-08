@@ -1,4 +1,4 @@
-const Playlist = require('../../app/models/playlists.model');
+const Playlist = require('../../models/playlists.model');
 
 const getAllUserPlaylists = async (req, res) => {
   const { user: { id } } = req;
