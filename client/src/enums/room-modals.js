@@ -3,6 +3,7 @@ const ROOM_MODALS = {
   PLAYLIST: 'PLAYLIST',
   PEOPLE: 'PEOPLE',
   SEARCH: 'SEARCH',
+  NONE: null,
 };
 
 export default ROOM_MODALS;

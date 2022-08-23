@@ -7,8 +7,6 @@ import NavBar from 'src/components/NavBar/NavBar';
 import Register from 'src/components/Register';
 import Login from 'src/components/Login';
 
-import './home.scss';
-
 const readSelectors = ({ loading }) => ({
   loginIsLoading: loading.effects.user.login,
   registerIsLoading: loading.effects.user.register,

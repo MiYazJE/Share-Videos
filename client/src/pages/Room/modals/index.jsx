@@ -22,7 +22,7 @@ function RoomModals({
   const dispatch = useDispatch();
 
   const onCloseModal = () => {
-    dispatch.room.SET_PROP({ activeModal: null });
+    dispatch.room.SET_PROP({ activeModal: ROOM_MODALS.NONE });
   };
 
   return (

@@ -1,4 +1,4 @@
-import { API_ROUTES } from 'src/enums';
+import { API_ROUTES, ROOM_MODALS } from 'src/enums';
 import { HttpInstance } from 'src/utils';
 
 const http = new HttpInstance();
@@ -23,7 +23,7 @@ const INITIAL_STATE = {
     updatedAt: null,
   },
   chat: [],
-  avtiveModal: null,
+  avtiveModal: ROOM_MODALS.NONE,
   videoSearch: '',
 };
 

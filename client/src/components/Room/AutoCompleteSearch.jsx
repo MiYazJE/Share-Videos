@@ -6,15 +6,19 @@ import {
   FormLabel,
   HStack,
   Input,
+  InputGroup,
+  InputLeftElement,
   List,
   ListItem,
   Text,
+  useColorMode,
   VStack,
 } from '@chakra-ui/react';
 import styled from 'styled-components';
 
 import useDebounce from 'src/hooks/useDebounce';
 import { ROOM_MODALS } from 'src/enums';
+import { SearchIcon } from '@chakra-ui/icons';
 
 const WrapAutocomplete = styled(HStack)`
   position: relative;
@@ -28,7 +32,7 @@ const StyledList = styled(List)`
   border-radius: 0.375rem;
   border: 1px solid #E2E8F0;
   width: 100%;
-  background-color: #fff;
+  background-color: ${({ darkMode }) => (darkMode ? '#1A202C' : '#fff')};
   max-height: 300px;
   height: 300px;
   overflow: auto;
@@ -44,7 +48,7 @@ const StyledItem = styled(ListItem)`
   cursor: pointer;
   
   &:hover {
-    background-color: #E2E8F0;
+    background-color: ${({ darkMode }) => (darkMode ? '#1A202C' : '#E2E8F0')};
   }
 `;
 
@@ -57,6 +61,7 @@ const readSelector = ({ room }) => ({
 function AutoCompleteSearch({ title, onSearch, resetPagination }) {
   const [showList, setShowList] = useState(false);
   const { suggestedVideos, search, playlist } = useSelector(readSelector);
+  const { colorMode } = useColorMode();
   const dispatch = useDispatch();
 
   const debouncedSearch = useDebounce(search);
@@ -71,14 +76,14 @@ function AutoCompleteSearch({ title, onSearch, resetPagination }) {
     dispatch.room.SET_PROP({ videoSearch });
   };
 
-  const handleOnKeyDown = (event) => {
+  const searchSuggest = (event) => {
     if (event.key === 'Enter' && search) {
       onSearch();
       setShowList(false);
     }
   };
 
-  const handleOnClickItem = (e, videoSearch) => {
+  const onClickSuggest = (e, videoSearch) => {
     e.stopPropagation();
     dispatch.room.SET_PROP({ videoSearch });
     dispatch.room.getVideos();
@@ -94,16 +99,24 @@ function AutoCompleteSearch({ title, onSearch, resetPagination }) {
               {title}
             </Text>
           </FormLabel>
-          <Input
-            mt="1em"
-            onKeyDown={handleOnKeyDown}
-            placeholder="Search a video..."
-            id="searchVideo"
-            size="lg"
-            onClick={() => setShowList(true)}
-            onChange={handleOnChangeInput}
-            value={search}
-          />
+          <InputGroup position="relative">
+            <InputLeftElement
+              mt={5}
+              pointerEvents="none"
+              /* eslint-disable-next-line */
+              children={<SearchIcon w={4} h={4} />}
+            />
+            <Input
+              mt="1em"
+              onKeyDown={searchSuggest}
+              placeholder="Search a video"
+              id="searchVideo"
+              size="lg"
+              onClick={() => setShowList(true)}
+              onChange={handleOnChangeInput}
+              value={search}
+            />
+          </InputGroup>
         </FormControl>
         {playlist.length ? (
           <HStack>
@@ -114,11 +127,12 @@ function AutoCompleteSearch({ title, onSearch, resetPagination }) {
         ) : null}
       </VStack>
       {showList ? (
-        <StyledList>
+        <StyledList darkMode={colorMode === 'dark'}>
           {suggestedVideos.map((videoSuggestion) => (
             <StyledItem
               key={videoSuggestion}
-              onClick={(e) => handleOnClickItem(e, videoSuggestion)}
+              darkMode={colorMode === 'dark'}
+              onClick={(e) => onClickSuggest(e, videoSuggestion)}
             >
               {videoSuggestion}
             </StyledItem>
