@@ -9,10 +9,7 @@ const WrapChat = styled.div`
   position: relative;
   gap: 8px;
   overflow: scroll;
-
-  &::-webkit-scrollbar {
-    display: none;
-  }
+  overflow-x: hidden;
 `;
 
 const ChatText = styled.div`

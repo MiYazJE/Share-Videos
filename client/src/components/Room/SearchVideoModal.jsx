@@ -13,20 +13,6 @@ import ResultVideos from 'src/components/ResultVideos';
 import usePagination from 'src/hooks/usePagination';
 import AutoCompleteSearch from './AutoCompleteSearch';
 
-const scrollBarStyles = {
-  '&::-webkit-scrollbar': {
-    width: '6px',
-    background: '#cdd1d6',
-  },
-  '&::-webkit-scrollbar-track': {
-    width: '5px',
-  },
-  '&::-webkit-scrollbar-thumb': {
-    background: '#748ae9',
-    borderRadius: '24px',
-  },
-};
-
 function SearchVideoModal({
   isOpen,
   onClose,
@@ -58,7 +44,7 @@ function SearchVideoModal({
             resetPagination={resetPagination}
           />
         </DrawerHeader>
-        <DrawerBody ref={scrollRef} css={scrollBarStyles}>
+        <DrawerBody ref={scrollRef}>
           <ResultVideos
             ref={scrollRef}
             getNextPage={getNextPage}

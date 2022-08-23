@@ -46,9 +46,10 @@ const StyledItem = styled(ListItem)`
   padding: .5em;
   width: 100%;
   cursor: pointer;
+  transition: all .3s;
   
   &:hover {
-    background-color: ${({ darkMode }) => (darkMode ? '#1A202C' : '#E2E8F0')};
+    background-color: ${({ darkMode }) => (darkMode ? '#2D3748' : '#E2E8F0')};
   }
 `;
 
