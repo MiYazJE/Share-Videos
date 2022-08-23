@@ -4,9 +4,20 @@ import tokenStorage from 'src/utils/token-storage';
 
 const http = new HttpInstance();
 
+const DEFAULT_COLOR = 'rgb(169 30 7 / 80%)';
+
+const mapLoggedUser = (user) => ({
+  name: user.name,
+  avatarBase64: user.avatarBase64,
+  id: user.id,
+  isLogged: true,
+  color: user.color,
+});
+
 const INITIAL_STATE = {
   isLogged: false,
   name: '',
+  color: DEFAULT_COLOR,
   avatarBase64: '',
   id: null,
 };
@@ -31,12 +42,7 @@ export default {
         const { user, token } = await http.post(API_ROUTES.AUTH.LOGIN, payload);
         dispatch.notifier.ADD_NOTIFICATION({ msg: 'Logged in successfully', variant: 'success' });
         tokenStorage.saveToken(tokenStorage.JWT_TOKEN, token);
-        dispatch.user.SET_PROP({
-          name: user.name,
-          avatarBase64: user.avatarBase64,
-          id: user.id,
-          isLogged: true,
-        });
+        dispatch.user.SET_PROP(mapLoggedUser(user));
       } catch (err) {
         const { msg } = err.response.data;
         dispatch.notifier.ADD_NOTIFICATION({ msg, variant: 'error' });
@@ -48,12 +54,7 @@ export default {
     },
     async whoAmI() {
       const { user } = await http.get(API_ROUTES.AUTH.WHO_AM_I);
-      dispatch.user.SET_PROP({
-        name: user.name,
-        avatarBase64: user.avatarBase64,
-        id: user.id,
-        isLogged: true,
-      });
+      dispatch.user.SET_PROP(mapLoggedUser(user));
     },
   }),
 };

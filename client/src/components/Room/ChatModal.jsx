@@ -40,7 +40,7 @@ function ChatModal({
         <DrawerHeader>
           {title}
         </DrawerHeader>
-        <DrawerBody ref={scrollRef} css={scrollBarStyles}>
+        <DrawerBody pb={0} ref={scrollRef} css={scrollBarStyles}>
           <Chat ref={scrollRef} />
         </DrawerBody>
       </DrawerContent>

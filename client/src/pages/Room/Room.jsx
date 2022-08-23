@@ -1,9 +1,8 @@
 import { useEffect, useState, useRef } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
-import CircularProgress from '@material-ui/core/CircularProgress';
 import ReactPlayer from 'react-player';
 import { useDispatch, useSelector } from 'react-redux';
-import { Container, VStack } from '@chakra-ui/react';
+import { Container, HStack, VStack } from '@chakra-ui/react';
 
 import MetaVideoInfo from 'src/components/Room/MetaVideoInfo';
 import useRoom from 'src/hooks/useRoom';
@@ -33,7 +32,7 @@ function Room() {
     urlVideo,
     name,
     idRoom,
-    isLoading,
+    // isLoading,
     isPlaying,
     progressVideo,
     seekVideo,
@@ -121,35 +120,39 @@ function Room() {
   };
 
   return (
-    <VStack height="100vh" justifyContent="space-between" p={5}>
-      {isLoading
-        ? <CircularProgress style={{ position: 'absolute', top: '50%' }} />
-        : null}
+    <HStack height="100vh" width="100%" justifyContent="center">
 
-      <Container width="100%" maxW="100%" p={0}>
-        <WrapPlayer alignItems="flex-start">
-          <ReactPlayer
-            ref={refPlayer}
-            playing={isPlaying}
-            onPlay={handleOnPlay}
-            onPause={handleOnPause}
-            onProgress={handleSendProgress}
-            onEnded={handleOnEnded}
-            width="100%"
-            height="700px"
-            controls
-            url={urlVideo}
-          />
-          <MetaVideoInfo />
-        </WrapPlayer>
-      </Container>
-      <RoomActionsBar />
-      <RoomModals
-        showNameModal={showNameModal}
-        onCloseNameModal={onCancelDialog}
-        onAcceptNameModal={onAcceptDialog}
-      />
-    </VStack>
+      <VStack height="100%" width="100%" maxW="2000px" maxH="1000px" justifyContent="space-between" p={5}>
+        {/* {isLoading
+        ? <CircularProgress style={{ position: 'absolute', top: '50%' }} />
+        : null} */}
+
+        <Container maxW="100%" width="100%" p={0}>
+          <WrapPlayer alignItems="flex-start">
+            <ReactPlayer
+              ref={refPlayer}
+              playing={isPlaying}
+              onPlay={handleOnPlay}
+              onPause={handleOnPause}
+              onProgress={handleSendProgress}
+              onEnded={handleOnEnded}
+              width="100%"
+              height="700px"
+              controls
+              url={urlVideo}
+            />
+            <MetaVideoInfo />
+          </WrapPlayer>
+        </Container>
+        <RoomActionsBar />
+        <RoomModals
+          showNameModal={showNameModal}
+          onCloseNameModal={onCancelDialog}
+          onAcceptNameModal={onAcceptDialog}
+        />
+      </VStack>
+
+    </HStack>
   );
 }
 export default Room;

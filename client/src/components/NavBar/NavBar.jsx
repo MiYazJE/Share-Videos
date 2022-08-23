@@ -1,24 +1,15 @@
-import { useState } from 'react';
-import { Link, useHistory } from 'react-router-dom';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import { Link } from 'react-router-dom';
+import styled from 'styled-components';
+import {
+  Box,
+  HStack,
+  Skeleton,
+} from '@chakra-ui/react';
 import { useSelector } from 'react-redux';
-import { styled } from '@material-ui/core';
-import styledComponents from 'styled-components';
 
-import { HStack } from '@chakra-ui/react';
-import AutoCompleteSearch from '../Room/AutoCompleteSearch';
 import AuthenticationNav from './AuthenticationNav/AuthenticationNav';
 
-const StyledWrapAutoComplete = styled('div')({
-  display: 'flex',
-  justifyContent: 'center',
-  alignItems: 'center',
-  backgroundColor: 'rgba(252, 252, 252, 0.15)',
-  borderRadius: '3px',
-  padding: '10px',
-});
-
-const StyledLink = styledComponents(Link)`
+const StyledLink = styled(Link)`
   color: #385898;
   font-weight: bold;
   font-size: 30px;
@@ -28,26 +19,27 @@ const StyledLink = styledComponents(Link)`
   }
 `;
 
-const readSelectors = ({ loading }) => ({
-  loadingVideos: loading.effects.room.getVideos,
-});
+const readIsLoadingUser = ({ loading }) => (
+  loading.effects.user.whoAmI
+  || loading.effects.user.login
+  || loading.effects.user.register
+);
 
 function NavBar({ openLogin, openRegister }) {
-  const history = useHistory();
-  const { loadingVideos } = useSelector(readSelectors);
-  const [showSearchBar] = useState(history.location.pathname !== '/');
+  const isLoadingUser = useSelector(readIsLoadingUser);
 
   return (
     <HStack width="100%" p={3} position="sticky" justifyContent="space-between">
       <StyledLink to="/">
         Share Videos
       </StyledLink>
-      {showSearchBar ? (
-        <StyledWrapAutoComplete>
-          <AutoCompleteSearch />
-          {loadingVideos ? <CircularProgress style={{ marginLeft: '30px', color: 'white' }} size={30} /> : null}
-        </StyledWrapAutoComplete>
-      ) : <AuthenticationNav openLogin={openLogin} openRegister={openRegister} />}
+      {isLoadingUser ? (
+        <Box width="220px" height="100%">
+          <Skeleton height="100%" />
+        </Box>
+      ) : (
+        <AuthenticationNav openLogin={openLogin} openRegister={openRegister} />
+      )}
     </HStack>
   );
 }
