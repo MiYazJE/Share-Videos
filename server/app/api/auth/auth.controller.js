@@ -6,6 +6,7 @@ const { encryptPassword } = require('../../lib/auth.helpers');
 const User = require('../../models/users.model');
 const usersBll = require('../users/users.bll');
 const generateAvatar = require('../../helpers/generateAvatar');
+const getRandomColor = require('../../helpers/getRandomColor');
 
 const DEFAULT_PLAYLIST_TITLE = 'Default Playlist';
 
@@ -41,12 +42,14 @@ const register = async (req, res) => {
   }
 
   const avatarBase64 = generateAvatar(name);
+  const color = getRandomColor();
   const encryptedPassword = await encryptPassword(password);
 
   const user = new User({
     name,
     avatarBase64,
     password: encryptedPassword,
+    color,
   });
 
   const playlist = new Playlist({

@@ -7,6 +7,7 @@ const config = {
     useUnifiedTopology: true,
     useCreateIndex: true,
   },
+  dbName: 'share-videos',
 };
 
 module.exports = config;

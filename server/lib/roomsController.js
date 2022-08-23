@@ -152,19 +152,25 @@ function roomsController(io) {
     socket.to(idRoom).emit(UPDATE_ROOM, { seekVideo });
   }
 
-  function sendMessage({ name, msg, idRoom }) {
-    const room = rooms.get(idRoom);
+  function sendMessage({
+    name,
+    msg,
+    roomId,
+    color,
+  }) {
+    const room = rooms.get(roomId);
     room.chat = room.chat.concat({
       isAdmin: false,
       emitter: name,
       msg,
       time: getTimeNow(),
+      color,
     });
     if (room.chat.length > MAX_CHAT_LENGTH) {
       room.chat = room.chat.slice(1);
     }
-    rooms.set(idRoom, room);
-    io.to(idRoom).emit(UPDATE_CHAT, room.chat);
+    rooms.set(roomId, room);
+    io.to(roomId).emit(UPDATE_CHAT, room.chat);
   }
 
   function leaveRoom(socket) {

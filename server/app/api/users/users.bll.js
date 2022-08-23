@@ -5,6 +5,7 @@ function mapUser(user) {
     id: user._id,
     name: user.name,
     avatarBase64: user.avatarBase64,
+    color: user.color,
   };
 }
 
