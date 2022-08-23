@@ -59,9 +59,18 @@ const readSelector = ({ room }) => ({
   playlist: room.queue,
 });
 
-function AutoCompleteSearch({ title, onSearch, resetPagination }) {
+function AutoCompleteSearch({
+  title,
+  resetPagination,
+}) {
   const [showList, setShowList] = useState(false);
-  const { suggestedVideos, search, playlist } = useSelector(readSelector);
+
+  const {
+    suggestedVideos,
+    search,
+    playlist,
+  } = useSelector(readSelector);
+
   const { colorMode } = useColorMode();
   const dispatch = useDispatch();
 
@@ -78,10 +87,11 @@ function AutoCompleteSearch({ title, onSearch, resetPagination }) {
   };
 
   const searchSuggest = (event) => {
-    if (event.key === 'Enter' && search) {
-      onSearch();
-      setShowList(false);
-    }
+    if (event.key !== 'Enter') return;
+
+    resetPagination();
+    dispatch.room.getVideos();
+    setShowList(false);
   };
 
   const onClickSuggest = (e, videoSearch) => {

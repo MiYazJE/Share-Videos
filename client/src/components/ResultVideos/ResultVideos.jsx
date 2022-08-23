@@ -143,7 +143,6 @@ const ResultVideos = forwardRef((props, ref) => {
                 />
               ))
           ) : null}
-        {(loadingWithPagination && !loadingVideos) ? getSekeletonVideos(8) : null}
         <Scroller ref={ref} />
       </Grid>
       {videos.length ? (

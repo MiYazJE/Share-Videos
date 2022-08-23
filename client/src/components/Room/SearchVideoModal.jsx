@@ -40,7 +40,6 @@ function SearchVideoModal({
         <DrawerHeader>
           <AutoCompleteSearch
             title={title}
-            onSearch={getNextPage}
             resetPagination={resetPagination}
           />
         </DrawerHeader>
