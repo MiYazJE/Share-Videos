@@ -49,10 +49,15 @@ export default {
     },
     async getVideos({ limit = 10, offset = 0 } = {}, state) {
       const { videoSearch } = state.room;
-      const { data: videos, isLastPage } = await http.get(`${API_ROUTES.VIDEOS.GET_VIDEOS}/${videoSearch}`, {
+
+      const sanitizedSearch = videoSearch.trim();
+      if (!sanitizedSearch) return;
+
+      const { data: videos, isLastPage } = await http.get(`${API_ROUTES.VIDEOS.GET_VIDEOS}/${sanitizedSearch}`, {
         params: { limit, offset },
       });
-      dispatch.room.getSuggestedVideos(videoSearch);
+
+      dispatch.room.getSuggestedVideos(sanitizedSearch);
       dispatch.room.SET_PROP({ videos, isLastPage });
     },
   }),

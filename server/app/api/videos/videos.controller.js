@@ -3,10 +3,13 @@ const youtube = require('youtube-sr');
 const URL_GOOGLE_SUGGEST = 'http://suggestqueries.google.com/complete/search?client=youtube&ds=yt&hl=es&q=';
 
 function mapSuggestions(suggestions) {
+  if (!suggestions) return [];
+
   const regexp = /\["[\w\s]+"/gi;
   const suggestionsFiltered = suggestions
     .match(regexp)
     .map((w) => w.substring(2, w.length - 1));
+
   return new Set(suggestionsFiltered).values();
 }
 
@@ -44,7 +47,7 @@ async function getYoutubeVideos(req, res) {
   const { offset = 0, limit = 10 } = req.query;
 
   const limitSearch = +offset + +limit;
-  const videos = await youtube.search(q, { limit: limitSearch + 1 });
+  const videos = await youtube.search(q, { limit: limitSearch + 1 }) ?? [];
   const isLastPage = videos.length <= limitSearch;
 
   const paginatedVideos = videos.slice(offset, offset + limit);
