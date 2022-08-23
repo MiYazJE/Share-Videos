@@ -13,8 +13,8 @@ const { getTimeNow } = require('./utils/getDate');
 const MAX_CHAT_LENGTH = 40;
 
 const INITIAL_CURRENT_VIDEO = {
-  url: 'https://www.youtube.com/watch?v=ZUwPxE1eK2c',
-  title: 'Ekali - Drown (feat. Au/Ra)',
+  url: 'https://www.youtube.com/watch?v=OgIRAjnnJzI',
+  title: 'Soy programador fp',
 };
 
 function roomsController(io) {
