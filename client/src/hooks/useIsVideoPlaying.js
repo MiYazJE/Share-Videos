@@ -5,13 +5,13 @@ const getCurrentVideo = ({ room }) => ({
   isPlaying: room.isPlaying,
 });
 
-const useIsVideoPlaying = (videoId) => {
+const useIsVideoPlaying = (videoUrl) => {
   const {
     currentVideo,
     isPlaying,
   } = useSelector(getCurrentVideo);
 
-  return isPlaying && currentVideo.id === videoId;
+  return isPlaying && currentVideo.url === videoUrl;
 };
 
 export default useIsVideoPlaying;

@@ -59,12 +59,12 @@ function VideoCard({
     views,
     uploadedAt,
     channel,
-    id,
+    url,
   } = video;
 
   const playingText = useTextInterval('Playing');
 
-  const isPlaying = useIsVideoPlaying(id);
+  const isPlaying = useIsVideoPlaying(url);
   const metaInfoString = `${stringFormat.formatViews(views)} ${uploadedAt ? `• ${uploadedAt}` : ''}`;
 
   return (
