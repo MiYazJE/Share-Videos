@@ -137,7 +137,7 @@ function AutoCompleteSearch({
           </HStack>
         ) : null}
       </VStack>
-      {showList ? (
+      {(showList && suggestedVideos?.length) ? (
         <StyledList darkMode={colorMode === 'dark'}>
           {suggestedVideos.map((videoSuggestion) => (
             <StyledItem
@@ -148,11 +148,6 @@ function AutoCompleteSearch({
               {videoSuggestion}
             </StyledItem>
           ))}
-          {!suggestedVideos.length ? (
-            <VStack height="100%" justifyContent="center">
-              <Text fontWeight="bold" textAlign="center">No results found</Text>
-            </VStack>
-          ) : null}
         </StyledList>
       ) : null}
     </WrapAutocomplete>
