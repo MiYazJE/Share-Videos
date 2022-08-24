@@ -146,6 +146,7 @@ function roomsController(io) {
   function sendPlayerState({ state, roomId }) {
     const room = rooms.get(roomId);
     if (!room) return;
+
     room.isPlaying = state === 'play';
     rooms.set(roomId, room);
     io.to(roomId).emit(UPDATE_ROOM, {
@@ -153,8 +154,22 @@ function roomsController(io) {
     });
   }
 
+  function reorderPlaylist({ playlist, roomId }) {
+    const room = rooms.get(roomId);
+    if (!room) return;
+
+    room.queue = playlist;
+    rooms.set(roomId, room);
+
+    io.to(roomId).emit(UPDATE_ROOM, {
+      queue: playlist,
+    });
+  }
+
   function sendProgress({
-    progress, roomId, seekVideo,
+    progress,
+    roomId,
+    seekVideo,
   }, socket) {
     const room = rooms.get(roomId);
     if (!room) return;
@@ -218,6 +233,7 @@ function roomsController(io) {
     sendProgress,
     leaveRoom,
     sendMessage,
+    reorderPlaylist,
     get: (id) => rooms.get(id),
   };
 }

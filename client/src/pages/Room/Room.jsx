@@ -12,7 +12,7 @@ import { VIDEOS } from 'src/enums';
 import { WrapPlayer } from './Room.styles';
 import RoomModals from './modals';
 
-const readSelector = ({ room, user }) => ({
+const readSelector = ({ room, user, loading }) => ({
   urlVideo: room.currentVideo.url,
   roomId: room.id,
   isLoading: room.loadingRoom,
@@ -23,6 +23,7 @@ const readSelector = ({ room, user }) => ({
   progressVideo: room.progressVideo,
   currentVideoId: room.currentVideo.id,
   isLogged: user.isLogged,
+  isLoadingUser: loading.effects.user.whoAmI,
 });
 
 function Room() {
@@ -37,6 +38,7 @@ function Room() {
     seekVideo,
     currentVideoId,
     isLogged,
+    isLoadingUser,
   } = useSelector(readSelector);
 
   const socketEvents = useSocketEvents();
@@ -51,12 +53,13 @@ function Room() {
   }, [isValidRoom, history]);
 
   useEffect(() => {
+    if (!name && isLoadingUser) return;
     if (!name) {
       return setShowNameModal(true);
     }
     socketEvents.joinRoom({ id, name, isLogged });
     setShowNameModal(false);
-  }, [id, name, isLogged, socketEvents]);
+  }, [id, name, isLogged, socketEvents, isLoadingUser]);
 
   useEffect(() => {
     if (seekVideo) {
@@ -122,9 +125,6 @@ function Room() {
     <HStack height="100vh" width="100%" justifyContent="center">
 
       <VStack height="100%" width="100%" maxW="2000px" maxH="1000px" justifyContent="space-between" p={5}>
-        {/* {isLoading
-        ? <CircularProgress style={{ position: 'absolute', top: '50%' }} />
-        : null} */}
 
         <Container maxW="100%" width="100%" p={0}>
           <WrapPlayer alignItems="flex-start">

@@ -21,6 +21,7 @@ const {
   WS_UPDATE_ROOM,
   WS_UPDATE_CHAT,
   WS_NOTIFY_MESSAGE,
+  WS_REORDER_PLAYLIST,
 } = WS_MESSAGES;
 
 const apiUrl = process.env.REACT_APP_API_URL;
@@ -55,6 +56,7 @@ function SocketEventsProvider({ children }) {
     sendPlayerState: (payload) => socket.emit(WS_SEND_PLAYER_STATE, payload),
     sendProgress: (payload) => socket.emit(WS_SEND_PROGRESS, payload),
     sendMessage: (payload) => socket.emit(WS_SEND_MESSAGE, payload),
+    reorderPlaylist: (payload) => socket.emit(WS_REORDER_PLAYLIST, payload),
     pauseVideo:
     (roomId) => socket.emit(WS_SEND_PLAYER_STATE, { roomId, state: VIDEOS.STATE.PAUSE }),
   }), [socket]);

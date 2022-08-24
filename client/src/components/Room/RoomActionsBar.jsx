@@ -1,6 +1,7 @@
 import {
   HStack,
   IconButton,
+  Stack,
   Text,
   Tooltip,
 } from '@chakra-ui/react';
@@ -8,7 +9,7 @@ import {
   MdPeople,
   MdChat,
   MdPlaylistPlay,
-  MdYoutubeSearchedFor,
+  MdSearch,
 } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -32,8 +33,13 @@ function RoomActionsBar() {
   };
 
   return (
-    <HStack
+    <Stack
       width="100%"
+      flexDirection={{
+        base: 'column',
+        sm: 'row',
+      }}
+      gap={1}
       justifyContent="space-between"
     >
       <HStack>
@@ -78,11 +84,11 @@ function RoomActionsBar() {
             onClick={createToggleShowModal(ROOM_MODALS.SEARCH)}
             colorScheme="facebook"
             rounded="full"
-            icon={<MdYoutubeSearchedFor />}
+            icon={<MdSearch size={20} />}
           />
         </Tooltip>
       </HStack>
-    </HStack>
+    </Stack>
   );
 }
 

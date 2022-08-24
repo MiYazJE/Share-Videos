@@ -5,6 +5,7 @@ function PlayButton({
   onClick,
   isPlaying,
   variant = 'solid',
+  isPlayingText = 'Playing',
   ...props
 }) {
   return (
@@ -15,7 +16,7 @@ function PlayButton({
       onClick={onClick}
       {...props}
     >
-      {isPlaying ? 'Playing' : 'Play'}
+      {isPlaying ? isPlayingText : 'Play'}
     </Button>
   );
 }

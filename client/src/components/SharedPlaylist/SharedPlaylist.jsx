@@ -5,6 +5,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { useSelector, useDispatch } from 'react-redux';
+import { Reorder } from 'framer-motion';
 
 import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
 import { ROOM_MODALS } from 'src/enums';
@@ -34,8 +35,12 @@ function SharedPlaylist() {
     });
   };
 
+  const handleReorderPlaylist = (playlist) => {
+    socketEvents.reorderPlaylist({ playlist, roomId });
+  };
+
   return (
-    <Grid position="relative" gridTemplateColumns="1fr" gap={6}>
+    <Grid>
       {!playlist?.length ? (
         <VStack alignItems="center" justifyContent="center" height="100%">
           <Text fontSize="lg" fontWeight="bold">
@@ -46,18 +51,25 @@ function SharedPlaylist() {
           </Button>
         </VStack>
       ) : null}
-      {playlist?.map((video) => (
-        <VideoCard
-          key={video.id}
-          video={video}
-          showPlaylistBtn={false}
-          onPlay={() => socketEvents.viewVideo({ roomId, video })}
-          onPause={() => socketEvents.pauseVideo(roomId)}
-          onRemoveVideo={() => socketEvents.removeVideo({ idVideo: video.id, roomId, name })}
-          showRemoveBtn
-          inline
-        />
-      ))}
+
+      <Reorder.Group as="div" axis="y" values={playlist} onReorder={handleReorderPlaylist}>
+        <Grid position="relative" gridTemplateColumns="1fr" gap={6}>
+          {playlist?.map((video) => (
+            <Reorder.Item as="span" key={video.id} value={video}>
+              <VideoCard
+                video={video}
+                showPlaylistBtn={false}
+                onPlay={() => socketEvents.viewVideo({ roomId, video })}
+                onPause={() => socketEvents.pauseVideo(roomId)}
+                onRemoveVideo={() => socketEvents.removeVideo({ idVideo: video.id, roomId, name })}
+                showRemoveBtn
+                inline
+              />
+            </Reorder.Item>
+          ))}
+        </Grid>
+      </Reorder.Group>
+
     </Grid>
   );
 }

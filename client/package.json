@@ -17,7 +17,7 @@
     "@testing-library/user-event": "^7.2.1",
     "axios": "^0.27.2",
     "dotenv": "^8.2.0",
-    "framer-motion": "^4.1.17",
+    "framer-motion": "^7.2.1",
     "qs": "^6.10.3",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",

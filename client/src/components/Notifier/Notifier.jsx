@@ -8,13 +8,15 @@ function Notifier() {
   const notification = useSelector(readNotification);
   const toast = useToast({
     isClosable: true,
-    position: 'top',
+    position: 'bottom-left',
+    duration: 2000,
   });
 
   useEffect(() => {
     if (notification) {
+      toast.closeAll();
       toast({
-        title: notification.msg,
+        description: notification.msg,
         status: notification.variant,
       });
     }

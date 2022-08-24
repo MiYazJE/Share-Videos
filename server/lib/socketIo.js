@@ -6,6 +6,7 @@ const {
   SEND_PLAYER_STATE,
   SEND_PROGRESS,
   SEND_MESSAGE,
+  REORDER_PLAYLIST,
 } = require('./constants');
 const { roomsController } = require('./roomsController');
 
@@ -20,6 +21,7 @@ module.exports = (io) => {
     socket.on(SEND_PLAYER_STATE, (payload) => roomsCtrl.sendPlayerState(payload, socket));
     socket.on(VIEW_VIDEO, roomsCtrl.viewVideo);
     socket.on(SEND_MESSAGE, roomsCtrl.sendMessage);
+    socket.on(REORDER_PLAYLIST, roomsCtrl.reorderPlaylist);
 
     socket.on('disconnect', () => roomsCtrl.leaveRoom(socket));
   });

@@ -17,6 +17,7 @@ import { MdPlaylistAdd } from 'react-icons/md';
 import { stringFormat } from 'src/utils';
 import useIsVideoPlaying from 'src/hooks/useIsVideoPlaying';
 import PlayButton from 'src/components/PlayButton';
+import useTextInterval from 'src/hooks/useTextInterval';
 import { WrapAddButon, WrapDuration } from './videoCard.styles';
 
 export const getSekeletonVideos = (many = 20) => Array(many).fill().map((_, i) => (
@@ -61,6 +62,8 @@ function VideoCard({
     id,
   } = video;
 
+  const playingText = useTextInterval('Playing');
+
   const isPlaying = useIsVideoPlaying(id);
   const metaInfoString = `${stringFormat.formatViews(views)} ${uploadedAt ? `• ${uploadedAt}` : ''}`;
 
@@ -84,12 +87,14 @@ function VideoCard({
         }}
       >
 
-        <Stack position="relative">
+        <Box position="relative">
           <Image
-            alt="Thumbnail"
+            pointerEvents="none"
+            alt={`Thumbnail of video ${video.title}`}
             src={urlThumbnail}
-            objectFit="cover"
+            objectFit="contain"
             h="100%"
+            w="100%"
           />
           <WrapDuration>
             <Text fontSize="xs" letterSpacing="1px" color="white">
@@ -112,7 +117,7 @@ function VideoCard({
               </Tooltip>
             </WrapAddButon>
           ) : null}
-        </Stack>
+        </Box>
 
         {showRemoveBtn ? (
           <Box
@@ -140,6 +145,7 @@ function VideoCard({
               w="100%"
               variant="outline"
               isPlaying={isPlaying}
+              isPlayingText={playingText}
               onClick={isPlaying ? onPause : onPlay}
             />
           </HStack>
