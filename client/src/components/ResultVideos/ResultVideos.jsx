@@ -11,6 +11,7 @@ import {
   VStack,
   Skeleton,
   HStack,
+  Avatar,
 } from '@chakra-ui/react';
 import { MdPlaylistAdd } from 'react-icons/md';
 import { forwardRef } from 'react';
@@ -49,6 +50,7 @@ function Video({ video, onClick }) {
     duration,
     views,
     uploadedAt,
+    channel,
   } = video;
 
   const metaInfoString = `${stringFormat.formatViews(views)} ${uploadedAt ? `• ${uploadedAt}` : ''}`;
@@ -56,6 +58,7 @@ function Video({ video, onClick }) {
   return (
     <Box position="relative" borderWidth="1px" borderRadius="lg" overflow="hidden">
       <Grid height="100%" gridTemplateRows="1fr 1fr">
+
         <Stack position="relative">
           <Image
             alt="Thumbnail"
@@ -83,10 +86,18 @@ function Video({ video, onClick }) {
             </Tooltip>
           </WrapAddButon>
         </Stack>
+
         <VStack height="100%" p={3} justifyContent="space-between" alignItems="flex-start">
           <Text fontSize="md" fontWeight="bold">{title}</Text>
+          <Tooltip label={`Go to ${channel.name} channel`} fontSize="md">
+            <HStack as="a" href={channel.url} target="_blank">
+              <Avatar name={channel.name} size="xs" src={channel.iconUrl} />
+              <Text>{channel.name}</Text>
+            </HStack>
+          </Tooltip>
           <Text fontSize="xs">{metaInfoString}</Text>
         </VStack>
+
       </Grid>
     </Box>
   );
@@ -130,7 +141,7 @@ const ResultVideos = forwardRef((props, ref) => {
 
   return (
     <>
-      <Grid position="relative" gridTemplateColumns="1fr 1fr" gridAutoRows="300px" gap={6}>
+      <Grid position="relative" gridTemplateColumns="1fr 1fr" gap={6}>
         {(loadingVideos && !loadingWithPagination) ? getSekeletonVideos(20) : null}
         {(videos.length && (!loadingVideos || loadingWithPagination))
           ? (

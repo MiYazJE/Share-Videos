@@ -1,5 +1,7 @@
 const youtube = require('youtube-sr').default;
 
+const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/c';
+
 function mapVideos(videos) {
   return videos.map((video) => {
     const {
@@ -9,6 +11,7 @@ function mapVideos(videos) {
       title,
       thumbnail: { url: urlThumbnail },
       uploadedAt,
+      channel,
     } = video;
     return {
       url,
@@ -17,6 +20,11 @@ function mapVideos(videos) {
       urlThumbnail,
       uploadedAt,
       duration,
+      channel: {
+        iconUrl: channel.icon.url,
+        url: `${YOUTUBE_CHANNEL_URL}/${channel.name}`,
+        name: channel.name,
+      },
     };
   });
 }
