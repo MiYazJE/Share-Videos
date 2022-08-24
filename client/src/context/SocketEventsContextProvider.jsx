@@ -56,7 +56,7 @@ function SocketEventsProvider({ children }) {
     sendProgress: (payload) => socket.emit(WS_SEND_PROGRESS, payload),
     sendMessage: (payload) => socket.emit(WS_SEND_MESSAGE, payload),
     pauseVideo:
-    (idRoom) => socket.emit(WS_SEND_PLAYER_STATE, { idRoom, state: VIDEOS.STATE.PAUSE }),
+    (roomId) => socket.emit(WS_SEND_PLAYER_STATE, { roomId, state: VIDEOS.STATE.PAUSE }),
   }), [socket]);
 
   return (

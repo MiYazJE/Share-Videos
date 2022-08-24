@@ -131,7 +131,10 @@ function AutoCompleteSearch({
         </FormControl>
         {playlist.length ? (
           <HStack>
-            <Button onClick={() => dispatch.room.SET_PROP({ activeModal: ROOM_MODALS.PLAYLIST })}>
+            <Button
+              colorScheme="facebook"
+              onClick={() => dispatch.room.SET_PROP({ activeModal: ROOM_MODALS.PLAYLIST })}
+            >
               View playlist
             </Button>
           </HStack>

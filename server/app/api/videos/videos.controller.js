@@ -14,6 +14,7 @@ function mapVideos(videos) {
       channel,
     } = video;
     return {
+      ...video,
       url,
       views,
       title,

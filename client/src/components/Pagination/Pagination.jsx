@@ -10,17 +10,18 @@ function Pagination({
   getNextPage,
   getPreviousPage,
   page,
+  disabled,
 }) {
   return (
     <HStack>
       <IconButton
-        disabled={page === 1}
+        disabled={page === 1 || disabled}
         icon={<ArrowLeftIcon />}
         onClick={getPreviousPage}
       />
       <Text>{page}</Text>
       <IconButton
-        disabled={!showNextPage}
+        disabled={!showNextPage || disabled}
         icon={<ArrowRightIcon />}
         onClick={getNextPage}
       />

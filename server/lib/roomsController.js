@@ -66,7 +66,7 @@ function roomsController(io) {
     io.to(id).emit(UPDATE_ROOM, { chat: room.chat, users: room.users });
 
     socket.to(id).emit(NOTIFY_MESSAGE, { msg: `${name.toUpperCase()} has joined!`, variant: 'success' });
-    socket.emit(NOTIFY_MESSAGE, { msg: `You just joined to ${id}`, variant: 'success' });
+    socket.emit(NOTIFY_MESSAGE, { msg: `You just joined to room ${id}`, variant: 'success' });
   }
 
   function addVideo({ video, id, name }, socket) {
@@ -85,71 +85,83 @@ function roomsController(io) {
     socket.emit(NOTIFY_MESSAGE, { msg: `You have added '${video.title}'!`, variant: 'success' });
   }
 
-  function removeVideo({ idVideo, idRoom, name }, socket) {
-    let room = rooms.get(idRoom);
+  function removeVideo({ idVideo, roomId, name }, socket) {
+    let room = rooms.get(roomId);
     if (!room) return;
 
-    const videoDeleted = room.queue.find((v) => v.id === idVideo);
+    const deletedVideoIdx = room.queue.findIndex((v) => v.id === idVideo);
+    const deletedVideo = room.queue[deletedVideoIdx];
+    const currentVideoIsDeleted = room.currentVideo.id === deletedVideo.id;
 
     room.queue = room.queue.filter((video) => video.id !== idVideo);
-    if (room.queue.length && idVideo === room.currentVideo.id) {
+
+    if (room.queue.length && currentVideoIsDeleted) {
+      const nextVideoIndex = deletedVideoIdx < room.queue.length
+        ? deletedVideoIdx
+        : deletedVideoIdx - 1;
+
+      const nextVideo = room.queue[nextVideoIndex];
+
       room = {
         ...room,
-        currentVideo: { ...room.queue[0] },
+        isPlaying: true,
+        currentVideo: nextVideo,
         progressVideo: 0,
       };
-      io.to(idRoom).emit(NOTIFY_MESSAGE, {
-        msg: `🎵 Next song is '${room.queue[0].title}'!`,
+
+      io.to(roomId).emit(NOTIFY_MESSAGE, {
+        msg: `Next video is '${nextVideo.title}'`,
         variant: 'success',
       });
     }
 
-    rooms.set(idRoom, room);
-    io.to(idRoom).emit(UPDATE_ROOM, { queue: room.queue });
+    rooms.set(roomId, room);
+    io.to(roomId).emit(UPDATE_ROOM, room);
 
     if (name) {
-      socket.to(idRoom).emit(NOTIFY_MESSAGE, {
-        msg: `❌ ${name.toUpperCase()} has deleted '${videoDeleted.title}'!`,
+      socket.to(roomId).emit(NOTIFY_MESSAGE, {
+        msg: `${name.toUpperCase()} has deleted '${deletedVideo.title}'`,
         variant: 'error',
       });
-      socket.emit(NOTIFY_MESSAGE, { msg: '❌ Video deleted from queue!', variant: 'error' });
+      socket.emit(NOTIFY_MESSAGE, { msg: 'Video deleted from queue', variant: 'error' });
     }
   }
 
-  function viewVideo({ idVideo, idRoom }) {
-    const room = rooms.get(idRoom);
+  function viewVideo({ video, roomId }) {
+    const room = rooms.get(roomId);
     if (!room) return;
-    const video = room.queue.find((v) => v.id === idVideo);
+
     room.currentVideo = video;
     room.progressVideo = 0;
-    rooms.set(idRoom, room);
-    io.to(idRoom).emit(UPDATE_ROOM, {
+    rooms.set(roomId, room);
+
+    io.to(roomId).emit(UPDATE_ROOM, {
       currentVideo: room.currentVideo,
       progressVideo: room.progressVideo,
       isPlaying: true,
     });
-    io.to(idRoom).emit(NOTIFY_MESSAGE, { msg: `🎵 Playing '${video.title}'...`, variant: 'success' });
+    io.to(roomId).emit(NOTIFY_MESSAGE, { msg: `Playing '${video.title}'...`, variant: 'success' });
   }
 
-  function sendPlayerState({ state, idRoom }) {
-    const room = rooms.get(idRoom);
+  function sendPlayerState({ state, roomId }) {
+    const room = rooms.get(roomId);
     if (!room) return;
     room.isPlaying = state === 'play';
-    rooms.set(idRoom, room);
-    io.to(idRoom).emit(UPDATE_ROOM, {
+    rooms.set(roomId, room);
+    io.to(roomId).emit(UPDATE_ROOM, {
       isPlaying: room.isPlaying,
     });
   }
 
   function sendProgress({
-    progress, idRoom, seekVideo,
+    progress, roomId, seekVideo,
   }, socket) {
-    const room = rooms.get(idRoom);
+    const room = rooms.get(roomId);
     if (!room) return;
     room.progressVideo = progress;
-    rooms.set(idRoom, room);
-    io.to(idRoom).emit(UPDATE_ROOM, { progressVideo: progress });
-    socket.to(idRoom).emit(UPDATE_ROOM, { seekVideo });
+    rooms.set(roomId, room);
+    io.to(roomId).emit(UPDATE_ROOM, { progressVideo: progress });
+    socket.to(roomId).emit(UPDATE_ROOM, { seekVideo });
   }
 
   function sendMessage({
@@ -180,13 +192,20 @@ function roomsController(io) {
     const room = rooms.get(user.id);
     users.delete(socket.id);
     room.users = room.users.filter((u) => u.name !== user.name);
+
+    if (!room.users.length) {
+      console.log(`Closing room ${room.id} because its empty`);
+      rooms.delete(user.id);
+      return;
+    }
+
     if (room.users.length) {
       room.host = room.users[Math.floor(Math.random() * room.users.length)].name;
     }
     rooms.set(user.id, room);
 
     io.to(user.id).emit(UPDATE_ROOM, { users: room.users });
-    io.to(user.id).emit(NOTIFY_MESSAGE, { msg: `${user.name.toUpperCase()} left the room.`, variant: 'warning' });
+    io.to(user.id).emit(NOTIFY_MESSAGE, { msg: `${user.name.toUpperCase()} left the room`, variant: 'warning' });
   }
 
   return {

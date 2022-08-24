@@ -14,7 +14,7 @@ import RoomModals from './modals';
 
 const readSelector = ({ room, user }) => ({
   urlVideo: room.currentVideo.url,
-  idRoom: room.id,
+  roomId: room.id,
   isLoading: room.loadingRoom,
   name: user.name,
   isPlaying: room.isPlaying,
@@ -31,8 +31,7 @@ function Room() {
   const {
     urlVideo,
     name,
-    idRoom,
-    // isLoading,
+    roomId,
     isPlaying,
     progressVideo,
     seekVideo,
@@ -78,7 +77,7 @@ function Room() {
   const handleSendProgress = () => {
     socketEvents.sendProgress({
       progress: refPlayer.current.getCurrentTime(),
-      idRoom,
+      roomId,
       name,
     });
   };
@@ -91,7 +90,7 @@ function Room() {
     if (seekVideo) {
       socketEvents.sendProgress({
         progress: refPlayer.current.getCurrentTime(),
-        idRoom,
+        roomId,
         seekVideo: true,
         name,
       });
@@ -99,7 +98,7 @@ function Room() {
 
     socketEvents.sendPlayerState({
       state: VIDEOS.STATE.PLAY,
-      idRoom,
+      roomId,
       name,
     });
   };
@@ -107,7 +106,7 @@ function Room() {
   const handleOnPause = () => {
     socketEvents.sendPlayerState({
       state: VIDEOS.STATE.PAUSE,
-      idRoom,
+      roomId,
       name,
     });
   };
@@ -115,7 +114,7 @@ function Room() {
   const handleOnEnded = () => {
     socketEvents.removeVideo({
       idVideo: currentVideoId,
-      idRoom,
+      roomId,
     });
   };
 

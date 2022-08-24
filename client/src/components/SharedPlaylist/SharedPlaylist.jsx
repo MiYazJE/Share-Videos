@@ -1,34 +1,28 @@
 import {
-  Box,
   Button,
   Grid,
-  Image,
-  Stack,
   Text,
   VStack,
-  CloseButton,
 } from '@chakra-ui/react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
-import { stringFormat } from 'src/utils';
-import { WrapDuration } from 'src/components/ResultVideos/ResultVideos.styles';
 import { ROOM_MODALS } from 'src/enums';
+
+import VideoCard from 'src/components/VideoCard';
 
 const getPlaylist = ({ room, user }) => ({
   playlist: room.queue,
   currentVideo: room.currentVideo,
   isPlaying: room.isPlaying,
-  idRoom: room.id,
+  roomId: room.id,
   name: user.name,
 });
 
 function SharedPlaylist() {
   const {
     playlist,
-    currentVideo,
-    isPlaying,
-    idRoom,
+    roomId,
     name,
   } = useSelector(getPlaylist);
   const dispatch = useDispatch();
@@ -42,7 +36,7 @@ function SharedPlaylist() {
 
   return (
     <Grid position="relative" gridTemplateColumns="1fr" gap={6}>
-      {!playlist.length ? (
+      {!playlist?.length ? (
         <VStack alignItems="center" justifyContent="center" height="100%">
           <Text fontSize="lg" fontWeight="bold">
             No videos in playlist yet 😴
@@ -52,68 +46,18 @@ function SharedPlaylist() {
           </Button>
         </VStack>
       ) : null}
-      {playlist
-        .map((video) => {
-          const isVideoPlaying = currentVideo.id === video.id && isPlaying;
-          const formattedViews = `${stringFormat.formatViews(video.views)} ${video.uploadedAt ? `• ${video.uploadedAt}` : ''}`;
-          return (
-            <Box
-              position="relative"
-              borderWidth="1px"
-              borderColor={isVideoPlaying ? 'green' : ''}
-              borderRadius="lg"
-              overflow="hidden"
-              key={video.url}
-            >
-              <Grid height="100%" gridTemplateColumns="1fr 1fr">
-                <Stack position="relative">
-                  <Image
-                    alt="Thumbnail"
-                    src={video.urlThumbnail}
-                    objectFit="cover"
-                    width="100%"
-                  />
-                  <WrapDuration>
-                    <Text fontSize="xs" letterSpacing="1px" color="white">
-                      {video.duration}
-                    </Text>
-                  </WrapDuration>
-                </Stack>
-                <VStack
-                  height="100%"
-                  p={3}
-                  justifyContent="space-between"
-                  alignItems="flex-start"
-                >
-                  <Text fontSize="md" fontWeight="bold">{video.title}</Text>
-                  <Button
-                    variant="solid"
-                    colorScheme={isVideoPlaying ? 'green' : 'facebook'}
-                    onClick={() => (
-                      isVideoPlaying
-                        ? socketEvents.pauseVideo(idRoom)
-                        : socketEvents.viewVideo({ idRoom, idVideo: video.id })
-                    )}
-                  >
-                    {isVideoPlaying ? 'Playing' : 'Play'}
-                  </Button>
-                  <Box
-                    css={{
-                      position: 'absolute',
-                      right: '3px',
-                      top: '-5px',
-                    }}
-                  >
-                    <CloseButton
-                      onClick={() => socketEvents.removeVideo({ idVideo: video.id, idRoom, name })}
-                    />
-                  </Box>
-                  <Text fontSize="xs">{formattedViews}</Text>
-                </VStack>
-              </Grid>
-            </Box>
-          );
-        })}
+      {playlist?.map((video) => (
+        <VideoCard
+          key={video.id}
+          video={video}
+          showPlaylistBtn={false}
+          onPlay={() => socketEvents.viewVideo({ roomId, video })}
+          onPause={() => socketEvents.pauseVideo(roomId)}
+          onRemoveVideo={() => socketEvents.removeVideo({ idVideo: video.id, roomId, name })}
+          showRemoveBtn
+          inline
+        />
+      ))}
     </Grid>
   );
 }
