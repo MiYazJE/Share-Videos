@@ -11,6 +11,7 @@ import {
   FormLabel,
   useColorMode,
   HStack,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
@@ -34,6 +35,7 @@ const yupSchema = Yup.object().shape({
 function BoxDialog({ onCreateRoom, isLoading }) {
   const [openDialogJoinRoom, setOpenDialogJoinRoom] = useState(false);
   const { colorMode } = useColorMode();
+  const titleColor = useColorModeValue('blue.500', 'blue.300');
 
   const {
     name,
@@ -63,7 +65,7 @@ function BoxDialog({ onCreateRoom, isLoading }) {
             <HStack justifyContent="center"><AiFillYoutube fill="#FF0000" /></HStack>
             View videos with
             {' '}
-            <Heading as="span" color="facebook.500" size="3xl">FRIENDS</Heading>
+            <Heading as="span" color={titleColor} size="3xl">FRIENDS</Heading>
           </Heading>
         </Container>
         <Container maxW="container.xxl">
