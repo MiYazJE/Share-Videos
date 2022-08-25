@@ -200,7 +200,7 @@ function roomsController(io) {
     io.to(roomId).emit(UPDATE_CHAT, room.chat);
   }
 
-  function leaveRoom(socket) {
+  function leaveRoom(reason, socket) {
     const user = users.get(socket.id);
     if (!user) return;
 
@@ -209,7 +209,7 @@ function roomsController(io) {
     room.users = room.users.filter((u) => u.name !== user.name);
 
     if (!room.users.length) {
-      console.log(`Closing room ${room.id} because its empty`);
+      console.log(`Closing room ${room.id} because its empty and reason:`, reason);
       rooms.delete(user.id);
       return;
     }
