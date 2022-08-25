@@ -23,7 +23,7 @@ module.exports = (io) => {
     socket.on(SEND_MESSAGE, roomsCtrl.sendMessage);
     socket.on(REORDER_PLAYLIST, roomsCtrl.reorderPlaylist);
 
-    socket.on('disconnect', () => roomsCtrl.leaveRoom(socket));
+    socket.on('disconnect', (reason) => roomsCtrl.leaveRoom(reason, socket));
   });
 
   return roomsCtrl;
