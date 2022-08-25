@@ -40,13 +40,13 @@ function SharedPlaylist() {
   };
 
   return (
-    <Grid>
+    <>
       {!playlist?.length ? (
         <VStack alignItems="center" justifyContent="center" height="100%">
           <Text fontSize="lg" fontWeight="bold">
             No videos in playlist yet 😴
           </Text>
-          <Button onClick={handleAddVideos}>
+          <Button onClick={handleAddVideos} colorScheme="facebook">
             Add videos
           </Button>
         </VStack>
@@ -74,7 +74,7 @@ function SharedPlaylist() {
         </Grid>
       </Reorder.Group>
 
-    </Grid>
+    </>
   );
 }
 

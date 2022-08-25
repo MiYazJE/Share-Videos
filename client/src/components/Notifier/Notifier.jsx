@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useToast } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
+import { useSelector, useDispatch } from 'react-redux';
 
 const readNotification = ({ notifier }) => notifier.notification;
 
 function Notifier() {
+  const dispatch = useDispatch();
   const notification = useSelector(readNotification);
   const toast = useToast({
     isClosable: true,
@@ -19,8 +20,9 @@ function Notifier() {
         description: notification.msg,
         status: notification.variant,
       });
+      dispatch.notifier.CLEAR_NOTIFICATION();
     }
-  }, [notification, toast]);
+  }, [notification, toast, dispatch]);
 
   return null;
 }

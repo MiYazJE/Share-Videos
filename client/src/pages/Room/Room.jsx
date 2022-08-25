@@ -49,15 +49,15 @@ function Room() {
   const { isValidRoom } = useRoom({ id });
 
   useEffect(() => {
-    if (!isValidRoom) history.push('/');
-  }, [isValidRoom, history]);
+    if (!isValidRoom) history.push(`/room-not-found/${id}`);
+  }, [isValidRoom, history, id]);
 
   useEffect(() => {
     if (!name && isLoadingUser) return;
     if (!name) {
       return setShowNameModal(true);
     }
-    socketEvents.joinRoom({ id, name, isLogged });
+    socketEvents.joinRoom({ roomId: id, name, isLogged });
     setShowNameModal(false);
   }, [id, name, isLogged, socketEvents, isLoadingUser]);
 
@@ -67,6 +67,8 @@ function Room() {
       dispatch.room.SET_PROP({ seekVideo: false });
     }
   }, [seekVideo, progressVideo, dispatch]);
+
+  useEffect(() => socketEvents.leaveRoom, [socketEvents]);
 
   const onCancelDialog = () => history.push('/');
 

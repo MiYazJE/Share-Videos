@@ -8,5 +8,8 @@ export default {
     ADD_NOTIFICATION(state, payload) {
       return { ...state, notification: payload };
     },
+    CLEAR_NOTIFICATION() {
+      return { notification: null };
+    },
   },
 };

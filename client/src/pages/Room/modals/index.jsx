@@ -42,7 +42,7 @@ function RoomModals({
         isOpen={activeModal === ROOM_MODALS.PEOPLE}
         onClose={onCloseModal}
         size={MODAL_SIZES.DESKTOP}
-        title="People in the room"
+        title="Details of the room"
       />
       <ChatModal
         isOpen={activeModal === ROOM_MODALS.CHAT}

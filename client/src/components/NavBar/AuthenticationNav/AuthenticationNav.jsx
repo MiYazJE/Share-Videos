@@ -8,11 +8,10 @@ import {
   ButtonGroup,
   Avatar,
   Spinner,
-  IconButton,
   HStack,
-  useColorMode,
 } from '@chakra-ui/react';
-import { MoonIcon, SunIcon } from '@chakra-ui/icons';
+
+import ChangeThemeButton from 'src/components/ChangeThemeButton';
 
 const readSelectors = ({ user, loading }) => ({
   isLogged: user.isLogged,
@@ -26,7 +25,6 @@ function AuthenticationNav({
   openRegister,
 }) {
   const dispatch = useDispatch();
-  const { colorMode, toggleColorMode } = useColorMode();
   const {
     isLogged,
     name,
@@ -73,10 +71,7 @@ function AuthenticationNav({
           </Button>
         </ButtonGroup>
       )}
-      <IconButton
-        onClick={toggleColorMode}
-        icon={colorMode === 'light' ? <MoonIcon /> : <SunIcon />}
-      />
+      <ChangeThemeButton />
     </HStack>
   );
 }

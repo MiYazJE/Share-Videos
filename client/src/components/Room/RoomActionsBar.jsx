@@ -6,14 +6,19 @@ import {
   Tooltip,
 } from '@chakra-ui/react';
 import {
-  MdPeople,
+  MdInfoOutline,
   MdChat,
   MdPlaylistPlay,
   MdSearch,
+  MdExitToApp,
 } from 'react-icons/md';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ROOM_MODALS } from 'src/enums';
+import { useHistory } from 'react-router-dom';
+import ChangeThemeButton from '../ChangeThemeButton';
+
+const ICON_SIZE = '25px';
 
 const getData = ({ room }) => ({
   users: room.users,
@@ -26,6 +31,7 @@ function RoomActionsBar() {
     roomName,
   } = useSelector(getData);
 
+  const history = useHistory();
   const dispatch = useDispatch();
 
   const createToggleShowModal = (type) => () => {
@@ -37,7 +43,7 @@ function RoomActionsBar() {
       width="100%"
       flexDirection={{
         base: 'column',
-        sm: 'row',
+        md: 'row',
       }}
       gap={1}
       justifyContent="space-between"
@@ -52,12 +58,12 @@ function RoomActionsBar() {
         </Text>
       </HStack>
       <HStack>
-        <Tooltip label="People">
+        <Tooltip label="Details of the room">
           <IconButton
             onClick={createToggleShowModal(ROOM_MODALS.PEOPLE)}
             colorScheme="facebook"
-            rounded="full"
-            icon={<MdPeople />}
+            variant="teal"
+            icon={<MdInfoOutline size={ICON_SIZE} />}
           />
         </Tooltip>
 
@@ -65,8 +71,8 @@ function RoomActionsBar() {
           <IconButton
             onClick={createToggleShowModal(ROOM_MODALS.CHAT)}
             colorScheme="facebook"
-            rounded="full"
-            icon={<MdChat />}
+            variant="teal"
+            icon={<MdChat size={ICON_SIZE} />}
           />
         </Tooltip>
 
@@ -74,8 +80,8 @@ function RoomActionsBar() {
           <IconButton
             onClick={createToggleShowModal(ROOM_MODALS.PLAYLIST)}
             colorScheme="facebook"
-            rounded="full"
-            icon={<MdPlaylistPlay />}
+            variant="teal"
+            icon={<MdPlaylistPlay size={ICON_SIZE} />}
           />
         </Tooltip>
 
@@ -83,8 +89,19 @@ function RoomActionsBar() {
           <IconButton
             onClick={createToggleShowModal(ROOM_MODALS.SEARCH)}
             colorScheme="facebook"
-            rounded="full"
-            icon={<MdSearch size={20} />}
+            variant="teal"
+            icon={<MdSearch size={ICON_SIZE} />}
+          />
+        </Tooltip>
+
+        <ChangeThemeButton size={ICON_SIZE} variant="teal" />
+
+        <Tooltip label="Leave">
+          <IconButton
+            onClick={() => history.push('/')}
+            color="red"
+            variant="teal"
+            icon={<MdExitToApp size={ICON_SIZE} />}
           />
         </Tooltip>
       </HStack>

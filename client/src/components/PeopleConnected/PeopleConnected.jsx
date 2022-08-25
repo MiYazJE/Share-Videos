@@ -37,9 +37,9 @@ function PeopleConnected() {
   };
 
   return (
-    <VStack alignItems="flex-start" spacing={6}>
+    <VStack alignItems="flex-start" spacing={10}>
       <FormControl>
-        <FormLabel htmlFor="shareRoom">Share room</FormLabel>
+        <FormLabel htmlFor="shareRoom">Share this link</FormLabel>
         <InputGroup>
           <Input
             onFocus={({ target }) => target.setSelectionRange(0, 100)}
@@ -56,7 +56,7 @@ function PeopleConnected() {
       </FormControl>
 
       <Container p={0}>
-        <Text textAlign="left" fontWeight="semibold">In the room</Text>
+        <Text textAlign="left" fontWeight="semibold">People connected</Text>
         <VStack gap={3} paddingTop={5} width="100%">
           {users.map((user) => (
             <HStack width="100%" alignItems="center">

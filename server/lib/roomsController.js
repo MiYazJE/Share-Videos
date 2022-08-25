@@ -37,19 +37,23 @@ function roomsController(io) {
   }
 
   async function join(payload, socket) {
-    const { id, name, isLogged } = payload;
-    const room = rooms.get(id);
+    const { roomId, name, isLogged } = payload;
+    const room = rooms.get(roomId);
     if (!room) return;
 
-    users.set(socket.id, payload);
-    if (!room.users.find((u) => u.name === name)) {
-      if (isLogged) {
-        const user = await usersBll.getUserByName(name);
-        room.users.push(user);
-      } else {
-        room.users.push({ name, avatarBase64: generateAvatar() });
-      }
+    let user = null;
+    if (isLogged) {
+      user = await usersBll.getUserByName(name);
+    } else {
+      user = {
+        id: generateId(),
+        name,
+        avatarBase64: generateAvatar(),
+      };
     }
+
+    room.users.push(user);
+    users.set(socket.id, { ...payload, ...user });
 
     room.chat = [
       ...room.chat,
@@ -59,14 +63,14 @@ function roomsController(io) {
         time: getTimeNow(),
       },
     ];
-    rooms.set(id, room);
+    rooms.set(roomId, room);
 
-    socket.join(id);
+    socket.join(roomId);
     socket.emit(UPDATE_ROOM, { ...room, seekVideo: room.isPlaying });
-    io.to(id).emit(UPDATE_ROOM, { chat: room.chat, users: room.users });
+    io.to(roomId).emit(UPDATE_ROOM, { chat: room.chat, users: room.users });
 
-    socket.to(id).emit(NOTIFY_MESSAGE, { msg: `${name.toUpperCase()} has joined!`, variant: 'success' });
-    socket.emit(NOTIFY_MESSAGE, { msg: `You just joined to room ${id}`, variant: 'success' });
+    socket.to(roomId).emit(NOTIFY_MESSAGE, { msg: `${name.toUpperCase()} has joined!`, variant: 'success' });
+    socket.emit(NOTIFY_MESSAGE, { msg: `You just joined to room ${roomId}`, variant: 'success' });
   }
 
   function addVideo({ video, id, name }, socket) {
@@ -201,29 +205,26 @@ function roomsController(io) {
   }
 
   function leaveRoom(reason, socket) {
-    if (reason !== 'transport close') {
-      socket.connect();
-      return;
-    }
-
     const user = users.get(socket.id);
     if (!user) return;
 
-    const room = rooms.get(user.id);
+    const room = rooms.get(user.roomId);
     users.delete(socket.id);
-    room.users = room.users.filter((u) => u.name !== user.name);
+    room.users = room.users.filter((u) => u.id !== user.id);
 
     if (!room.users.length) {
       console.log(`Closing room ${room.id} because its empty and reason:`, reason);
-      rooms.delete(user.id);
+      rooms.delete(user.roomId);
       return;
     }
 
     room.host = room.users[Math.floor(Math.random() * room.users.length)].name;
-    rooms.set(user.id, room);
+    rooms.set(user.roomId, room);
 
-    io.to(user.id).emit(UPDATE_ROOM, { users: room.users });
-    io.to(user.id).emit(NOTIFY_MESSAGE, { msg: `${user.name.toUpperCase()} left the room`, variant: 'warning' });
+    io.to(user.roomId).emit(UPDATE_ROOM, { users: room.users });
+    io.to(user.roomId).emit(NOTIFY_MESSAGE, { msg: `${user.name.toUpperCase()} left the room`, variant: 'warning' });
+
+    socket.leave(room.id);
   }
 
   return {

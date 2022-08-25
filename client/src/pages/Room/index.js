@@ -1,1 +1,3 @@
-export { default as Room } from './Room';
+import Room from './Room';
+
+export default Room;
