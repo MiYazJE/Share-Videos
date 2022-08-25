@@ -92,9 +92,8 @@ function VideoCard({
             pointerEvents="none"
             alt={`Thumbnail of video ${video.title}`}
             src={urlThumbnail}
-            objectFit="contain"
+            objectFit="cover"
             h="100%"
-            w="100%"
           />
           <WrapDuration>
             <Text fontSize="xs" letterSpacing="1px" color="white">

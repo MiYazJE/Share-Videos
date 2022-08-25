@@ -201,6 +201,11 @@ function roomsController(io) {
   }
 
   function leaveRoom(reason, socket) {
+    if (reason !== 'transport close') {
+      socket.connect();
+      return;
+    }
+
     const user = users.get(socket.id);
     if (!user) return;
 
@@ -214,9 +219,7 @@ function roomsController(io) {
       return;
     }
 
-    if (room.users.length) {
-      room.host = room.users[Math.floor(Math.random() * room.users.length)].name;
-    }
+    room.host = room.users[Math.floor(Math.random() * room.users.length)].name;
     rooms.set(user.id, room);
 
     io.to(user.id).emit(UPDATE_ROOM, { users: room.users });

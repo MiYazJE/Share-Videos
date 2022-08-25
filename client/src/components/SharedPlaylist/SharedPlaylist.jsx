@@ -53,7 +53,11 @@ function SharedPlaylist() {
       ) : null}
 
       <Reorder.Group as="div" axis="y" values={playlist} onReorder={handleReorderPlaylist}>
-        <Grid position="relative" gridTemplateColumns="1fr" gap={6}>
+        <Grid
+          position="relative"
+          gridTemplateColumns="repeat(auto-fill, 1fr)"
+          gap={6}
+        >
           {playlist?.map((video) => (
             <Reorder.Item as="span" key={video.id} value={video}>
               <VideoCard

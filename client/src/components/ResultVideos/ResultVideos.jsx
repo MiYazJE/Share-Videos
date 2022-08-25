@@ -56,7 +56,7 @@ const ResultVideos = forwardRef((props, ref) => {
     <>
       <Grid
         position="relative"
-        gridTemplateColumns="1fr"
+        gridTemplateRows="repeat(auto-fill, 1fr)"
         gap={6}
       >
         {loadingVideos ? getSekeletonVideos(20) : null}
