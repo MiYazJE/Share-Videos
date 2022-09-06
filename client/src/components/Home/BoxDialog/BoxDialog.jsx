@@ -63,14 +63,14 @@ function BoxDialog({ onCreateRoom, isLoading }) {
         <Container maxW="container.xl" px={10}>
           <Heading size="3xl" textAlign="center" color={colorMode !== 'dark' && 'gray.700'}>
             <HStack justifyContent="center"><AiFillYoutube fill="#FF0000" /></HStack>
-            Share videos with
+            Watch videos with
             {' '}
             <Heading as="span" color={titleColor} size="3xl">FRIENDS</Heading>
           </Heading>
         </Container>
         <Container maxW="container.xxl">
           <Text textAlign="center" fontSize="20px">
-            Watch Videos is the perfect website to view youtube videos in real time with friends.
+            Share Videos is the perfect website to view youtube videos in real time with friends.
             {' '}
             <br />
             What are you waiting for? Join and enjoy 🚀
