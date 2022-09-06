@@ -63,7 +63,7 @@ function BoxDialog({ onCreateRoom, isLoading }) {
         <Container maxW="container.xl" px={10}>
           <Heading size="3xl" textAlign="center" color={colorMode !== 'dark' && 'gray.700'}>
             <HStack justifyContent="center"><AiFillYoutube fill="#FF0000" /></HStack>
-            View videos with
+            Share videos with
             {' '}
             <Heading as="span" color={titleColor} size="3xl">FRIENDS</Heading>
           </Heading>
