@@ -70,7 +70,7 @@ function BoxDialog({ onCreateRoom, isLoading }) {
         </Container>
         <Container maxW="container.xxl">
           <Text textAlign="center" fontSize="20px">
-            Share Videos is the perfect website to view youtube videos in real time with friends.
+            Watch Videos is the perfect website to view youtube videos in real time with friends.
             {' '}
             <br />
             What are you waiting for? Join and enjoy 🚀
