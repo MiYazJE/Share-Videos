@@ -42,12 +42,12 @@ const ResultVideos = forwardRef((props, ref) => {
 
   const handleNextPage = () => {
     getNextPage();
-    ref.current.scrollIntoView({ behavior: 'smooth' });
+    ref.current.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const handlePrevPage = () => {
     getPreviousPage();
-    ref.current.scrollIntoView({ behavior: 'smooth' });
+    ref.current.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   const renderVideos = videos.length && !loadingVideos;

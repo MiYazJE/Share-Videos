@@ -1,4 +1,5 @@
 const passport = require('passport');
+const config = require('../../config/config');
 const LocalStrategy = require('passport-local').Strategy;
 const JwtStrategy = require('passport-jwt').Strategy;
 const User = require('../models/users.model');
@@ -14,7 +15,7 @@ const PASSPORT_CONFIG = {
   },
   JWT: {
     jwtFromRequest: (req) => req.cookies.jwt,
-    secretOrKey: process.env.ACCESS_SECRET_TOKEN,
+    secretOrKey: config.accessSecretToken,
   },
 };
 

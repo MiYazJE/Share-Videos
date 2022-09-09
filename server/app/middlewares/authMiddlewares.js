@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const passport = require('passport');
+const config = require('../../config/config');
 
 const users = require('../models/users.model');
 
@@ -13,7 +14,7 @@ async function userAuthMiddleware(req, res, next) {
 
   const parsedToken = token.split` `[1];
   try {
-    const isValid = jwt.verify(parsedToken, process.env.ACCESS_SECRET_TOKEN);
+    const isValid = jwt.verify(parsedToken, config.accessSecretToken);
     if (!isValid) {
       return res.status(401).json({ msg: 'Invalid token.' });
     }

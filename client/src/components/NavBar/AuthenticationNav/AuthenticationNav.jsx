@@ -71,7 +71,7 @@ function AuthenticationNav({
           </Button>
         </ButtonGroup>
       )}
-      <ChangeThemeButton />
+      <ChangeThemeButton variant="teal" />
     </HStack>
   );
 }

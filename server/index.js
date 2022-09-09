@@ -5,9 +5,10 @@ const cookieParser = require('cookie-parser');
 const session = require('express-session');
 const morgan = require('morgan');
 const cors = require('cors');
-const { initializeMongoDB } = require('./database/connect');
+const { initializeMongoDB } = require('./config/connect');
 const initRoomsCtrl = require('./lib/socketIo');
 const apiRoutes = require('./app/routes/routes');
+const config = require('./config/config');
 require('dotenv').config();
 require('./app/lib/passport');
 
@@ -23,17 +24,17 @@ function initPassport() {
   passport.use(passport.session());
 }
 
-function initServer() {
+async function initServer() {
   app.use(morgan('tiny'));
   app.use(express.json());
-  app.use(session({ saveUninitialized: true, resave: false, secret: process.env.SECRET_KEY }));
+  app.use(session({ saveUninitialized: true, resave: false, secret: config.secretKey }));
   app.use(cookieParser());
 
-  initializeMongoDB();
+  await initializeMongoDB();
   useRoutes();
   initPassport();
 
-  const PORT = process.env.PORT || 3000;
+  const PORT = config.appPort;
   const server = app.listen(PORT, () => console.log(`MAGIC at port ${PORT}`));
   const io = socketIO(server, { path: '/socket-io' });
   const roomsCtrl = initRoomsCtrl(io);

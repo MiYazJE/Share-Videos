@@ -2,21 +2,24 @@ const jwt = require('jsonwebtoken');
 const passport = require('passport');
 
 const Playlist = require('../../models/playlists.model');
-const { encryptPassword } = require('../../lib/auth.helpers');
 const User = require('../../models/users.model');
 const usersBll = require('../users/users.bll');
+
+const config = require('../../../config/config');
+
+const { encryptPassword } = require('../../lib/auth.helpers');
 const generateAvatar = require('../../helpers/generateAvatar');
 const getRandomColor = require('../../helpers/getRandomColor');
 
 const DEFAULT_PLAYLIST_TITLE = 'Default Playlist';
 
 function createToken(payload) {
-  return jwt.sign(payload, process.env.ACCESS_SECRET_TOKEN, {
-    expiresIn: '7d',
+  return jwt.sign(payload, config.accessSecretToken, {
+    expiresIn: config.jwt.expiresIn,
   });
 }
 
-function successLogin(req, res) {
+function successLogin(_, res) {
   return (err, user) => {
     if (err || !user) {
       return res.status(401).json({ msg: 'Password or nickname are incorrects' });
