@@ -6,8 +6,11 @@ on:
       - master
 
 jobs:
-  prepare-deploy:
+  check-changes:
     name: "Check which folders were modified"
+
+    runs-on: ubuntu-latest
+
     steps:
       - uses: dorny/paths-filter@v2
         id: changes
