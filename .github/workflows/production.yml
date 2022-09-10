@@ -31,7 +31,7 @@ jobs:
 
       - name: Install dependencies
         if: steps.changes.outputs.server == 'true'
-        run: npm ci --no-audit --no-found --no-optional
+        run: npm i --no-audit --no-found --no-optional
       - name: Lint
         if: steps.changes.outputs.server == 'true'
         run: npm run eslint
