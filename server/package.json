@@ -10,7 +10,7 @@
     "dev": "nodemon -L server.js",
     "start": "node server.js",
     "lint:fix": "eslint --fix *.js",
-    "lint": "eslint",
+    "lint": "eslint *.js",
     "test:dev": "jest"
   },
   "keywords": [],
