@@ -30,6 +30,7 @@ jobs:
     needs: check_changes
     if: ${{ needs.check_changes.outputs.server == 'true' }}
 
+    environment: Production
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -48,6 +49,10 @@ jobs:
         run: npm run lint
       - name: Run tests
         run: npm run test
+      - name: Deploy to railway
+        uses: bervProject/railway-deploy@main
+        with:
+          railway_token: ${{ secrets.RAILWAY_TOKEN }}
 
   deploy-frontend:
     name: Build frontend
