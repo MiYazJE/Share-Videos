@@ -10,22 +10,22 @@ jobs:
     name: "Check which folders were modified"
     runs-on: ubuntu-latest
     outputs:
-      backend: ${{ steps.filter.outputs.backend }}
-      frontend: ${{ steps.filter.outputs.frontend }}
+      backend: ${{ steps.changes.outputs.server }}
+      frontend: ${{ steps.changes.outputs.frontend }}
     steps:
       - uses: dorny/paths-filter@v2
-        id: filter
+        id: changes
         with:
           filters: |
-            backend:
-              - 'backend/**'
+            server:
+              - 'server/**'
             frontend:
               - 'client/**'
 
   deploy_server:
     name: Build server
     needs: check_changes
-    if: ${{ needs.changes.outputs.backend == 'true' }}
+    if: ${{ needs.changes.outputs.server == 'true' }}
 
     runs-on: ubuntu-latest
     defaults:
