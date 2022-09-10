@@ -6,11 +6,9 @@ on:
       - master
 
 jobs:
-  check-changes:
+  check_changes:
     name: "Check which folders were modified"
-
     runs-on: ubuntu-latest
-
     steps:
       - uses: dorny/paths-filter@v2
         id: changes
@@ -20,16 +18,19 @@ jobs:
               - 'server/**'
             frontend: 
               - 'frontend/**'
+    outputs:
+      server: ${{ steps.changes.outputs.server }}
+      frontend: ${{ steps.changes.outputs.frontend }}
 
-  deploy-server:
+  deploy_server:
     name: Build server
-
-    if: steps.changes.outputs.server == 'true'
-
+    needs: check_changes
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: server
+
+    if: needs.check_changes.outputs.server == 'true'
 
     steps:
       - uses: actions/checkout@v2
@@ -49,13 +50,13 @@ jobs:
 
   deploy-frontend:
     name: Build frontend
-
-    if: steps.changes.outputs.frontend == 'true'
-
+    needs: check_changes
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: client
+
+    if: needs.check_changes.outputs.server == 'true'
 
     steps:
       - uses: actions/checkout@v2
