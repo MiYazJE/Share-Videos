@@ -9,31 +9,28 @@ jobs:
   check_changes:
     name: "Check which folders were modified"
     runs-on: ubuntu-latest
+    outputs:
+      backend: ${{ steps.filter.outputs.backend }}
+      frontend: ${{ steps.filter.outputs.frontend }}
     steps:
-      - uses: actions/checkout@v2
-        with:
-          fetch-depth: 0
       - uses: dorny/paths-filter@v2
-        id: changes
+        id: filter
         with:
           filters: |
-            server: 
-              - 'server/**'
-            frontend: 
-              - 'frontend/**'
-    outputs:
-      server: ${{ steps.changes.outputs.server }}
-      frontend: ${{ steps.changes.outputs.frontend }}
+            backend:
+              - 'backend/**'
+            frontend:
+              - 'client/**'
 
   deploy_server:
     name: Build server
     needs: check_changes
+    if: ${{ needs.changes.outputs.backend == 'true' }}
+
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: server
-
-    if: needs.check_changes.outputs.server == 'true'
 
     steps:
       - uses: actions/checkout@v2
@@ -52,12 +49,12 @@ jobs:
   deploy-frontend:
     name: Build frontend
     needs: check_changes
+    if: ${{ needs.changes.outputs.frontend == 'true' }}
+
     runs-on: ubuntu-latest
     defaults:
       run:
         working-directory: client
-
-    if: needs.check_changes.outputs.server == 'true'
 
     steps:
       - uses: actions/checkout@v2
