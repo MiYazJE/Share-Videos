@@ -30,8 +30,8 @@ jobs:
               - 'server/**'
 
       - name: Install dependencies
-        if: steps.filter.outputs.server == 'true'
+        if: steps.changes.outputs == 'true'
         run: npm ci --no-audit --no-found --no-optional
       - name: Lint
-        if: steps.filter.outputs.server == 'true'
+        if: steps.changes.outputs == 'true'
         run: npm run eslint
