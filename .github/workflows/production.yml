@@ -8,6 +8,8 @@ on:
 jobs:
   deploy-server:
     name: Build server
+    if: steps.changes.outputs.server == 'true'
+
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -30,11 +32,45 @@ jobs:
               - 'server/**'
 
       - name: Install dependencies
-        if: steps.changes.outputs.server == 'true'
         run: npm i --no-audit --no-found --no-optional
       - name: Lint
-        if: steps.changes.outputs.server == 'true'
         run: npm run lint
       - name: Run tests
-        if: steps.changes.outputs.server == 'true'
         run: npm run test
+
+  deploy-fronted:
+    name: Build frontend
+    if: steps.changes.outputs.frontend == 'true'
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            frontend: 
+              - 'frontend/**'
+
+      - name: Install dependencies
+        run: npm i --no-audit --no-found --no-optional
+      - name: Lint
+        run: npm run lint
+      - name: Deploy to Vercel Action
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-args: "--prod"
+          vercel-org-id: ${{ secrets.ORG_ID}}
+          vercel-project-id: ${{ secrets.PROJECT_ID}}
