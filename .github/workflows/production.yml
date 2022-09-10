@@ -10,7 +10,7 @@ jobs:
     name: "Check which folders were modified"
     runs-on: ubuntu-latest
     outputs:
-      backend: ${{ steps.changes.outputs.server }}
+      server: ${{ steps.changes.outputs.server }}
       frontend: ${{ steps.changes.outputs.frontend }}
     steps:
       - uses: actions/checkout@v2
@@ -28,7 +28,7 @@ jobs:
   deploy_server:
     name: Build server
     needs: check_changes
-    if: ${{ needs.changes.outputs.server == 'true' }}
+    if: ${{ needs.check_changes.outputs.server == 'true' }}
 
     runs-on: ubuntu-latest
     defaults:
@@ -52,7 +52,7 @@ jobs:
   deploy-frontend:
     name: Build frontend
     needs: check_changes
-    if: ${{ needs.changes.outputs.frontend == 'true' }}
+    if: ${{ needs.check_changes.outputs.frontend == 'true' }}
 
     runs-on: ubuntu-latest
     defaults:
