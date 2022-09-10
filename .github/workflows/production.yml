@@ -6,6 +6,16 @@ on:
       - master
 
 jobs:
+  prepare-deploy:
+    - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            server: 
+              - 'server/**'
+            frontend: 
+              - 'frontend/**'
+              
   deploy-server:
     name: Build server
 
@@ -24,13 +34,6 @@ jobs:
       - uses: actions/setup-node@v2
         with:
           node-version: "18"
-
-      - uses: dorny/paths-filter@v2
-        id: changes
-        with:
-          filters: |
-            server: 
-              - 'server/**'
 
       - name: Install dependencies
         run: npm i --no-audit --no-found --no-optional
