@@ -34,4 +34,4 @@ jobs:
         run: npm i --no-audit --no-found --no-optional
       - name: Lint
         if: steps.changes.outputs.server == 'true'
-        run: npm run eslint
+        run: npm run lint

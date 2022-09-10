@@ -6,9 +6,9 @@ const initRoomsCtrl = require('./lib/socketIo');
 const config = require('./config/config');
 
 async function main() {
-  await clientDb.connect();
+  await clientDb.connect(); 
 
-  const server = app.listen(config.appPort, () => console.log(`MAGIC at port ${config.appPort}    `));
+  const server = app.listen(config.appPort, () => console.log(`MAGIC at port ${config.appPort}`));
 
   const io = socketIO(server, { path: '/socket-io' });
   const roomsCtrl = initRoomsCtrl(io);
