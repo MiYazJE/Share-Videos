@@ -7,14 +7,16 @@ on:
 
 jobs:
   prepare-deploy:
-    - uses: dorny/paths-filter@v2
-      id: changes
-      with:
-        filters: |
-          server: 
-            - 'server/**'
-          frontend: 
-            - 'frontend/**'
+    name: "Check which folders were modified"
+    steps:
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            server: 
+              - 'server/**'
+            frontend: 
+              - 'frontend/**'
 
   deploy-server:
     name: Build server
