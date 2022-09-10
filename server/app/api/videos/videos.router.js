@@ -1,7 +1,23 @@
 const router = require('express').Router();
-const videosCtrl = require('./videos.controller');
 
-router.get('/autocomplete/youtube/:q', videosCtrl.autocompleteYoutube);
-router.get('/youtube/:q', videosCtrl.getYoutubeVideos);
+const controller = require('./videos.controller');
+const validation = require('./videos.validation');
+
+const { userAuthMiddleware } = require('../../middlewares/authMiddlewares');
+const { validateSchema } = require('../../middlewares/validation');
+
+router.get(
+  '/autocomplete/youtube/:q',
+  userAuthMiddleware,
+  validateSchema(validation.searchParam),
+  controller.autocompleteYoutube,
+);
+
+router.get(
+  '/youtube/:q',
+  userAuthMiddleware,
+  validateSchema(validation.searchParam),
+  controller.getYoutubeVideos,
+);
 
 module.exports = router;

@@ -38,7 +38,7 @@ const register = async (req, res) => {
 
   const userExists = await User.exists({ name });
   if (userExists) {
-    return res.json({
+    return res.status(400).json({
       error: true,
       msg: 'That nickname already exists. Please, choose another.',
     });
@@ -57,7 +57,7 @@ const register = async (req, res) => {
 
   const playlist = new Playlist({
     title: DEFAULT_PLAYLIST_TITLE,
-    user: user._doc._id,
+    userId: user._doc._id,
   });
 
   await Promise.all([

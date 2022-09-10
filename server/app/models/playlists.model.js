@@ -7,6 +7,12 @@ const PlaylistSchema = mongoose.Schema({
   },
   videos: {
     type: Array,
+    default: [],
+  },
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    required: true,
+    ref: 'User',
   },
 }, {
   timestamps: true,
