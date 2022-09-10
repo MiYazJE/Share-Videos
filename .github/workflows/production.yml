@@ -13,6 +13,9 @@ jobs:
       backend: ${{ steps.changes.outputs.server }}
       frontend: ${{ steps.changes.outputs.frontend }}
     steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - uses: dorny/paths-filter@v2
         id: changes
         with:
