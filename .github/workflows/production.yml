@@ -1,0 +1,24 @@
+name: Share videos CI pipeline for PRODUCTION
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  deploy-server:
+    runs-on: ubuntu-18.04
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v2
+        with:
+          node-version: "18"
+      - name: Setup server
+        run: cd /server
+      - name: Install dependencies
+        run: npm ci --no-audit --no-found --no-optional
+      - name: Lint
+        run: npm run eslint
