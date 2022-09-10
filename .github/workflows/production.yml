@@ -35,3 +35,6 @@ jobs:
       - name: Lint
         if: steps.changes.outputs.server == 'true'
         run: npm run lint
+      - name: Run tests
+        if: steps.changes.outputs.server == 'true'
+        run: npm run tests
