@@ -8,8 +8,13 @@ function extractToken(tokenKey = JWT_TOKEN) {
   return localStorage.getItem(tokenKey);
 }
 
+function removeToken(tokenKey = JWT_TOKEN) {
+  localStorage.removeItem(tokenKey);
+}
+
 export default {
   saveToken,
   extractToken,
+  removeToken,
   JWT_TOKEN,
 };

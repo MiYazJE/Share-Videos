@@ -49,7 +49,7 @@ export default {
       }
     },
     async logout() {
-      await http.get(API_ROUTES.AUTH.LOGOUT);
+      tokenStorage.removeToken(tokenStorage.JWT_TOKEN);
       dispatch.user.RESET();
     },
     async whoAmI() {
