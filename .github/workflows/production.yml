@@ -54,6 +54,7 @@ jobs:
     needs: check_changes
     if: ${{ needs.check_changes.outputs.frontend == 'true' }}
 
+    environment: Production
     runs-on: ubuntu-latest
     defaults:
       run:
