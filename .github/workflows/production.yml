@@ -7,18 +7,31 @@ on:
 
 jobs:
   deploy-server:
-    runs-on: ubuntu-18.04
+    name: Build server
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
 
     steps:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
+
       - uses: actions/setup-node@v2
         with:
           node-version: "18"
-      - name: Setup server
-        run: cd /server
+
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            server: 
+              - 'server/**'
+
       - name: Install dependencies
+        if: steps.filter.outputs.server == 'true'
         run: npm ci --no-audit --no-found --no-optional
       - name: Lint
+        if: steps.filter.outputs.server == 'true'
         run: npm run eslint
