@@ -8,6 +8,7 @@ on:
 jobs:
   deploy-server:
     name: Build server
+
     if: steps.changes.outputs.server == 'true'
 
     runs-on: ubuntu-latest
@@ -38,8 +39,9 @@ jobs:
       - name: Run tests
         run: npm run test
 
-  deploy-fronted:
+  deploy-frontend:
     name: Build frontend
+
     if: steps.changes.outputs.frontend == 'true'
 
     runs-on: ubuntu-latest
