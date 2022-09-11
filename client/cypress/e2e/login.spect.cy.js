@@ -16,8 +16,8 @@ describe('Home page e2e', () => {
 
     cy.get('.chakra-modal__content button[type="submit"]')
       .click();
-    // cy.get('.chakra-modal__content button[type="submit"]')
-    //   .should('have.attr', 'data-loading');
+    cy.get('.chakra-modal__content button[type="submit"]')
+      .should('have.attr', 'data-loading');
 
     cy.intercept('POST', '**/auth/login', { statusCode: 500, body: { msg: 'Network Error' } })
       .as('login');
@@ -37,17 +37,21 @@ describe('Home page e2e', () => {
 
     cy.get('.chakra-modal__content button[type="submit"]')
       .click();
-    // cy.get('.chakra-modal__content button[type="submit"]')
-    //   .should('have.attr', 'data-loading');
+    cy.get('.chakra-modal__content button[type="submit"]')
+      .should('have.attr', 'data-loading');
 
     cy.fixture('user').then((user) => {
       cy.intercept('POST', '**/auth/login', user)
         .as('login');
-      cy.wait('@login');
     });
+
+    cy.wait('@login');
 
     cy.contains(/Logged in successfully/gi);
     cy.get('button')
-      .contains(/welcome test/gi);
+      .contains(/welcome test/gi)
+      .then(() => {
+        expect(localStorage.getItem('JWT_TOKEN')).to.equal('Bearer superToken');
+      });
   });
 });

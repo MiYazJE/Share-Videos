@@ -84,6 +84,10 @@ jobs:
           build: npm run build
           start: npm start
           wait-on: "http://localhost:3000"
+          record: true
+        env:
+          CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+          CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
       - name: Deploy to Vercel Action
         uses: amondnet/vercel-action@v20
         with:
