@@ -53,8 +53,10 @@ export default {
       dispatch.user.RESET();
     },
     async whoAmI() {
-      const { user } = await http.get(API_ROUTES.AUTH.WHO_AM_I);
-      dispatch.user.SET_PROP(mapLoggedUser(user));
+      try {
+        const { user } = await http.get(API_ROUTES.AUTH.WHO_AM_I);
+        dispatch.user.SET_PROP(mapLoggedUser(user));
+      } catch (err) { /* */ }
     },
   }),
 };

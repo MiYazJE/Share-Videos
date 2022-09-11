@@ -9,6 +9,7 @@ function ChangeThemeButton({ variant, size }) {
   return (
     <Tooltip label={`Change to ${colorMode === 'dark' ? 'light' : 'dark'} mode`}>
       <IconButton
+        data-test-id="changeThemeButton"
         onClick={toggleColorMode}
         icon={<IconMode size={size} />}
         variant={variant}

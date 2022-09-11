@@ -58,7 +58,7 @@ function BoxDialog({ onCreateRoom, isLoading }) {
   }, [name, setValue]);
 
   return (
-    <form onSubmit={handleSubmit(onCreateRoom)}>
+    <form data-test-id="homeForm" onSubmit={handleSubmit(onCreateRoom)}>
       <VStack p={10} gap={10} boxSize="100%">
         <Container maxW="container.xl" px={10}>
           <Heading size="3xl" textAlign="center" color={colorMode !== 'dark' && 'gray.700'}>

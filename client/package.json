@@ -34,6 +34,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
+    "test:dev": "cypress",
+    "test:ci": "cypress",
     "eject": "react-scripts eject",
     "lint:fix": "eslint --fix --ext .js,.jsx .",
     "lint": "eslint ."
@@ -51,8 +53,10 @@
     ]
   },
   "devDependencies": {
+    "cypress": "^10.7.0",
     "eslint": "^8.16.0",
     "eslint-config-airbnb": "^19.0.4",
+    "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.5.0",

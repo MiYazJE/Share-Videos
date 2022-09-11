@@ -76,6 +76,10 @@ jobs:
         run: npm i --no-audit --no-found --no-optional
       - name: Lint
         run: npm run lint
+      - name: Test
+        uses: cypress-io/github-action@v4
+        with:
+          browser: chrome
       - name: Deploy to Vercel Action
         uses: amondnet/vercel-action@v20
         with:
