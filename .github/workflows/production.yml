@@ -88,6 +88,7 @@ jobs:
         env:
           CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
       - name: Deploy to Vercel Action
         uses: amondnet/vercel-action@v20
         with:
