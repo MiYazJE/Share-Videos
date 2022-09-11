@@ -44,7 +44,7 @@ jobs:
         with:
           node-version: "18"
       - name: Install dependencies
-        run: npm i --no-audit --no-found --no-optional
+        run: npm ci --no-audit --no-found --no-optional
       - name: Lint
         run: npm run lint
       - name: Run tests
@@ -54,7 +54,7 @@ jobs:
         with:
           railway_token: ${{ secrets.RAILWAY_TOKEN }}
 
-  deploy-frontend:
+  deploy_frontend:
     name: Build frontend
     needs: check_changes
     if: ${{ needs.check_changes.outputs.frontend == 'true' }}
@@ -73,13 +73,14 @@ jobs:
         with:
           node-version: "18"
       - name: Install dependencies
-        run: npm i --no-audit --no-found --no-optional
+        run: npm ci --no-audit --no-found --no-optional
       - name: Lint
         run: npm run lint
-      - name: Test
+      - name: Test Cypress E2E
         uses: cypress-io/github-action@v4
         with:
-          browser: chrome
+          build: npm run build
+          start: npm start
       - name: Deploy to Vercel Action
         uses: amondnet/vercel-action@v20
         with:
