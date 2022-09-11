@@ -44,7 +44,7 @@ export default {
         tokenStorage.saveToken(tokenStorage.JWT_TOKEN, token);
         dispatch.user.SET_PROP(mapLoggedUser(user));
       } catch (err) {
-        const { msg } = err.response.data;
+        const msg = err.response?.data?.msg || err.message;
         dispatch.notifier.ADD_NOTIFICATION({ msg, variant: 'error' });
       }
     },

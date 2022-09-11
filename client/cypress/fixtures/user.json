@@ -1,0 +1,9 @@
+{
+  "user": {
+    "name": "test",
+    "avatarBase64": "",
+    "id": "userId",
+    "color": "#FFFFFF"
+  },
+  "token": "Bearer superToken"
+}
