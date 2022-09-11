@@ -16,8 +16,6 @@ describe('Home page e2e', () => {
 
     cy.get('.chakra-modal__content button[type="submit"]')
       .click();
-    cy.get('.chakra-modal__content button[type="submit"]')
-      .should('have.attr', 'data-loading');
 
     cy.intercept('POST', 'http://localhost:5000/auth/login', { statusCode: 500, body: { msg: 'Network Error' } })
       .as('login');
@@ -37,8 +35,6 @@ describe('Home page e2e', () => {
 
     cy.get('.chakra-modal__content button[type="submit"]')
       .click();
-    cy.get('.chakra-modal__content button[type="submit"]')
-      .should('have.attr', 'data-loading');
 
     cy.fixture('user').then((user) => {
       cy.intercept('POST', 'http://localhost:5000/auth/login', user)
