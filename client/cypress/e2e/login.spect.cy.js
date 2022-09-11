@@ -26,7 +26,7 @@ describe('Home page e2e', () => {
     cy.contains(/network error/gi);
   });
 
-  it.only('Should login successfully with valid credentials', () => {
+  it('Should login successfully with valid credentials', () => {
     cy.contains(/login/gi).click({ force: true });
 
     cy.get('.chakra-modal__content input#name')
