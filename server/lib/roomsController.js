@@ -13,6 +13,7 @@ const { getTimeNow } = require('./utils/getDate');
 const MAX_CHAT_LENGTH = 40;
 
 const INITIAL_CURRENT_VIDEO = {
+  id: generateId(),
   url: 'https://www.youtube.com/watch?v=OgIRAjnnJzI',
   title: 'Soy programador fp',
 };
