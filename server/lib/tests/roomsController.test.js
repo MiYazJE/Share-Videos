@@ -1,9 +1,4 @@
-const supertest = require('supertest');
-
-const User = require('../../app/models/users.model');
 const { roomsController } = require('../roomsController');
-const clientDb = require('../../config/createDatabase');
-const app = require('../../app');
 
 const NAME = 'me';
 const NAME_2 = 'you';
@@ -15,8 +10,6 @@ const SOCKET_MOCK = {
 const SOCKET_MOCK_2 = {
   id: 'randomSocketId2',
 };
-
-supertest(app);
 
 const mockJoinRoom = jest.fn(() => {});
 const mockEmitToRoom = jest.fn(() => {});
@@ -36,32 +29,9 @@ jest.mock('../../app/helpers/generateAvatar.js', () => jest.fn(() => ''));
 
 let roomsCtrl;
 
-async function createUser({
-  name = 'test',
-  password = 'pass',
-  color = '',
-} = {}) {
-  const user = new User({
-    name,
-    password,
-    color,
-  });
-  await user.save();
-}
-
 describe('Rooms controller test', () => {
-  beforeAll(async () => {
-    await clientDb.connect();
-    await createUser();
-  });
-
   beforeEach(() => {
     roomsCtrl = roomsController();
-  });
-
-  afterEach(async () => {
-    await clientDb.dropCollections();
-    jest.clearAllMocks();
   });
 
   test('Should create a room', async () => {

@@ -26,7 +26,7 @@ describe('Home page e2e', () => {
     cy.contains(/network error/gi);
   });
 
-  it('Should login successfully with valid credentials', () => {
+  it.only('Should login successfully with valid credentials', () => {
     cy.contains(/login/gi).click({ force: true });
 
     cy.get('.chakra-modal__content input#name')
@@ -40,10 +40,7 @@ describe('Home page e2e', () => {
     // cy.get('.chakra-modal__content button[type="submit"]')
     //   .should('have.attr', 'data-loading');
 
-    cy.fixture('user').then((user) => {
-      cy.intercept('POST', '**/auth/login', user)
-        .as('login');
-    });
+    cy.intercept('POST', '**/auth/login', { fixture: 'user.json' }).as('login');
 
     cy.wait('@login');
 
