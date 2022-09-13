@@ -6,6 +6,7 @@ const {
 
 const usersBll = require('../app/api/users/users.bll');
 const generateAvatar = require('../app/helpers/generateAvatar');
+const createEventsHandler = require('./eventsHandler');
 
 const { generateId } = require('./utils/generateID');
 const { getTimeNow } = require('./utils/getDate');
@@ -21,8 +22,21 @@ const INITIAL_CURRENT_VIDEO = {
 function roomsController(io) {
   const rooms = new Map();
   const users = new Map();
+  const eventsHandler = createEventsHandler(io);
 
-  function create(host) {
+  async function createRoom(id, room) {
+    rooms.set(id, room);
+  }
+
+  async function getRoom(id) {
+    return Promise.resolve(rooms.get(id));
+  }
+
+  async function deleteRoom(id) {
+    return rooms.delete(id);
+  }
+
+  async function create(host) {
     const id = generateId();
     const room = {
       id,
@@ -33,13 +47,13 @@ function roomsController(io) {
       progressVideo: 0,
       currentVideo: { ...INITIAL_CURRENT_VIDEO },
     };
-    rooms.set(id, room);
+    await createRoom(id, room);
     return room;
   }
 
   async function join(payload, socket) {
     const { roomId, name, isLogged } = payload;
-    const room = rooms.get(roomId);
+    const room = await getRoom(roomId);
     if (!room) return;
 
     let user = null;
@@ -66,32 +80,31 @@ function roomsController(io) {
     ];
     rooms.set(roomId, room);
 
-    socket.join(roomId);
-    socket.emit(UPDATE_ROOM, { ...room, seekVideo: room.isPlaying });
-    io.to(roomId).emit(UPDATE_ROOM, { chat: room.chat, users: room.users });
+    eventsHandler.joinRoom(socket, roomId);
 
-    socket.to(roomId).emit(NOTIFY_MESSAGE, { msg: `${name.toUpperCase()} has joined!`, variant: 'success' });
-    socket.emit(NOTIFY_MESSAGE, { msg: `You just joined to room ${roomId}`, variant: 'success' });
+    eventsHandler.emitToMe(socket, UPDATE_ROOM, { ...room, seekVideo: room.isPlaying });
+    eventsHandler.broadcastToRoom(roomId, UPDATE_ROOM, { chat: room.chat, users: room.users });
+
+    eventsHandler.emitToRoom(socket, roomId, NOTIFY_MESSAGE, { msg: `${name.toUpperCase()} has joined!`, variant: 'success' });
+    eventsHandler.emitToMe(socket, NOTIFY_MESSAGE, { msg: `You just joined to room ${roomId}`, variant: 'success' });
   }
 
-  function addVideo({ video, id, name }, socket) {
-    const room = rooms.get(id);
+  async function addVideo({ video, id: roomId, name }, socket) {
+    const room = await getRoom(roomId);
     if (!room) return;
 
     // eslint-disable-next-line no-param-reassign
     video.id = generateId();
     room.queue.push({ ...video });
-    rooms.set(id, room);
-    io.to(id).emit(UPDATE_ROOM, { queue: room.queue });
+    rooms.set(roomId, room);
 
-    socket
-      .to(id)
-      .emit(NOTIFY_MESSAGE, { msg: `${name.toUpperCase()} has added '${video.title}'!`, variant: 'success' });
-    socket.emit(NOTIFY_MESSAGE, { msg: `You have added '${video.title}'!`, variant: 'success' });
+    eventsHandler.broadcastToRoom(roomId, UPDATE_ROOM, { queue: room.queue });
+    eventsHandler.broadcastToRoom(roomId, NOTIFY_MESSAGE, { msg: `${name.toUpperCase()} has added '${video.title}'!`, variant: 'success' });
+    eventsHandler.emitToMe(socket, roomId, NOTIFY_MESSAGE, { msg: `You have added '${video.title}'!`, variant: 'success' });
   }
 
-  function removeVideo({ idVideo, roomId, name }, socket) {
-    let room = rooms.get(roomId);
+  async function removeVideo({ idVideo, roomId, name }, socket) {
+    let room = await getRoom(roomId);
     if (!room) return;
 
     const deletedVideoIdx = room.queue.findIndex((v) => v.id === idVideo);
@@ -114,83 +127,84 @@ function roomsController(io) {
         progressVideo: 0,
       };
 
-      io.to(roomId).emit(NOTIFY_MESSAGE, {
+      eventsHandler.broadcastToRoom(roomId, NOTIFY_MESSAGE, {
         msg: `Next video is '${nextVideo.title}'`,
         variant: 'success',
       });
     }
 
     rooms.set(roomId, room);
-    io.to(roomId).emit(UPDATE_ROOM, room);
+    eventsHandler.broadcastToRoom(roomId, UPDATE_ROOM, room);
 
     if (name) {
-      socket.to(roomId).emit(NOTIFY_MESSAGE, {
+      eventsHandler.emitToRoom(socket, roomId, NOTIFY_MESSAGE, {
         msg: `${name.toUpperCase()} has deleted '${deletedVideo.title}'`,
         variant: 'error',
       });
-      socket.emit(NOTIFY_MESSAGE, { msg: 'Video deleted from queue', variant: 'error' });
+      eventsHandler.emitToMe(socket, NOTIFY_MESSAGE, { msg: 'Video deleted from queue', variant: 'error' });
     }
   }
 
-  function viewVideo({ video, roomId }) {
-    const room = rooms.get(roomId);
+  async function viewVideo({ video, roomId }) {
+    const room = await getRoom(roomId);
     if (!room) return;
 
     room.currentVideo = video;
     room.progressVideo = 0;
+    room.isPlaying = true;
     rooms.set(roomId, room);
 
-    io.to(roomId).emit(UPDATE_ROOM, {
+    eventsHandler.broadcastToRoom(roomId, UPDATE_ROOM, {
       currentVideo: room.currentVideo,
       progressVideo: room.progressVideo,
       isPlaying: true,
     });
-    io.to(roomId).emit(NOTIFY_MESSAGE, { msg: `Playing '${video.title}'...`, variant: 'success' });
+    eventsHandler.broadcastToRoom(roomId, NOTIFY_MESSAGE, { msg: `Playing '${video.title}'...`, variant: 'success' });
   }
 
-  function sendPlayerState({ state, roomId }) {
-    const room = rooms.get(roomId);
+  async function sendPlayerState({ state, roomId }) {
+    const room = await getRoom(roomId);
     if (!room) return;
 
     room.isPlaying = state === 'play';
     rooms.set(roomId, room);
-    io.to(roomId).emit(UPDATE_ROOM, {
-      isPlaying: room.isPlaying,
-    });
+    eventsHandler.broadcastToRoom(roomId, UPDATE_ROOM, { isPlaying: room.isPlaying });
   }
 
-  function reorderPlaylist({ playlist, roomId }) {
-    const room = rooms.get(roomId);
+  async function reorderPlaylist({ playlist, roomId }) {
+    const room = await getRoom(roomId);
     if (!room) return;
 
     room.queue = playlist;
     rooms.set(roomId, room);
 
-    io.to(roomId).emit(UPDATE_ROOM, {
-      queue: playlist,
-    });
+    eventsHandler.broadcastToRoom(roomId, UPDATE_ROOM, { queue: playlist });
   }
 
-  function sendProgress({
+  async function sendProgress({
     progress,
     roomId,
     seekVideo,
   }, socket) {
-    const room = rooms.get(roomId);
+    const room = await getRoom(roomId);
     if (!room) return;
+
     room.progressVideo = progress;
     rooms.set(roomId, room);
-    io.to(roomId).emit(UPDATE_ROOM, { progressVideo: progress });
-    socket.to(roomId).emit(UPDATE_ROOM, { seekVideo });
+
+    eventsHandler.broadcastToRoom(roomId, UPDATE_ROOM, { progressVideo: progress });
+    eventsHandler.emitToRoom(socket, roomId, UPDATE_ROOM, { seekVideo });
   }
 
-  function sendMessage({
+  async function sendMessage({
     name,
     msg,
     roomId,
     color,
   }) {
-    const room = rooms.get(roomId);
+    const room = await getRoom(roomId);
+    if (!room) return;
+
     room.chat = room.chat.concat({
       isAdmin: false,
       emitter: name,
@@ -198,34 +212,35 @@ function roomsController(io) {
       time: getTimeNow(),
       color,
     });
+
     if (room.chat.length > MAX_CHAT_LENGTH) {
       room.chat = room.chat.slice(1);
     }
     rooms.set(roomId, room);
-    io.to(roomId).emit(UPDATE_CHAT, room.chat);
+
+    eventsHandler.broadcastToRoom(roomId, UPDATE_CHAT, room.chat);
   }
 
-  function leaveRoom(reason, socket) {
+  async function leaveRoom(reason, socket) {
     const user = users.get(socket.id);
     if (!user) return;
 
-    const room = rooms.get(user.roomId);
+    const room = await getRoom(user.roomId);
     users.delete(socket.id);
     room.users = room.users.filter((u) => u.id !== user.id);
 
     if (!room.users.length) {
       console.log(`Closing room ${room.id} because its empty and reason:`, reason);
-      rooms.delete(user.roomId);
+      await deleteRoom(user.roomId);
       return;
     }
 
     room.host = room.users[Math.floor(Math.random() * room.users.length)].name;
     rooms.set(user.roomId, room);
 
-    io.to(user.roomId).emit(UPDATE_ROOM, { users: room.users });
-    io.to(user.roomId).emit(NOTIFY_MESSAGE, { msg: `${user.name.toUpperCase()} left the room`, variant: 'warning' });
-
-    socket.leave(room.id);
+    eventsHandler.broadcastToRoom(user.roomId, UPDATE_ROOM, { users: room.users });
+    eventsHandler.broadcastToRoom(user.roomId, NOTIFY_MESSAGE, { msg: `${user.name.toUpperCase()} left the room`, variant: 'warning' });
+    eventsHandler.leaveRoom(socket, user.roomId);
   }
 
   return {
@@ -239,7 +254,7 @@ function roomsController(io) {
     leaveRoom,
     sendMessage,
     reorderPlaylist,
-    get: (id) => rooms.get(id),
+    get: getRoom,
   };
 }
 
