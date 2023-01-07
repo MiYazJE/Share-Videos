@@ -108,8 +108,8 @@ function roomsController(io) {
     if (!room) return;
 
     const deletedVideoIdx = room.queue.findIndex((v) => v.id === idVideo);
-    const deletedVideo = room.queue[deletedVideoIdx];
-    const currentVideoIsDeleted = room.currentVideo.id === deletedVideo.id;
+    const deletedVideo = room.queue?.[deletedVideoIdx];
+    const currentVideoIsDeleted = room.currentVideo.id === deletedVideo?.id;
 
     room.queue = room.queue.filter((video) => video.id !== idVideo);
 
