@@ -61,9 +61,11 @@ jobs:
         run: npm run test
       - name: Deploy to railway
         if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy_server)
-        uses: devtomio/action-railway@v1.1.4
-        with:
-          railway_token: ${{ secrets.RAILWAY_TOKEN }}
+        run: |
+          npm install --global @railway/cli
+          railway up --ci
+        env:
+          RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
   deploy_frontend:
     name: Build frontend
