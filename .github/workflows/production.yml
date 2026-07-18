@@ -83,7 +83,7 @@ jobs:
       - name: Deploy to Railway
         run: |
           npm install --global @railway/cli
-          railway up . --ci --path-as-root
+          railway up . --ci --path-as-root --service "Share-Videos"
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
