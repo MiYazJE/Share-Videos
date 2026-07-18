@@ -25,7 +25,7 @@ const {
   WS_LEAVE_ROOM,
 } = WS_MESSAGES;
 
-const apiUrl = process.env.REACT_APP_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const SocketEventsContext = createContext({});
 

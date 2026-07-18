@@ -13,7 +13,7 @@ jobs:
       server: ${{ steps.changes.outputs.server }}
       frontend: ${{ steps.changes.outputs.frontend }}
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
       - uses: dorny/paths-filter@v2
@@ -37,10 +37,10 @@ jobs:
         working-directory: server
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
           node-version: "18"
       - name: Install dependencies
@@ -66,18 +66,20 @@ jobs:
         working-directory: client
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v2
+      - uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: client/package-lock.json
       - name: Install dependencies
         run: npm ci --no-audit --no-found --no-optional
       - name: Lint
         run: npm run lint
       - name: Test Cypress E2E
-        uses: cypress-io/github-action@v4
+        uses: cypress-io/github-action@v7
         with:
           working-directory: ./client
           browser: chrome
@@ -90,7 +92,7 @@ jobs:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy to Vercel Action
-        uses: amondnet/vercel-action@v20
+        uses: amondnet/vercel-action@v42
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-args: "--prod"
