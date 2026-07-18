@@ -4,6 +4,9 @@ on:
   push:
     branches:
       - master
+  pull_request:
+    branches:
+      - master
 
 jobs:
   check_changes:
@@ -50,6 +53,7 @@ jobs:
       - name: Run tests
         run: npm run test
       - name: Deploy to railway
+        if: github.event_name == 'push'
         uses: devtomio/action-railway@v1.1.4
         with:
           railway_token: ${{ secrets.RAILWAY_TOKEN }}
@@ -92,6 +96,7 @@ jobs:
           CYPRESS_PROJECT_ID: ${{ secrets.CYPRESS_PROJECT_ID }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Deploy to Vercel Action
+        if: github.event_name == 'push'
         uses: amondnet/vercel-action@v42
         with:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
