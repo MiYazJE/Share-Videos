@@ -71,9 +71,6 @@ jobs:
     if: github.event_name == 'workflow_dispatch' && inputs.deploy_target == 'backend'
     environment: Production
     runs-on: ubuntu-latest
-    defaults:
-      run:
-        working-directory: server
 
     steps:
       - uses: actions/checkout@v4
@@ -83,7 +80,7 @@ jobs:
       - name: Deploy to Railway
         run: |
           npm install --global @railway/cli
-          railway up . --ci --path-as-root --service "Share-Videos"
+          railway up --ci --service "Share-Videos"
         env:
           RAILWAY_TOKEN: ${{ secrets.RAILWAY_TOKEN }}
 
