@@ -31,12 +31,12 @@
     "yup": "^0.32.11"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test",
+    "start": "vite --host 0.0.0.0 --port 3000",
+    "dev": "vite --host 0.0.0.0 --port 3000",
+    "build": "vite build",
+    "preview": "vite preview",
     "test:dev": "cypress open",
     "test:ci": "cypress",
-    "eject": "react-scripts eject",
     "lint:fix": "eslint --fix --ext .js,.jsx .",
     "lint": "eslint ."
   },
@@ -53,14 +53,15 @@
     ]
   },
   "devDependencies": {
-    "cypress": "^10.7.0",
+    "@vitejs/plugin-react": "^4.3.4",
+    "cypress": "^15.18.1",
     "eslint": "^8.16.0",
     "eslint-config-airbnb": "^19.0.4",
     "eslint-plugin-cypress": "^2.12.1",
     "eslint-plugin-import": "^2.26.0",
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.5.0",
-    "react-scripts": "^5.0.1",
-    "sass": "^1.52.1"
+    "sass": "^1.52.1",
+    "vite": "^5.4.14"
   }
 }

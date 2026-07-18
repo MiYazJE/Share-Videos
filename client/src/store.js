@@ -9,7 +9,7 @@ const store = init({
   plugins: [loading],
   redux: {
     reducers: {},
-    devtoolOptions: { disabled: process.env.NODE_ENV === 'production' },
+    devtoolOptions: { disabled: import.meta.env.PROD },
     rootReducers: { RESET_APP: () => undefined },
   },
 });

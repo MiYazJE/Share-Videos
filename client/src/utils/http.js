@@ -5,7 +5,7 @@ import tokenStorage from './token-storage';
 const DATA_BLOB_PDF = 'data:application/pdf;base64,';
 
 function initUrl() {
-  return process.env.REACT_APP_API_URL || 'http://localhost:5000';
+  return import.meta.env.VITE_API_URL || 'http://localhost:5000';
 }
 
 function getAuth() {

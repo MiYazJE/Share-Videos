@@ -6,6 +6,9 @@ describe('Home page e2e', () => {
   });
 
   it('Should show network error trying to login without api server', () => {
+    cy.intercept('POST', '**/auth/login', { statusCode: 500, body: { msg: 'Network Error' } })
+      .as('login');
+
     cy.contains(/login/gi).click({ force: true });
 
     cy.get('.chakra-modal__content input#name')
@@ -19,14 +22,14 @@ describe('Home page e2e', () => {
     // cy.get('.chakra-modal__content button[type="submit"]')
     //   .should('have.attr', 'data-loading');
 
-    cy.intercept('POST', '**/auth/login', { statusCode: 500, body: { msg: 'Network Error' } })
-      .as('login');
     cy.wait('@login');
 
     cy.contains(/network error/gi);
   });
 
-  it.only('Should login successfully with valid credentials', () => {
+  it('Should login successfully with valid credentials', () => {
+    cy.intercept('POST', '**/auth/login', { fixture: 'user.json' }).as('login');
+
     cy.contains(/login/gi).click({ force: true });
 
     cy.get('.chakra-modal__content input#name')
@@ -39,8 +42,6 @@ describe('Home page e2e', () => {
       .click();
     // cy.get('.chakra-modal__content button[type="submit"]')
     //   .should('have.attr', 'data-loading');
-
-    cy.intercept('POST', '**/auth/login', { fixture: 'user.json' }).as('login');
 
     cy.wait('@login');
 
