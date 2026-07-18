@@ -7,6 +7,13 @@ on:
   pull_request:
     branches:
       - master
+  workflow_dispatch:
+    inputs:
+      deploy_server:
+        description: Force the server deployment even when server files have not changed
+        required: true
+        default: true
+        type: boolean
 
 jobs:
   check_changes:
@@ -31,7 +38,7 @@ jobs:
   deploy_server:
     name: Build server
     needs: check_changes
-    if: ${{ needs.check_changes.outputs.server == 'true' }}
+    if: ${{ needs.check_changes.outputs.server == 'true' || (github.event_name == 'workflow_dispatch' && inputs.deploy_server) }}
 
     environment: Production
     runs-on: ubuntu-latest
@@ -53,7 +60,7 @@ jobs:
       - name: Run tests
         run: npm run test
       - name: Deploy to railway
-        if: github.event_name == 'push'
+        if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.deploy_server)
         uses: devtomio/action-railway@v1.1.4
         with:
           railway_token: ${{ secrets.RAILWAY_TOKEN }}
