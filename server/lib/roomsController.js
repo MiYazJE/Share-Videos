@@ -225,8 +225,10 @@ function roomsController(io) {
     const user = users.get(socket.id);
     if (!user) return;
 
-    const room = await getRoom(user.roomId);
     users.delete(socket.id);
+    const room = await getRoom(user.roomId);
+    if (!room) return;
+
     room.users = room.users.filter((u) => u.id !== user.id);
 
     if (!room.users.length) {

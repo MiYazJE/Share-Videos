@@ -16,7 +16,9 @@ Socket.IO connects to the HTTP server with path `/socket-io`. Client definitions
 | `WS_REORDER_PLAYLIST` | `{ playlist, roomId }` | Replaces queue and broadcasts queue update |
 | `WS_LEAVE_ROOM` | no payload | Removes caller; deletes empty room or reassigns host and broadcasts users/notification |
 
-The server also invokes leave behavior for selected Socket.IO `disconnect` reasons.
+The server invokes idempotent leave behavior for every Socket.IO `disconnect` reason. It never attempts to reconnect a disconnected server socket; client reconnection and the subsequent `WS_JOIN_ROOM` establish the new live membership. Explicit leave followed by disconnect produces departure effects only once.
+
+All inbound asynchronous handlers pass through a realtime error boundary. A synchronous throw or rejected promise is logged with the event name and socket ID but without the raw payload. When the socket is still connected, it receives a generic `WS_NOTIFY_MESSAGE`; internal error details are never emitted, and later events remain processable.
 
 ## Server to client
 
@@ -46,4 +48,3 @@ The server also invokes leave behavior for selected Socket.IO `disconnect` reaso
 | `WS_UPDATE_PROGRESS_VIDEO` | constant only | absent | Client-only, unused/legacy |
 
 Payloads are plain JavaScript objects with no shared schema. Contract changes must compare both sides and update this document.
-

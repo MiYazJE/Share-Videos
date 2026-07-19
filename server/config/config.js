@@ -14,6 +14,7 @@ const config = {
   },
   secretKey: process.env.SECRET_KEY || 'SECRET_KEY',
   accessSecretToken: process.env.ACCESS_SECRET_TOKEN || 'ACCESS_SECRET_TOKEN',
+  shutdownTimeoutMs: Number(process.env.SHUTDOWN_TIMEOUT_MS) || 10000,
 };
 
 module.exports = config;

@@ -16,7 +16,7 @@ flowchart LR
 
 The client starts at `client/src/index.jsx`, mounts routing through `client/src/App.jsx`, and uses Rematch models from `client/src/models/`. Axios requests go through `client/src/utils/http.js`; realtime operations go through `client/src/context/SocketEventsContextProvider.jsx`.
 
-The server starts at `server/server.js`. It connects the database selected by `server/config/createDatabase.js`, listens using `server/config/config.js`, and attaches Socket.IO on `/socket-io`. Express routes are mounted by `server/app/routes/routes.js`; realtime handlers are registered in `server/lib/socketIo.js`.
+The server starts at `server/server.js`. It begins unready, connects the database selected by `server/config/createDatabase.js`, listens using `server/config/config.js`, attaches Socket.IO on `/socket-io`, and then marks itself ready. Express routes are mounted by `server/app/routes/routes.js`; rejected asynchronous routes flow through terminal error middleware. Realtime handlers registered in `server/lib/socketIo.js` use their own promise boundary because Express middleware cannot observe Socket.IO callbacks.
 
 ## State ownership
 
@@ -43,3 +43,5 @@ Authentication registration creates both a `User` and a default `Playlist`. Logi
 ## Deployment shape
 
 Local Vite runs on port 3000. The browser defaults API and Socket.IO traffic to port 5000. The server itself defaults to 3000 unless `PORT` is set; Docker Compose maps host `5000` to container `3000` and exposes MongoDB on host `27018`. The server container and MongoDB communicate over the Compose `backend` network.
+
+Recoverable HTTP and realtime failures are contained at their framework boundaries. An uncontained rejection or uncaught exception is treated as fatal: readiness is removed, HTTP/Socket.IO/MongoDB receive a bounded close attempt, and the process exits non-zero. The development Compose stack retains Nodemon hot reload and checks `/health`; a production supervisor must run `npm start` and replace the process after a non-zero exit. A fatal restart discards all rooms, queues, playback and chat because that state is intentionally process-local.

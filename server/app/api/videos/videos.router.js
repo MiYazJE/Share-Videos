@@ -5,17 +5,18 @@ const validation = require('./videos.validation');
 
 const { userAuthMiddleware } = require('../../middlewares/authMiddlewares');
 const { validateSchema } = require('../../middlewares/validation');
+const asyncHandler = require('../../middlewares/asyncHandler');
 
 router.get(
   '/autocomplete/youtube/:q',
   validateSchema(validation.searchParam),
-  controller.autocompleteYoutube,
+  asyncHandler(controller.autocompleteYoutube),
 );
 
 router.get(
   '/youtube/:q',
   validateSchema(validation.searchParam),
-  controller.getYoutubeVideos,
+  asyncHandler(controller.getYoutubeVideos),
 );
 
 module.exports = router;

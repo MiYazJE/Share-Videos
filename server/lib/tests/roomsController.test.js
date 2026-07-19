@@ -235,6 +235,40 @@ describe('Rooms controller test', () => {
     expect(mockBroadcastToRoom).toHaveBeenCalledTimes(0);
   });
 
+  test('Should ignore repeated leave cleanup for the same socket', async () => {
+    const { id: roomId } = await roomsCtrl.create('HOST');
+    await roomsCtrl.join({ roomId, name: NAME }, SOCKET_MOCK);
+
+    await roomsCtrl.leaveRoom('explicit leave', SOCKET_MOCK);
+    jest.clearAllMocks();
+    await expect(roomsCtrl.leaveRoom('transport close', SOCKET_MOCK)).resolves.toBeUndefined();
+
+    expect(mockBroadcastToRoom).not.toHaveBeenCalled();
+    expect(mockLeaveRoom).not.toHaveBeenCalled();
+  });
+
+  test('Should ignore cleanup for an unknown socket', async () => {
+    await expect(roomsCtrl.leaveRoom('transport close', { id: 'unknown' })).resolves.toBeUndefined();
+
+    expect(mockBroadcastToRoom).not.toHaveBeenCalled();
+    expect(mockLeaveRoom).not.toHaveBeenCalled();
+  });
+
+  test('Should remove a stale socket mapping when its room is absent', async () => {
+    const originalGet = Map.prototype.get;
+    const getSpy = jest.spyOn(Map.prototype, 'get').mockImplementation(function get(key) {
+      if (key === SOCKET_MOCK.id) {
+        return { id: 'user-id', name: NAME, roomId: 'missing-room' };
+      }
+      return originalGet.call(this, key);
+    });
+
+    await expect(roomsCtrl.leaveRoom('transport close', SOCKET_MOCK)).resolves.toBeUndefined();
+
+    expect(mockBroadcastToRoom).not.toHaveBeenCalled();
+    getSpy.mockRestore();
+  });
+
   test('Should leave a room and the room should not be closed', async () => {
     const { id: roomId } = await roomsCtrl.create('HOST');
 

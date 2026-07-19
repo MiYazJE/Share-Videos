@@ -48,6 +48,7 @@ Then run `npm run dev` from `client/`; Vite listens on `http://localhost:3000`.
 | `JWT_EXPIRES_IN` | Server | `7d` | JWT lifetime |
 | `ACCESS_SECRET_TOKEN` | Server | placeholder | JWT signing secret; set a real secret outside source control |
 | `SECRET_KEY` | Server | placeholder | Present in config; no active consumer was found |
+| `SHUTDOWN_TIMEOUT_MS` | Server | `10000` | Maximum graceful-shutdown wait before a fatal process exits |
 
 ## Docker Compose
 
@@ -74,6 +75,12 @@ The Compose services and host endpoints are:
 | `mongo` | MongoDB | `localhost:27018` |
 
 The browser-loaded frontend continues to use `http://localhost:5000` as its default API URL. Compose mounts `~/.npmrc` into the Node.js services, so hosts without that file may need to adjust the mount (see known issues).
+
+The development Compose stack uses the image's `npm run dev` command and retains Nodemon hot reload. If the child application crashes, Nodemon can remain alive waiting for a file change, so Compose restart policy is not a production recovery guarantee. The `/health` check still exposes that the application is unavailable.
+
+A production runtime should execute `npm start` directly and supervise non-zero exits so a fatal Node.js failure replaces the process. This repository does not currently define a separate production Compose file or production image.
+
+Expected request or Socket.IO handler failures are contained and do not restart the service. An `uncaughtException` or uncontained rejection is treated as unsafe: the server stops readiness, attempts bounded HTTP/Socket.IO/MongoDB cleanup, and exits non-zero. A replacement process starts with empty room state because rooms are not persisted.
 
 ## Routine validation
 

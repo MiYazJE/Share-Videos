@@ -1,6 +1,16 @@
 # HTTP API contracts
 
-Base URL is `VITE_API_URL` in the client, defaulting to `http://localhost:5000`. The Axios wrapper sends `Authorization` on all requests when a token exists. Validation failures return HTTP 400 with `{ message, path }`.
+Base URL is `VITE_API_URL` in the client, defaulting to `http://localhost:5000`. The Axios wrapper sends `Authorization` on all requests when a token exists. Validation failures return HTTP 400 with `{ message, path }`. Rejected asynchronous route handlers pass through the terminal error middleware: classified operational errors retain their safe status/message, while unexpected errors return HTTP 500 `{ message: "Internal server error" }`. Server logs retain diagnostic errors; responses do not expose stacks.
+
+## Health
+
+### `GET /health`
+
+- Auth: none.
+- Input: none.
+- Ready response: HTTP 200 `{ status: "ready" }` after database connection and HTTP/Socket.IO startup complete.
+- Unready response: HTTP 503 `{ status: "unready" }` during startup or shutdown.
+- Consumer: Docker Compose health check.
 
 ## Authentication
 
@@ -62,7 +72,7 @@ The server route includes a trailing slash in its declaration, but Express accep
 - Auth: none; an auth middleware import is unused.
 - Input: required search text path parameter.
 - Success: YouTube suggestion array returned by `youtube-sr`.
-- Errors: 400 validation response; upstream errors are not explicitly mapped.
+- Errors: 400 validation response; YouTube dependency failure returns HTTP 502 `{ message: "YouTube search is temporarily unavailable" }`.
 - Client: room search autocomplete via `client/src/models/room.js`.
 - Server: videos router/validation/controller.
 
@@ -70,8 +80,8 @@ The server route includes a trailing slash in its declaration, but Express accep
 
 - Auth: none.
 - Input: required search text; optional query `offset` (default 0) and `limit` (default 10).
-- Success: `{ data: video[], isLastPage: boolean }`; videos are normalized with thumbnail, duration and channel fields while retaining upstream fields.
-- Errors: 400 validation response; upstream errors are not explicitly mapped.
+- Success: `{ data: video[], isLastPage: boolean }`; videos are normalized with thumbnail, duration and channel fields while retaining upstream fields. Upstream records missing the required URL, title, thumbnail URL, or channel name are omitted; a completed result containing no usable records returns an empty `data` array.
+- Errors: 400 validation response; YouTube dependency or parser failure returns HTTP 502 `{ message: "YouTube search is temporarily unavailable" }`.
 - Client: paginated room search via `client/src/models/room.js`.
 - Server: videos router/validation/controller and external `youtube-sr` service.
 
@@ -86,4 +96,3 @@ The server route includes a trailing slash in its declaration, but Express accep
 - Client: no current consumer and no corresponding client API enum.
 - Server: playlists router/controller and `Playlist` model.
 - Status: active route with known ownership-query and Passport setup findings; see [known issues](../known-issues.md).
-
