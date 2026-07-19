@@ -6,10 +6,19 @@ const clientDb = require('../../../config/createDatabase');
 const app = require('../../../app');
 
 const api = supertest(app);
+const TEST_DATABASE_NAME = 'share-videos-test';
+
+const clearTestData = async () => {
+  await Promise.all([
+    User.deleteMany({}),
+    Playlist.deleteMany({}),
+  ]);
+};
 
 describe('Auth E2E test', () => {
   beforeAll(async () => {
     await clientDb.connect();
+    await clearTestData();
   });
 
   afterAll(async () => {
@@ -17,7 +26,11 @@ describe('Auth E2E test', () => {
   });
 
   afterEach(async () => {
-    await clientDb.dropCollections();
+    await clearTestData();
+  });
+
+  test('Should use the dedicated test database', () => {
+    expect(clientDb.getDb().name).toBe(TEST_DATABASE_NAME);
   });
 
   describe('Register', () => {

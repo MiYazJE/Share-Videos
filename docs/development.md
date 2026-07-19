@@ -48,7 +48,6 @@ Then run `npm run dev` from `client/`; Vite listens on `http://localhost:3000`.
 | `JWT_EXPIRES_IN` | Server | `7d` | JWT lifetime |
 | `ACCESS_SECRET_TOKEN` | Server | placeholder | JWT signing secret; set a real secret outside source control |
 | `SECRET_KEY` | Server | placeholder | Present in config; no active consumer was found |
-| `IN_MEMORY_DATABASE` | Server | false | Select `mongodb-memory-server`, primarily set by Jest config |
 
 ## Docker Compose
 
@@ -89,6 +88,30 @@ cd ../server
 npm run lint
 npm test
 ```
+
+Database-backed server tests, including `auth.test.js`, require a reachable MongoDB instance. Jest always forces these tests to use the `share-videos-test` database, regardless of any `NAME_MONGO_DB` value in the shell, so they do not write to the normal `share-videos` database. `URL_MONGO_DB` remains configurable because the MongoDB address differs between the host and the Compose network.
+
+To use the Compose MongoDB service while running tests from the host, start MongoDB from the repository root:
+
+```text
+docker compose up -d mongo
+```
+
+Then run the server tests against the published host port:
+
+```powershell
+cd server
+$env:URL_MONGO_DB='mongodb://localhost:27018'
+npm test
+```
+
+From a POSIX shell, use `URL_MONGO_DB=mongodb://localhost:27018 npm test` instead. To run the same tests inside the already-running backend container, use the Compose service hostname:
+
+```text
+docker compose exec -e URL_MONGO_DB=mongodb://mongo:27017 share-videos npm test
+```
+
+Jest does not provision MongoDB or fall back to an in-memory server. A connection failure therefore means that MongoDB is not running or that `URL_MONGO_DB` is incorrect for the current network context.
 
 Client E2E tests require the frontend, backend and relevant database/services to be running. `npm run test:dev` opens Cypress interactively. Current script caveats are recorded in [known issues](known-issues.md).
 

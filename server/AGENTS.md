@@ -9,7 +9,7 @@ This directory contains the Node.js/Express/Socket.IO backend. Follow the reposi
 - `app/api/` contains routers, validation, controllers and user mapping logic.
 - `app/models/` contains the persistent Mongoose `User` and `Playlist` models.
 - `lib/socketIo.js` registers inbound events; `lib/roomsController.js` owns all ephemeral room state; `lib/eventsHandler.js` wraps emissions.
-- `config/config.js` is the environment contract; `config/createDatabase.js` selects MongoDB or the in-memory test database.
+- `config/config.js` is the environment contract; `config/createDatabase.js` exposes the shared Mongoose database client.
 
 ## Conventions and boundaries
 
@@ -26,7 +26,6 @@ From `server/`:
 - `npm ci`: install the locked dependency set.
 - `npm run dev`: start with nodemon; set environment variables described in `../docs/development.md`.
 - `npm run lint`: routine lint command; note its current root-file-only coverage in `../docs/known-issues.md`.
-- `npm test`: Jest tests using `mongodb-memory-server`.
+- `npm test`: Jest tests against a reachable MongoDB instance. Jest forces the database name to `share-videos-test`; configure `URL_MONGO_DB` for the current host or Compose network as documented in `../docs/development.md`.
 
 Use Conventional Commit scope `backend`, for example `fix(backend): validate room membership`.
-

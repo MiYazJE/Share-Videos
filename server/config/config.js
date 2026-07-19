@@ -14,7 +14,6 @@ const config = {
   },
   secretKey: process.env.SECRET_KEY || 'SECRET_KEY',
   accessSecretToken: process.env.ACCESS_SECRET_TOKEN || 'ACCESS_SECRET_TOKEN',
-  inMemoryDatabase: process.env.IN_MEMORY_DATABASE === 'true',
 };
 
 module.exports = config;

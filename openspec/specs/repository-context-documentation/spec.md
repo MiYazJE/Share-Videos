@@ -45,7 +45,7 @@ The repository SHALL document every active WebSocket event with its direction, p
 - **THEN** the documentation marks it as legacy, unused, or inconsistent rather than presenting it as an active contract
 
 ### Requirement: Verified development guidance
-The repository SHALL document installation, configuration, local execution, container execution, testing, linting, and available build workflows using commands and environment behavior verified against repository configuration. It SHALL distinguish available build commands from the routine lint-and-test validation baseline.
+The repository SHALL document installation, configuration, local execution, container execution, testing, linting, and available build workflows using commands and environment behavior verified against repository configuration. It SHALL distinguish available build commands from the routine lint-and-test validation baseline, and SHALL identify MongoDB as a prerequisite for database-backed backend tests together with the dedicated test-database behavior.
 
 #### Scenario: Owner or Codex starts the application locally
 - **WHEN** the owner or an assisting Codex session follows the development documentation
@@ -54,6 +54,10 @@ The repository SHALL document installation, configuration, local execution, cont
 #### Scenario: Owner or Codex validates a documentation change
 - **WHEN** repository context documentation is changed
 - **THEN** the guidance provides proportionate checks for links, documented commands, contracts, and affected project tests or builds
+
+#### Scenario: Owner runs database-backed backend tests
+- **WHEN** the owner follows the backend test guidance from the host or the backend container
+- **THEN** they can identify the required MongoDB service, the correct connection URL for that network context, and that test data is forced into a dedicated database rather than the normal application database
 
 ### Requirement: Commit and validation policy
 Repository guidance SHALL require Conventional Commits with application-area scopes and SHALL define lint and tests, rather than a routine build, as the normal validation baseline.

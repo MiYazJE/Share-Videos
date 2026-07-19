@@ -1,1 +1,1 @@
-process.env.IN_MEMORY_DATABASE = 'true';
+process.env.NAME_MONGO_DB = 'share-videos-test';
