@@ -1,40 +1,60 @@
-<h1 align="center">Share Video</h1>
-<p align="left">
-    Share Video is a website to view youtube videos in real time. 
-</p>
+# Share-Videos
 
-## Table of contents
-- [How It Works](#howitworks)
-- [Install](#installbackend)
-- [Roadmap](#Roadmap)
+Share-Videos is a web application for watching YouTube videos with other people in realtime rooms. Participants share playback state, progress, a video queue and chat through Socket.IO. Registered users and saved playlists use MongoDB; active room state is ephemeral and owned by the running server process.
 
-## How it Works
-A user create a room and shares a link or a room code with others to join. When someone seek or play/pause a video he emits an event to everyone who's connected in the same room, same happens when someone adds a video to the playlist.
+## Technology
 
-All of this its made with Web Sockets (socket.io) and node.js (express.js).
+- React 18, Vite, Chakra UI and Rematch on the client.
+- Node.js, Express and Socket.IO on the server.
+- MongoDB/Mongoose for users and saved playlists.
+- Jest for server tests and Cypress for browser flows.
 
-## Install backend
+## Quick start
 
-Go to `/server` folder.
+Install locked dependencies from each application directory:
 
-- With docker-compose:
-    ```
-    docker-compose build
-    docker-compose up -d
-    ```
-- Otherwise you will need mongoDB and node js in order to run:
-    ```
-    npm run dev
-    ```
-    
-## Install frontend
+```text
+cd server
+npm ci
 
-Go to `/client` folder and run `npm run start`.
+cd ../client
+npm ci
+```
 
+Start MongoDB, then run the server on port 5000 and the client on port 3000. On PowerShell:
 
-## Roadmap
-- [ ] Watch public rooms
-- [ ] Login with oAuth:
-  - [ ] Google
-  - [ ] Facebook
-- [ ] Create playlists for logged users
+```powershell
+cd server
+$env:PORT='5000'
+$env:URL_MONGO_DB='mongodb://localhost:27017'
+npm run dev
+```
+
+In another terminal:
+
+```text
+cd client
+npm run dev
+```
+
+For the containerized backend and MongoDB, run `docker compose up --build` from the repository root. See [development documentation](docs/development.md) for environment variables, validation commands and current caveats.
+
+## Features
+
+- Create and join rooms through a room ID/link.
+- Search YouTube and manage a shared room queue.
+- Synchronize selected video, play/pause state and progress.
+- Exchange ephemeral room chat messages.
+- Register/login with JWT authentication; registration creates a default saved playlist record.
+
+## Documentation
+
+- [Architecture and state ownership](docs/architecture.md)
+- [Room lifecycle](docs/domain/rooms.md)
+- [HTTP API contracts](docs/contracts/http-api.md)
+- [WebSocket event contracts](docs/contracts/websocket-events.md)
+- [Development workflow](docs/development.md)
+- [Known issues and inconsistencies](docs/known-issues.md)
+
+Repository-specific Codex instructions are in `AGENTS.md`, with scoped guidance under `client/` and `server/`.
+

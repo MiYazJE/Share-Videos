@@ -1,0 +1,89 @@
+# Development
+
+## Prerequisites
+
+- Node.js 18 or newer (declared by `server/package.json`; use the same version for the client).
+- npm, using the committed lockfiles.
+- MongoDB for non-container server development, or Docker Compose.
+- A browser for the Vite application and Cypress E2E tests.
+
+## Install and run locally
+
+Install independently:
+
+```text
+cd server
+npm ci
+
+cd ../client
+npm ci
+```
+
+For paired local development, start the backend on the URL expected by the client:
+
+```text
+cd server
+PORT=5000 URL_MONGO_DB=mongodb://localhost:27017 npm run dev
+```
+
+PowerShell equivalent:
+
+```powershell
+cd server
+$env:PORT='5000'
+$env:URL_MONGO_DB='mongodb://localhost:27017'
+npm run dev
+```
+
+Then run `npm run dev` from `client/`; Vite listens on `http://localhost:3000`.
+
+## Environment
+
+| Variable | Side | Default | Purpose |
+| --- | --- | --- | --- |
+| `VITE_API_URL` | Client | `http://localhost:5000` | Base HTTP and Socket.IO server URL |
+| `PORT` | Server | `3000` | Express/Socket.IO listen port |
+| `URL_MONGO_DB` | Server | `mongodb://mongo:27017` | MongoDB connection URL |
+| `NAME_MONGO_DB` | Server | `share-videos` | MongoDB database name |
+| `JWT_EXPIRES_IN` | Server | `7d` | JWT lifetime |
+| `ACCESS_SECRET_TOKEN` | Server | placeholder | JWT signing secret; set a real secret outside source control |
+| `SECRET_KEY` | Server | placeholder | Present in config; no active consumer was found |
+| `IN_MEMORY_DATABASE` | Server | false | Select `mongodb-memory-server`, primarily set by Jest config |
+
+## Docker Compose
+
+From the repository root, `docker compose up --build` builds the server development image and starts MongoDB. The API is exposed at `http://localhost:5000`; MongoDB is exposed at `localhost:27018`. Compose currently mounts `~/.npmrc`, so hosts without that file may need to adjust the mount (see known issues).
+
+## Routine validation
+
+Run only the affected areas:
+
+```text
+cd client
+npm run lint
+npm run test:ci
+
+cd ../server
+npm run lint
+npm test
+```
+
+Client E2E tests require the frontend, backend and relevant database/services to be running. `npm run test:dev` opens Cypress interactively. Current script caveats are recorded in [known issues](known-issues.md).
+
+`npm run build` is available in `client/`, but it is not a routine completion check. Run it only when a change explicitly affects Vite configuration, packaging or deployment.
+
+## Commits
+
+Use Conventional Commits: `type(frontend): ...` for client work and `type(backend): ...` for server work. Split cross-area changes when coherent. Root documentation, OpenSpec and genuinely shared configuration may omit the scope, for example `docs: clarify development validation`.
+
+## Repository-local Codex skills
+
+The selected skills live under `.codex/skills/` and are discovered when Codex starts a repository session:
+
+- `frontend-design`: substantial visual frontend creation/redesign.
+- `nodejs-backend-patterns`: applicable Node.js/Express/Mongoose/Socket.IO implementation work.
+- `api-design-principles`: optional HTTP contract design/review.
+
+Each directory contains provenance and license information. `skills-lock.json` records the imported source path and hash. Restart the Codex session after adding or updating a skill so its catalog is refreshed. The generic `npx skills list` command scans the installer's `.agents` location rather than this repository's explicit `.codex/skills/` scope, so it is not the discovery check for this layout.
+
+Inspect third-party updates before accepting them. Repository `AGENTS.md`, OpenSpec artifacts, executable code and tests override generic skill examples.
