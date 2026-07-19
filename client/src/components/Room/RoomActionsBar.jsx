@@ -1,24 +1,21 @@
 import {
+  Avatar,
+  AvatarGroup,
+  Badge,
+  Button,
+  Flex,
   HStack,
-  IconButton,
-  Stack,
   Text,
   Tooltip,
+  VStack,
+  useColorModeValue,
 } from '@chakra-ui/react';
-import {
-  MdInfoOutline,
-  MdChat,
-  MdPlaylistPlay,
-  MdSearch,
-  MdExitToApp,
-} from 'react-icons/md';
-import { useDispatch, useSelector } from 'react-redux';
+import { useState } from 'react';
+import { MdExitToApp, MdLink, MdPeople } from 'react-icons/md';
+import { useSelector } from 'react-redux';
 
-import { ROOM_MODALS } from 'src/enums';
 import { useHistory } from 'react-router-dom';
 import ChangeThemeButton from '../ChangeThemeButton';
-
-const ICON_SIZE = '25px';
 
 const getData = ({ room }) => ({
   users: room.users,
@@ -26,86 +23,77 @@ const getData = ({ room }) => ({
 });
 
 function RoomActionsBar() {
+  const [copied, setCopied] = useState(false);
   const {
     users,
     roomName,
   } = useSelector(getData);
 
   const history = useHistory();
-  const dispatch = useDispatch();
+  const mutedColor = useColorModeValue('gray.600', 'whiteAlpha.700');
+  const roomUrl = `${window.location.origin}/room/${roomName}`;
 
-  const createToggleShowModal = (type) => () => {
-    dispatch.room.SET_PROP({ activeModal: type });
+  const copyInvitation = async () => {
+    await navigator.clipboard.writeText(roomUrl);
+    setCopied(true);
   };
 
   return (
-    <Stack
+    <Flex
+      as="header"
       width="100%"
-      flexDirection={{
-        base: 'column',
-        md: 'row',
-      }}
-      gap={1}
+      align={{ base: 'flex-start', md: 'center' }}
       justifyContent="space-between"
+      direction={{ base: 'column', sm: 'row' }}
+      gap={4}
     >
-      <HStack>
-        <Text fontSize="lg" fontWeight="semibold">
-          {roomName}
-          {' '}
-          |
-          {' '}
-          {`${users.length} ${users.length === 1 ? 'user' : 'users'} connected` }
+      <VStack align="flex-start" spacing={1}>
+        <HStack spacing={3}>
+          <Badge colorScheme="blue" borderRadius="full" px={3} py={1} letterSpacing="0.08em">
+            Live room
+          </Badge>
+          <HStack color={mutedColor} spacing={1}>
+            <MdPeople aria-hidden="true" />
+            <Text fontSize="sm">
+              {`${users.length} ${users.length === 1 ? 'person' : 'people'} connected`}
+            </Text>
+          </HStack>
+        </HStack>
+        <Text as="h1" fontSize={{ base: '2xl', md: '3xl' }} fontWeight="900" letterSpacing="-0.03em">
+          {roomName || 'Watch together'}
         </Text>
+      </VStack>
+      <HStack spacing={{ base: 1, md: 2 }} flexWrap="wrap">
+        {users.length ? (
+          <AvatarGroup size="sm" max={4} mr={1}>
+            {users.map((user) => (
+              <Tooltip key={user.id} label={user.name}>
+                <Avatar name={user.name} src={user.avatarBase64} />
+              </Tooltip>
+            ))}
+          </AvatarGroup>
+        ) : null}
+        <Button
+          aria-label="Copy room invitation link"
+          onClick={copyInvitation}
+          colorScheme={copied ? 'green' : 'blue'}
+          variant="ghost"
+          leftIcon={<MdLink />}
+        >
+          {copied ? 'Copied' : 'Invite'}
+        </Button>
+        <ChangeThemeButton size="20px" variant="ghost" />
+        <Button
+          aria-label="Leave room"
+          onClick={() => history.push('/')}
+          colorScheme="red"
+          variant="ghost"
+          leftIcon={<MdExitToApp />}
+        >
+          Leave
+        </Button>
       </HStack>
-      <HStack>
-        <Tooltip label="Details of the room">
-          <IconButton
-            onClick={createToggleShowModal(ROOM_MODALS.PEOPLE)}
-            colorScheme="facebook"
-            variant="teal"
-            icon={<MdInfoOutline size={ICON_SIZE} />}
-          />
-        </Tooltip>
-
-        <Tooltip label="Chat">
-          <IconButton
-            onClick={createToggleShowModal(ROOM_MODALS.CHAT)}
-            colorScheme="facebook"
-            variant="teal"
-            icon={<MdChat size={ICON_SIZE} />}
-          />
-        </Tooltip>
-
-        <Tooltip label="Playlist">
-          <IconButton
-            onClick={createToggleShowModal(ROOM_MODALS.PLAYLIST)}
-            colorScheme="facebook"
-            variant="teal"
-            icon={<MdPlaylistPlay size={ICON_SIZE} />}
-          />
-        </Tooltip>
-
-        <Tooltip label="Search videos">
-          <IconButton
-            onClick={createToggleShowModal(ROOM_MODALS.SEARCH)}
-            colorScheme="facebook"
-            variant="teal"
-            icon={<MdSearch size={ICON_SIZE} />}
-          />
-        </Tooltip>
-
-        <ChangeThemeButton size={ICON_SIZE} variant="teal" />
-
-        <Tooltip label="Leave">
-          <IconButton
-            onClick={() => history.push('/')}
-            color="red"
-            variant="teal"
-            icon={<MdExitToApp size={ICON_SIZE} />}
-          />
-        </Tooltip>
-      </HStack>
-    </Stack>
+    </Flex>
   );
 }
 

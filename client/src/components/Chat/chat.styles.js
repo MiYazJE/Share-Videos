@@ -8,13 +8,13 @@ const WrapChat = styled.div`
   flex-direction: column;
   position: relative;
   gap: 8px;
-  overflow: scroll;
+  overflow-y: auto;
   overflow-x: hidden;
 `;
 
 const ChatText = styled.div`
   display: flex;
-  justify-content: ${({ me }) => (me ? 'end' : 'start')};
+  justify-content: flex-start;
 `;
 
 export {

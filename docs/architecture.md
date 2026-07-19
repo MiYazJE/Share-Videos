@@ -36,9 +36,10 @@ The server starts at `server/server.js`. It connects the database selected by `s
 
 Room creation and validation use HTTP; joining and all shared interaction use Socket.IO. The server broadcasts partial room updates, which the client shallow-merges into the Rematch room model. See [room lifecycle](domain/rooms.md), [HTTP contracts](contracts/http-api.md), and [WebSocket contracts](contracts/websocket-events.md).
 
+The Room route presents playback and collaboration as one responsive workspace. The player and metadata remain the primary region, while video search, the compact shared queue, and chat render as labelled in-page sections rather than mutually exclusive drawers. Participant avatars and invitation access live in the room header. Wide viewports use a two-column composition; narrow viewports preserve every workspace section in a single scrollable flow. Chat autoscroll is confined to its message history and does not move the page viewport. This presentation does not change the HTTP and Socket.IO ownership described above.
+
 Authentication registration creates both a `User` and a default `Playlist`. Login returns a bearer token, and `whoAmI` restores the user on client startup. YouTube search and autocomplete are server-side calls through `youtube-sr`.
 
 ## Deployment shape
 
 Local Vite runs on port 3000. The browser defaults API and Socket.IO traffic to port 5000. The server itself defaults to 3000 unless `PORT` is set; Docker Compose maps host `5000` to container `3000` and exposes MongoDB on host `27018`. The server container and MongoDB communicate over the Compose `backend` network.
-

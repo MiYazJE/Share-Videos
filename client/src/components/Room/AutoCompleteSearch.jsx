@@ -1,7 +1,6 @@
 import { useDispatch, useSelector } from 'react-redux';
 import { useEffect, useState } from 'react';
 import {
-  Button,
   FormControl,
   FormLabel,
   HStack,
@@ -17,7 +16,6 @@ import {
 import styled from 'styled-components';
 
 import useDebounce from 'src/hooks/useDebounce';
-import { ROOM_MODALS } from 'src/enums';
 import { SearchIcon } from '@chakra-ui/icons';
 
 const WrapAutocomplete = styled(HStack)`
@@ -27,14 +25,15 @@ const WrapAutocomplete = styled(HStack)`
 
 const StyledList = styled(List)`
   position: absolute;
-  bottom: -310px;
-  left: -8px;
+  z-index: 20;
+  top: calc(100% + 4px);
+  left: 0;
   border-radius: 0.375rem;
   border: 1px solid #E2E8F0;
   width: 100%;
   background-color: ${({ darkMode }) => (darkMode ? '#1A202C' : '#fff')};
   max-height: 300px;
-  height: 300px;
+  height: auto;
   overflow: auto;
 
   &::-webkit-scrollbar {
@@ -56,11 +55,9 @@ const StyledItem = styled(ListItem)`
 const readSelector = ({ room }) => ({
   suggestedVideos: room.suggestedVideos,
   search: room.videoSearch,
-  playlist: room.queue,
 });
 
 function AutoCompleteSearch({
-  title,
   resetPagination,
 }) {
   const [showList, setShowList] = useState(false);
@@ -68,7 +65,6 @@ function AutoCompleteSearch({
   const {
     suggestedVideos,
     search,
-    playlist,
   } = useSelector(readSelector);
 
   const { colorMode } = useColorMode();
@@ -106,9 +102,7 @@ function AutoCompleteSearch({
       <VStack w="100%" alignItems="left">
         <FormControl>
           <FormLabel htmlFor="searchVideo">
-            <Text fontSize="large">
-              {title}
-            </Text>
+            <Text fontWeight="semibold">Search by title or URL</Text>
           </FormLabel>
           <InputGroup position="relative">
             <InputLeftElement
@@ -129,16 +123,6 @@ function AutoCompleteSearch({
             />
           </InputGroup>
         </FormControl>
-        {playlist.length ? (
-          <HStack>
-            <Button
-              colorScheme="facebook"
-              onClick={() => dispatch.room.SET_PROP({ activeModal: ROOM_MODALS.PLAYLIST })}
-            >
-              View playlist
-            </Button>
-          </HStack>
-        ) : null}
       </VStack>
       {(showList && suggestedVideos?.length) ? (
         <StyledList darkMode={colorMode === 'dark'}>

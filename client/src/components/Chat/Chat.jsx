@@ -30,25 +30,27 @@ const ADMIN_COLOR = {
   dark: '#64d53f',
 };
 
-const Comments = forwardRef(({ comments, me }, ref) => {
+const Comments = forwardRef(({ comments }, ref) => {
   const { colorMode } = useColorMode();
 
   useEffect(() => {
     if (!ref?.current) return;
-    if (comments?.length && comments[comments.length - 1].emitter !== me) return;
-
-    ref.current.scrollIntoView({ behavior: 'smooth' });
-  }, [ref, me, comments]);
+    const chatContainer = ref.current;
+    chatContainer.scrollTo({
+      top: chatContainer.scrollHeight,
+      behavior: 'smooth',
+    });
+  }, [ref, comments]);
 
   return (
-    <WrapChat>
+    <WrapChat ref={ref}>
       {comments?.map(({
         emitter,
         msg,
         isAdmin,
         color,
-      }) => (
-        <ChatText>
+      }, index) => (
+        <ChatText key={`${emitter}-${msg}-${index}`}>
           {isAdmin ? (
             <Text
               color={ADMIN_COLOR[colorMode]}
@@ -67,7 +69,6 @@ const Comments = forwardRef(({ comments, me }, ref) => {
           )}
         </ChatText>
       ))}
-      <div ref={ref} style={{ height: 0, width: 0 }} />
     </WrapChat>
   );
 });
@@ -102,11 +103,11 @@ function Chat() {
   };
 
   return (
-    <Grid height="100%" width="100%" templateRows="1fr 100px">
+    <Grid height="100%" minH={0} width="100%" templateRows="minmax(0, 1fr) auto" gap={4}>
 
-      <Comments comments={comments} me={name} ref={chatRef} />
+      <Comments comments={comments} ref={chatRef} />
 
-      <VStack alignItems="end">
+      <VStack alignItems="stretch">
         <Input
           size="lg"
           placeholder="Send a message"
@@ -115,6 +116,7 @@ function Chat() {
           onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
         />
         <Button
+          alignSelf="flex-end"
           onClick={sendMessage}
           colorScheme="facebook"
         >
