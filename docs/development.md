@@ -52,7 +52,29 @@ Then run `npm run dev` from `client/`; Vite listens on `http://localhost:3000`.
 
 ## Docker Compose
 
-From the repository root, `docker compose up --build` builds the server development image and starts MongoDB. The API is exposed at `http://localhost:5000`; MongoDB is exposed at `localhost:27018`. Compose currently mounts `~/.npmrc`, so hosts without that file may need to adjust the mount (see known issues).
+The development images only bootstrap their applications; they do not install npm dependencies during the image build or container startup. From the repository root, install the frontend dependencies inside a one-off container before its first start:
+
+```text
+docker compose run --rm web npm ci
+```
+
+Run that command again whenever `client/package-lock.json` changes. The `client` directory is mounted at `/app`, so the installed dependencies and source files are available to the regular `web` service.
+
+Then build and start the frontend, backend and MongoDB services:
+
+```text
+docker compose up --build
+```
+
+The Compose services and host endpoints are:
+
+| Service | Purpose | Host endpoint |
+| --- | --- | --- |
+| `web` | Vite frontend development server | `http://localhost:3000` |
+| `share-videos` | Express and Socket.IO backend | `http://localhost:5000` |
+| `mongo` | MongoDB | `localhost:27018` |
+
+The browser-loaded frontend continues to use `http://localhost:5000` as its default API URL. Compose mounts `~/.npmrc` into the Node.js services, so hosts without that file may need to adjust the mount (see known issues).
 
 ## Routine validation
 

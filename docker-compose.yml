@@ -1,6 +1,23 @@
 version: '2.2'
 
 services:
+  web:
+    image: share-videos-web:local
+    build:
+      network: host
+      context: ./client
+      dockerfile: Dockerfile.dev
+    stdin_open: true
+    tty: true
+    volumes:
+      - "./client:/app"
+      - "~/.npmrc:/root/.npmrc:ro"
+    networks:
+      - backend
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
   share-videos:
     image: share-videos:local
     build:
