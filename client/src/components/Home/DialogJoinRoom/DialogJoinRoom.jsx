@@ -1,4 +1,8 @@
-import { useEffect, useState } from 'react';
+import {
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 import { useHistory } from 'react-router-dom';
 
 import {
@@ -16,7 +20,10 @@ import {
   Container,
 } from '@chakra-ui/react';
 
-import useRoom from 'src/hooks/useRoom';
+import { validateRoom } from 'src/api/rooms';
+
+const ROOM_NOT_FOUND_MESSAGE = 'Room does not exist';
+const VALIDATION_FAILURE_MESSAGE = 'Unable to validate the room. Try again.';
 
 function DialogJoinRoom({
   open,
@@ -24,33 +31,93 @@ function DialogJoinRoom({
 }) {
   const [idRoom, setIdRoom] = useState('');
   const [errorRoomId, setErrorRoomId] = useState('');
-
-  const roomValidation = useRoom({ id: idRoom });
-  const { isValidRoom } = roomValidation;
+  const [isValidating, setIsValidating] = useState(false);
+  const [canRetry, setCanRetry] = useState(false);
+  const isOpenRef = useRef(open);
+  const isRequestPendingRef = useRef(false);
+  const requestVersionRef = useRef(0);
 
   const history = useHistory();
 
   useEffect(() => {
-    if (!idRoom) return;
-    if (roomValidation.isSuccess && !isValidRoom) setErrorRoomId('Room does not exist');
-    if (roomValidation.isSuccess && isValidRoom) setErrorRoomId('');
-    if (roomValidation.isError) setErrorRoomId('Unable to validate the room. Try again.');
-  }, [isValidRoom, idRoom, roomValidation.isSuccess, roomValidation.isError]);
+    isOpenRef.current = open;
+  }, [open]);
 
-  const handleJoinRoom = () => {
-    if (!idRoom) return setErrorRoomId('Room is empty');
-    if (roomValidation.isError) return roomValidation.refetch();
-    if (roomValidation.isPending) return;
-    if (!isValidRoom) return;
+  useEffect(() => () => {
+    isOpenRef.current = false;
+    requestVersionRef.current += 1;
+  }, []);
 
-    history.push(`/room/${idRoom}`);
+  const handleClose = () => {
+    isOpenRef.current = false;
+    isRequestPendingRef.current = false;
+    requestVersionRef.current += 1;
+    setIsValidating(false);
+    setErrorRoomId('');
+    setCanRetry(false);
     onClose();
+  };
+
+  const handleRoomIdChange = ({ target }) => {
+    setIdRoom(target.value);
+    setErrorRoomId('');
+    setCanRetry(false);
+  };
+
+  const handleJoinRoom = async () => {
+    if (isRequestPendingRef.current) return;
+
+    const normalizedRoomId = idRoom.trim();
+    if (!normalizedRoomId) {
+      setErrorRoomId('Room is empty');
+      setCanRetry(false);
+      return;
+    }
+
+    const requestVersion = requestVersionRef.current + 1;
+    requestVersionRef.current = requestVersion;
+    isRequestPendingRef.current = true;
+    setIsValidating(true);
+    setErrorRoomId('');
+    setCanRetry(false);
+
+    const requestIsCurrent = () => (
+      isOpenRef.current && requestVersionRef.current === requestVersion
+    );
+
+    try {
+      const roomExists = await validateRoom({ id: normalizedRoomId });
+      if (!requestIsCurrent()) return;
+
+      if (typeof roomExists !== 'boolean') {
+        setErrorRoomId(VALIDATION_FAILURE_MESSAGE);
+        setCanRetry(true);
+        return;
+      }
+
+      if (!roomExists) {
+        setErrorRoomId(ROOM_NOT_FOUND_MESSAGE);
+        return;
+      }
+
+      handleClose();
+      history.push(`/room/${normalizedRoomId}`);
+    } catch {
+      if (!requestIsCurrent()) return;
+      setErrorRoomId(VALIDATION_FAILURE_MESSAGE);
+      setCanRetry(true);
+    } finally {
+      if (requestIsCurrent()) {
+        isRequestPendingRef.current = false;
+        setIsValidating(false);
+      }
+    }
   };
 
   return (
     <Modal
       isOpen={open}
-      onClose={onClose}
+      onClose={handleClose}
       size="md"
       isCentered
     >
@@ -68,7 +135,8 @@ function DialogJoinRoom({
               type="text"
               placeholder="Enter the room"
               errorBorderColor="red.300"
-              onChange={({ target }) => setIdRoom(target.value)}
+              value={idRoom}
+              onChange={handleRoomIdChange}
             />
             <FormErrorMessage>
               {errorRoomId && errorRoomId}
@@ -77,16 +145,16 @@ function DialogJoinRoom({
         </Container>
 
         <ModalFooter>
-          <Button variant="ghost" mr={3} onClick={onClose}>
+          <Button variant="ghost" mr={3} onClick={handleClose}>
             Close
           </Button>
           <Button
             colorScheme="facebook"
             onClick={handleJoinRoom}
-            isLoading={roomValidation.isFetching}
-            isDisabled={!idRoom}
+            isLoading={isValidating}
+            isDisabled={isValidating}
           >
-            {roomValidation.isError ? 'Retry' : 'Join'}
+            {canRetry ? 'Retry' : 'Join'}
           </Button>
         </ModalFooter>
       </ModalContent>
