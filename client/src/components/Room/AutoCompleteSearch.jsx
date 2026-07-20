@@ -1,5 +1,4 @@
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {
   FormControl,
   FormLabel,
@@ -15,7 +14,6 @@ import {
 } from '@chakra-ui/react';
 import styled from 'styled-components';
 
-import useDebounce from 'src/hooks/useDebounce';
 import { SearchIcon } from '@chakra-ui/icons';
 
 const WrapAutocomplete = styled(HStack)`
@@ -52,48 +50,31 @@ const StyledItem = styled(ListItem)`
   }
 `;
 
-const readSelector = ({ room }) => ({
-  suggestedVideos: room.suggestedVideos,
-  search: room.videoSearch,
-});
-
 function AutoCompleteSearch({
-  resetPagination,
+  search,
+  suggestions,
+  suggestionsError,
+  onChange,
+  onSearch,
 }) {
   const [showList, setShowList] = useState(false);
-
-  const {
-    suggestedVideos,
-    search,
-  } = useSelector(readSelector);
-
   const { colorMode } = useColorMode();
-  const dispatch = useDispatch();
-
-  const debouncedSearch = useDebounce(search);
-
-  useEffect(() => {
-    dispatch.room.getSuggestedVideos(debouncedSearch);
-    resetPagination();
-  }, [debouncedSearch, dispatch, resetPagination]);
 
   const handleOnChangeInput = (event) => {
-    const videoSearch = event.target.value;
-    dispatch.room.SET_PROP({ videoSearch });
+    onChange(event.target.value);
   };
 
   const searchSuggest = (event) => {
     if (event.key !== 'Enter') return;
 
-    resetPagination();
-    dispatch.room.getVideos();
+    onSearch(search);
     setShowList(false);
   };
 
   const onClickSuggest = (e, videoSearch) => {
     e.stopPropagation();
-    dispatch.room.SET_PROP({ videoSearch });
-    dispatch.room.getVideos();
+    onChange(videoSearch);
+    onSearch(videoSearch);
     setShowList(false);
   };
 
@@ -124,9 +105,10 @@ function AutoCompleteSearch({
           </InputGroup>
         </FormControl>
       </VStack>
-      {(showList && suggestedVideos?.length) ? (
+      {suggestionsError ? <Text color="red.400" fontSize="sm">Suggestions unavailable. You can still search.</Text> : null}
+      {(showList && suggestions?.length) ? (
         <StyledList darkMode={colorMode === 'dark'}>
-          {suggestedVideos.map((videoSuggestion) => (
+          {suggestions.map((videoSuggestion) => (
             <StyledItem
               key={videoSuggestion}
               darkMode={colorMode === 'dark'}

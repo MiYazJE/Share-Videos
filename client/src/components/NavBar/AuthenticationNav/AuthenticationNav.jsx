@@ -1,4 +1,3 @@
-import { useDispatch, useSelector } from 'react-redux';
 import {
   Button,
   MenuButton,
@@ -12,25 +11,15 @@ import {
 } from '@chakra-ui/react';
 
 import ChangeThemeButton from 'src/components/ChangeThemeButton';
-
-const readSelectors = ({ user, loading }) => ({
-  isLogged: user.isLogged,
-  name: user.name,
-  avatarBase64: user.avatarBase64,
-  loadingAuth: loading.effects.user.whoAmI || loading.effects.user.login,
-});
+import { useSession } from 'src/context/SessionContextProvider';
 
 function AuthenticationNav({
   openLogin,
   openRegister,
 }) {
-  const dispatch = useDispatch();
-  const {
-    isLogged,
-    name,
-    avatarBase64,
-    loadingAuth,
-  } = useSelector(readSelectors);
+  const { user, logout, sessionQuery } = useSession();
+  const { isLogged, name, avatarBase64 } = user;
+  const loadingAuth = sessionQuery.isFetching;
 
   if (loadingAuth) return <Spinner />;
 
@@ -50,7 +39,7 @@ function AuthenticationNav({
             {name}
           </MenuButton>
           <MenuList>
-            <MenuItem onClick={dispatch.user.logout}>Logout</MenuItem>
+            <MenuItem onClick={logout}>Logout</MenuItem>
           </MenuList>
         </Menu>
       ) : (

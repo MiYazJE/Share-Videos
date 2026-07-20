@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { stringify } from 'qs';
 import tokenStorage from './token-storage';
+import { normalizeHttpError } from './http-error';
 
 const DATA_BLOB_PDF = 'data:application/pdf;base64,';
 
@@ -37,7 +38,7 @@ class HttpInstance {
 
     this.instance.interceptors.response.use(
       (response) => response,
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(normalizeHttpError(error)),
     );
 
     this.instance.interceptors.request.use(
@@ -48,7 +49,7 @@ class HttpInstance {
           Authorization: getAuth(),
         },
       }),
-      (error) => Promise.reject(error),
+      (error) => Promise.reject(normalizeHttpError(error)),
     );
   }
 
@@ -71,80 +72,32 @@ class HttpInstance {
   }
 
   async get(url, options = {}) {
-    let result;
-
-    try {
-      result = await this.instance.get(url, options);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(url, error);
-    }
-
-    return result && result.data;
+    const result = await this.instance.get(url, options);
+    return result.data === undefined ? null : result.data;
   }
 
   async post(url, body, options = {}) {
-    let result;
-
-    try {
-      result = await this.instance.post(url, body, options);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(url, error);
-      return Promise.reject(error);
-    }
-
-    return result && result.data;
+    const result = await this.instance.post(url, body, options);
+    return result.data === undefined ? null : result.data;
   }
 
   async put(url, body, options = {}) {
-    let result;
-
-    try {
-      result = await this.instance.put(url, body, options);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(url, error);
-    }
-
-    return result && result.data;
+    const result = await this.instance.put(url, body, options);
+    return result.data === undefined ? null : result.data;
   }
 
   async patch(url, body, options = {}) {
-    let result;
-
-    try {
-      result = await this.instance.patch(url, body, options);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(url, error);
-    }
-
-    return result && result.data;
+    const result = await this.instance.patch(url, body, options);
+    return result.data === undefined ? null : result.data;
   }
 
   async delete(url, options = {}) {
-    let result;
-
-    try {
-      result = await this.instance.delete(url, options);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(url, error);
-    }
-
-    return result && result.data;
+    const result = await this.instance.delete(url, options);
+    return result.data === undefined ? null : result.data;
   }
 
   async download(url, body, options = {}) {
-    let result;
-
-    try {
-      result = await this.instance.post(url, body, options);
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(url, error);
-    }
+    const result = await this.instance.post(url, body, options);
 
     return this.dataURItoBlob(
       options.downloadType !== 'bucket'

@@ -1,35 +1,28 @@
-import { useSelector } from 'react-redux';
-import { Grid, HStack } from '@chakra-ui/react';
+import {
+  Grid, HStack, Text, VisuallyHidden,
+} from '@chakra-ui/react';
 import { forwardRef } from 'react';
 
 import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
+import { useRoomState } from 'src/context/SocketEventsContextProvider';
+import { useSession } from 'src/context/SessionContextProvider';
 import Scroller from 'src/components/Scroller';
 import Pagination from '../Pagination';
 import VideoCard from '../VideoCard';
 import { getSekeletonVideos } from '../VideoCard/VideoCard';
 
-const readSelector = ({ room, user, loading }) => ({
-  name: user.name,
-  videos: room.videos,
-  isLastPage: room.isLastPage,
-  loadingVideos: loading.effects.room.getVideos,
-  roomId: room.id,
-});
-
 const ResultVideos = forwardRef((props, ref) => {
   const {
     getNextPage,
     getPreviousPage,
-    page,
-  } = props;
-
-  const {
-    name,
-    loadingVideos,
-    videos,
+    hasSearch,
     isLastPage,
-    roomId,
-  } = useSelector(readSelector);
+    loading,
+    page,
+    videos,
+  } = props;
+  const { id: roomId } = useRoomState();
+  const { name } = useSession();
   const socketEvents = useSocketEvents();
 
   const handleAddVideo = (video) => {
@@ -50,7 +43,7 @@ const ResultVideos = forwardRef((props, ref) => {
     ref.current.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
-  const renderVideos = videos.length && !loadingVideos;
+  const renderVideos = videos.length && !loading;
 
   return (
     <>
@@ -59,7 +52,8 @@ const ResultVideos = forwardRef((props, ref) => {
         gridTemplateRows="repeat(auto-fill, 1fr)"
         gap={6}
       >
-        {loadingVideos ? getSekeletonVideos(20) : null}
+        {loading ? <VisuallyHidden role="status">Loading videos.</VisuallyHidden> : null}
+        {loading ? getSekeletonVideos(10) : null}
         {renderVideos
           ? (
             videos.map((video) => (
@@ -76,10 +70,11 @@ const ResultVideos = forwardRef((props, ref) => {
           ) : null}
         <Scroller ref={ref} />
       </Grid>
+      {hasSearch && !loading && !videos.length ? <Text py={6} textAlign="center">No videos found.</Text> : null}
       {videos.length ? (
         <HStack justifyContent="center" p={5}>
           <Pagination
-            disabled={loadingVideos}
+            disabled={loading}
             showNextPage={!isLastPage}
             getNextPage={handleNextPage}
             getPreviousPage={handlePrevPage}

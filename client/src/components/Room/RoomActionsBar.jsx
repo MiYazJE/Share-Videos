@@ -12,22 +12,14 @@ import {
 } from '@chakra-ui/react';
 import { useState } from 'react';
 import { MdExitToApp, MdLink, MdPeople } from 'react-icons/md';
-import { useSelector } from 'react-redux';
+import { useRoomState } from 'src/context/SocketEventsContextProvider';
 
 import { useHistory } from 'react-router-dom';
 import ChangeThemeButton from '../ChangeThemeButton';
 
-const getData = ({ room }) => ({
-  users: room.users,
-  roomName: room.id,
-});
-
 function RoomActionsBar() {
   const [copied, setCopied] = useState(false);
-  const {
-    users,
-    roomName,
-  } = useSelector(getData);
+  const { users, id: roomName } = useRoomState();
 
   const history = useHistory();
   const mutedColor = useColorModeValue('gray.600', 'whiteAlpha.700');

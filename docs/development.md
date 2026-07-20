@@ -76,6 +76,8 @@ The Compose services and host endpoints are:
 
 The browser-loaded frontend continues to use `http://localhost:5000` as its default API URL. Compose mounts `~/.npmrc` into the Node.js services, so hosts without that file may need to adjust the mount (see known issues).
 
+The Compose `web` service sets `VITE_USE_POLLING=true`. This enables Vite's documented `server.watch.usePolling` workaround for Docker Desktop with a WSL2 backend when Windows applications edit files in a bind mount. The repository currently lives on the Windows filesystem, where those filesystem events are not always forwarded reliably. Polling runs every 250 ms and uses more CPU than the normal watcher; keeping and editing the repository inside the WSL2 filesystem is Vite's preferred alternative. Local `npm run dev` outside Compose keeps the normal filesystem-event watcher.
+
 The development Compose stack uses the image's `npm run dev` command and retains Nodemon hot reload. If the child application crashes, Nodemon can remain alive waiting for a file change, so Compose restart policy is not a production recovery guarantee. The `/health` check still exposes that the application is unavailable.
 
 A production runtime should execute `npm start` directly and supervise non-zero exits so a fatal Node.js failure replaces the process. This repository does not currently define a separate production Compose file or production image.
@@ -89,6 +91,7 @@ Run only the affected areas:
 ```text
 cd client
 npm run lint
+npm run test:unit
 npm run test:ci
 
 cd ../server
@@ -120,7 +123,9 @@ docker compose exec -e URL_MONGO_DB=mongodb://mongo:27017 share-videos npm test
 
 Jest does not provision MongoDB or fall back to an in-memory server. A connection failure therefore means that MongoDB is not running or that `URL_MONGO_DB` is incorrect for the current network context.
 
-Client E2E tests require the frontend, backend and relevant database/services to be running. `npm run test:dev` opens Cypress interactively. Current script caveats are recorded in [known issues](known-issues.md).
+Client unit tests use Vitest and create isolated QueryClient instances with bounded deterministic retry behavior. Client E2E tests require the frontend, backend and relevant database/services to be running. `npm run test:dev` opens Cypress interactively; `npm run test:ci` runs all E2E specs headlessly in Chrome and returns a failing exit code when a spec fails.
+
+The pull-request frontend workflow runs lint and Vitest before Cypress. Cypress then builds and starts the client through its GitHub Action configuration.
 
 `npm run build` is available in `client/`, but it is not a routine completion check. Run it only when a change explicitly affects Vite configuration, packaging or deployment.
 
@@ -135,6 +140,15 @@ The selected skills live under `.codex/skills/` and are discovered when Codex st
 - `frontend-design`: substantial visual frontend creation/redesign.
 - `nodejs-backend-patterns`: applicable Node.js/Express/Mongoose/Socket.IO implementation work.
 - `api-design-principles`: optional HTTP contract design/review.
+- `share-videos-query-state`: repository-specific TanStack Query, normalized HTTP error, request UX, and Socket.IO context boundaries. It is the local fallback while the installed `@tanstack/react-query` package exposes no compatible skill through TanStack Intent.
+
+After installing or updating TanStack Query, check for version-matched package skills from `client/`:
+
+```text
+npx @tanstack/intent@latest list --json --no-notices
+```
+
+Prefer compatible official skills when they become available; avoid duplicating their generic Query guidance in the repository-local fallback.
 
 Each directory contains provenance and license information. `skills-lock.json` records the imported source path and hash. Restart the Codex session after adding or updating a skill so its catalog is refreshed. The generic `npx skills list` command scans the installer's `.agents` location rather than this repository's explicit `.codex/skills/` scope, so it is not the discovery check for this layout.
 

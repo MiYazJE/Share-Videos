@@ -16,16 +16,11 @@ import {
 import { useEffect, useState } from 'react';
 import * as Yup from 'yup';
 import { useForm } from 'react-hook-form';
-import { useSelector } from 'react-redux';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { AiFillYoutube } from 'react-icons/ai';
 
 import DialogJoinRoom from 'src/components/Home/DialogJoinRoom/DialogJoinRoom';
-
-const readUser = ({ user }) => ({
-  name: user.name,
-  isLogged: user.isLogged,
-});
+import { useSession } from 'src/context/SessionContextProvider';
 
 const yupSchema = Yup.object().shape({
   nickName: Yup.string()
@@ -37,10 +32,8 @@ function BoxDialog({ onCreateRoom, isLoading }) {
   const { colorMode } = useColorMode();
   const titleColor = useColorModeValue('blue.500', 'blue.300');
 
-  const {
-    name,
-    isLogged,
-  } = useSelector(readUser);
+  const { name, user } = useSession();
+  const { isLogged } = user;
 
   const {
     handleSubmit,

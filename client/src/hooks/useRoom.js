@@ -1,28 +1,19 @@
-import { useEffect, useState } from 'react';
-
-import { API_ROUTES } from 'src/enums';
-import { HttpInstance } from 'src/utils';
-
-const http = new HttpInstance();
+import { useQuery } from '@tanstack/react-query';
+import { validateRoom } from 'src/api/rooms';
+import { queryKeys } from 'src/queries/keys';
 
 const useRoom = ({ id }) => {
-  const [isValidRoom, setIsValidRoom] = useState(true);
-  const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (!id) return;
-    async function check() {
-      setLoading(true);
-      const isValidRoom = await http.get(`${API_ROUTES.ROOM.BASE}/${id}/isValid`);
-      setLoading(false);
-      setIsValidRoom(isValidRoom);
-    }
-    check();
-  }, [id]);
+  const query = useQuery({
+    queryKey: queryKeys.room(id),
+    queryFn: ({ signal }) => validateRoom({ id, signal }),
+    enabled: Boolean(id),
+    staleTime: 10 * 1000,
+  });
 
   return {
-    isValidRoom,
-    loading,
+    isValidRoom: query.data,
+    loading: query.isPending,
+    ...query,
   };
 };
 

@@ -1,15 +1,7 @@
-import { useSelector } from 'react-redux';
-
-const getCurrentVideo = ({ room }) => ({
-  currentVideo: room.currentVideo,
-  isPlaying: room.isPlaying,
-});
+import { useRoomState } from 'src/context/SocketEventsContextProvider';
 
 const useIsVideoPlaying = (videoUrl) => {
-  const {
-    currentVideo,
-    isPlaying,
-  } = useSelector(getCurrentVideo);
+  const { currentVideo, isPlaying } = useRoomState();
 
   return isPlaying && currentVideo.url === videoUrl;
 };

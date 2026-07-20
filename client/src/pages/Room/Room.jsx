@@ -6,17 +6,23 @@ import {
 } from 'react';
 import { useParams, useHistory } from 'react-router-dom';
 import ReactPlayer from 'react-player';
-import { useDispatch, useSelector } from 'react-redux';
 import {
+  Alert,
+  AlertIcon,
   AspectRatio,
   Box,
+  Button,
+  Center,
   Container,
   Grid,
+  Spinner,
+  VStack,
 } from '@chakra-ui/react';
 
 import MetaVideoInfo from 'src/components/Room/MetaVideoInfo';
 import useRoom from 'src/hooks/useRoom';
-import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
+import { useRoomState, useSocketEvents } from 'src/context/SocketEventsContextProvider';
+import { useSession } from 'src/context/SessionContextProvider';
 import RoomActionsBar from 'src/components/Room/RoomActionsBar';
 import RoomPanel from 'src/components/Room/RoomPanel';
 import SearchVideos from 'src/components/Room/SearchVideos';
@@ -26,62 +32,49 @@ import { VIDEOS } from 'src/enums';
 import { RoomCanvas, WrapPlayer } from './Room.styles';
 import RoomModals from './modals';
 
-const readSelector = ({ room, user, loading }) => ({
-  urlVideo: room.currentVideo.url,
-  roomId: room.id,
-  isLoading: room.loadingRoom,
-  name: user.name,
-  isPlaying: room.isPlaying,
-  host: room.host,
-  seekVideo: room.seekVideo,
-  progressVideo: room.progressVideo,
-  currentVideoId: room.currentVideo.id,
-  isLogged: user.isLogged,
-  isLoadingUser: loading.effects.user.whoAmI,
-});
-
 function Room() {
   const [showNameModal, setShowNameModal] = useState(false);
 
+  const room = useRoomState();
   const {
-    urlVideo,
-    name,
-    roomId,
+    id: roomId,
     isPlaying,
     progressVideo,
     seekVideo,
-    currentVideoId,
-    isLogged,
-    isLoadingUser,
-  } = useSelector(readSelector);
+    currentVideo,
+  } = room;
+  const { name, user, setGuestName } = useSession();
+  const { isLogged } = user;
+  const urlVideo = currentVideo.url;
+  const currentVideoId = currentVideo.id;
 
   const socketEvents = useSocketEvents();
-  const dispatch = useDispatch();
   const refPlayer = useRef();
   const searchSectionRef = useRef();
   const history = useHistory();
   const { id } = useParams();
-  const { isValidRoom } = useRoom({ id });
+  const roomValidation = useRoom({ id });
+  const { isValidRoom } = roomValidation;
 
   useEffect(() => {
-    if (!isValidRoom) history.push(`/room-not-found/${id}`);
-  }, [isValidRoom, history, id]);
+    if (roomValidation.isSuccess && !isValidRoom) history.push(`/room-not-found/${id}`);
+  }, [isValidRoom, history, id, roomValidation.isSuccess]);
 
   useEffect(() => {
-    if (!name && isLoadingUser) return;
+    if (!isValidRoom) return;
     if (!name) {
       return setShowNameModal(true);
     }
     socketEvents.joinRoom({ roomId: id, name, isLogged });
     setShowNameModal(false);
-  }, [id, name, isLogged, socketEvents, isLoadingUser]);
+  }, [id, name, isLogged, socketEvents, isValidRoom]);
 
   useEffect(() => {
     if (seekVideo) {
       refPlayer.current.seekTo(progressVideo);
-      dispatch.room.SET_PROP({ seekVideo: false });
+      socketEvents.markSeekHandled();
     }
-  }, [seekVideo, progressVideo, dispatch]);
+  }, [seekVideo, progressVideo, socketEvents]);
 
   useEffect(() => socketEvents.leaveRoom, [socketEvents]);
 
@@ -89,10 +82,32 @@ function Room() {
 
   const onAcceptDialog = (nickname) => {
     if (nickname) {
-      dispatch.user.SET_NAME(nickname);
+      setGuestName(nickname);
       setShowNameModal(false);
     }
   };
+
+  const focusSection = useCallback((sectionRef, focusSelector) => {
+    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    window.setTimeout(() => {
+      sectionRef.current?.querySelector(focusSelector)?.focus({ preventScroll: true });
+    }, 400);
+  }, []);
+
+  if (roomValidation.isPending) {
+    return <Center minH="60vh"><Spinner size="xl" aria-label="Validating room" /></Center>;
+  }
+
+  if (roomValidation.isError) {
+    return (
+      <Center minH="60vh">
+        <VStack>
+          <Alert status="error"><AlertIcon />Unable to validate this room.</Alert>
+          <Button onClick={() => roomValidation.refetch()}>Retry</Button>
+        </VStack>
+      </Center>
+    );
+  }
 
   const handleSendProgress = () => {
     socketEvents.sendProgress({
@@ -137,13 +152,6 @@ function Room() {
       roomId,
     });
   };
-
-  const focusSection = useCallback((sectionRef, focusSelector) => {
-    sectionRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    window.setTimeout(() => {
-      sectionRef.current?.querySelector(focusSelector)?.focus({ preventScroll: true });
-    }, 400);
-  }, []);
 
   return (
     <RoomCanvas width="100%">

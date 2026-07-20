@@ -1,0 +1,4 @@
+interface:
+  display_name: "Share Videos Query State"
+  short_description: "TanStack Query and realtime state conventions"
+  default_prompt: "Use $share-videos-query-state to migrate or review Share-Videos client state and request UX."

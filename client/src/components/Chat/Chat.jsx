@@ -12,18 +12,10 @@ import {
   VStack,
   Button,
 } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
-
-import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
+import { useRoomState, useSocketEvents } from 'src/context/SocketEventsContextProvider';
+import { useSession } from 'src/context/SessionContextProvider';
 
 import { WrapChat, ChatText } from './chat.styles';
-
-const readChat = ({ room, user }) => ({
-  name: user.name,
-  color: user.color,
-  comments: room.chat,
-  roomId: room.id,
-});
 
 const ADMIN_COLOR = {
   light: '#64d53f',
@@ -81,12 +73,8 @@ function Chat() {
   const chatRef = useRef();
   const inputRef = useRef('');
 
-  const {
-    name,
-    comments,
-    roomId,
-    color,
-  } = useSelector(readChat);
+  const { name, color } = useSession();
+  const { chat: comments, id: roomId } = useRoomState();
 
   const sendMessage = () => {
     if (!msg.replace(/ /g, '')) return;

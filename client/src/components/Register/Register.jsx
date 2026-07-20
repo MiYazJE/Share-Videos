@@ -18,7 +18,7 @@ import {
   InputRightElement,
   InputGroup,
 } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
+import { useSession } from 'src/context/SessionContextProvider';
 
 const schema = Yup.object().shape({
   name: Yup.string()
@@ -30,15 +30,14 @@ const schema = Yup.object().shape({
     .required('Password is empty'),
 });
 
-const readIsLoggedIn = ({ user }) => user.isLogged;
-
 function Register({
   open,
   onClose,
   onRegister,
   loading,
 }) {
-  const isLoggedIn = useSelector(readIsLoggedIn);
+  const { user } = useSession();
+  const isLoggedIn = user.isLogged;
 
   const [showPassword, setShowPassword] = useState(false);
   const [showRepeatPassword, setShowRepeatPassword] = useState(false);

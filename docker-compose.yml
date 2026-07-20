@@ -9,6 +9,8 @@ services:
       dockerfile: Dockerfile.dev
     stdin_open: true
     tty: true
+    environment:
+      VITE_USE_POLLING: "true"
     volumes:
       - "./client:/app"
       - "~/.npmrc:/root/.npmrc:ro"

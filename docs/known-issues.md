@@ -15,7 +15,6 @@ These are source-backed findings, not specifications or fixes. Resolve each thro
 | Passport middleware ordering/session setup is inconsistent | routes are mounted before `passport.initialize()` in `server/app.js`; `passport.session()` is used without session middleware | Passport-backed `/playlists/getAll` may fail or behave unexpectedly |
 | Default JWT secret is insecure outside local development | `server/config/config.js` supplies `ACCESS_SECRET_TOKEN` fallback | Tokens are predictable if deployment omits the variable |
 | Server lint covers only root files | `server/package.json` runs `eslint *.js` | Most files under `app/`, `lib/` and `config/` are not linted by the routine script |
-| Client CI test script is incomplete | `client/package.json` defines `test:ci` as bare `cypress`, while Cypress normally needs a subcommand | The documented CI command may exit without executing E2E specs |
 | Server lint currently fails | `npm run lint` reports missing trailing comma and final newline in `server/.eslintrc.js`; it also reports a console warning in `server.js` | Routine backend validation is red before application changes are made |
 | Random color generation is not zero-padded | `server/app/helpers/getRandomColor.js`; auth test expected 7 characters but observed `#cb01f` during validation | Registration can store an invalid short hex color and the auth suite is nondeterministically red |
 | Jest reports open handles | `npm test -- --runInBand` reports two Supertest server handles from auth tests | Test process lifecycle is not fully clean even when assertions finish |
@@ -25,7 +24,6 @@ These are source-backed findings, not specifications or fixes. Resolve each thro
 | Fatal backend restart loses active rooms | A production supervisor can restart a fatally failed backend, while room, membership, playback, queue, and chat state exists only in server memory | Service availability recovers automatically, but participants must create or rejoin a new room |
 | Development backend is not a production supervisor | `Dockerfile.dev` runs Nodemon, which can remain alive after its Node child crashes even though Compose uses a restart policy | Local hot reload is preserved, but automatic fatal recovery requires a production runtime that executes and supervises `npm start` directly |
 | README roadmap is stale | registration exists and registration creates a default playlist, while README lists playlists as future work | Public orientation understates implemented backend behavior and overstates UI completeness |
-| Loading selector appears stale | `client/src/routes/Routes.jsx` reads `user.loadingUser`, but the Rematch user state does not define it | The intended startup loading screen may never display |
 | Video validation message names the wrong domain | `server/app/api/videos/videos.validation.js` reports “Room name is required” for missing search query | API validation feedback is misleading |
 | Unused authentication import in videos router | `userAuthMiddleware` is imported but not used | Readers may incorrectly assume video search requires authentication |
 

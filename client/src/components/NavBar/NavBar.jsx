@@ -7,7 +7,7 @@ import {
   Text,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
+import { useSession } from 'src/context/SessionContextProvider';
 
 import AuthenticationNav from './AuthenticationNav/AuthenticationNav';
 
@@ -20,14 +20,9 @@ const StyledLink = styled(Link)`
   }
 `;
 
-const readIsLoadingUser = ({ loading }) => (
-  loading.effects.user.whoAmI
-  || loading.effects.user.login
-  || loading.effects.user.register
-);
-
 function NavBar({ openLogin, openRegister }) {
-  const isLoadingUser = useSelector(readIsLoadingUser);
+  const { sessionQuery } = useSession();
+  const isLoadingUser = sessionQuery.isPending || sessionQuery.isFetching;
   const titleColor = useColorModeValue('blue.500', 'blue.300');
 
   return (

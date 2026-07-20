@@ -25,17 +25,22 @@ function DialogJoinRoom({
   const [idRoom, setIdRoom] = useState('');
   const [errorRoomId, setErrorRoomId] = useState('');
 
-  const { isValidRoom } = useRoom({ id: idRoom });
+  const roomValidation = useRoom({ id: idRoom });
+  const { isValidRoom } = roomValidation;
 
   const history = useHistory();
 
   useEffect(() => {
     if (!idRoom) return;
-    if (!isValidRoom) setErrorRoomId('Room not exists');
-  }, [isValidRoom, idRoom]);
+    if (roomValidation.isSuccess && !isValidRoom) setErrorRoomId('Room does not exist');
+    if (roomValidation.isSuccess && isValidRoom) setErrorRoomId('');
+    if (roomValidation.isError) setErrorRoomId('Unable to validate the room. Try again.');
+  }, [isValidRoom, idRoom, roomValidation.isSuccess, roomValidation.isError]);
 
   const handleJoinRoom = () => {
     if (!idRoom) return setErrorRoomId('Room is empty');
+    if (roomValidation.isError) return roomValidation.refetch();
+    if (roomValidation.isPending) return;
     if (!isValidRoom) return;
 
     history.push(`/room/${idRoom}`);
@@ -78,8 +83,10 @@ function DialogJoinRoom({
           <Button
             colorScheme="facebook"
             onClick={handleJoinRoom}
+            isLoading={roomValidation.isFetching}
+            isDisabled={!idRoom}
           >
-            Join
+            {roomValidation.isError ? 'Retry' : 'Join'}
           </Button>
         </ModalFooter>
       </ModalContent>

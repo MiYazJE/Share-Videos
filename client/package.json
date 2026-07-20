@@ -10,8 +10,7 @@
     "@emotion/react": "^11.9.0",
     "@emotion/styled": "^11.8.1",
     "@hookform/resolvers": "^2.8.10",
-    "@rematch/core": "^2.2.0",
-    "@rematch/loading": "^2.1.2",
+    "@tanstack/react-query": "^5.101.2",
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.5.0",
     "@testing-library/user-event": "^7.2.1",
@@ -24,7 +23,6 @@
     "react-hook-form": "^7.31.2",
     "react-icons": "^3.11.0",
     "react-player": "^2.6.0",
-    "react-redux": "^7.2.1",
     "react-router-dom": "^5.2.0",
     "socket.io-client": "^2.3.0",
     "styled-components": "^5.2.1",
@@ -36,7 +34,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "test:dev": "cypress open",
-    "test:ci": "cypress",
+    "test:ci": "node scripts/run-cypress-ci.js",
+    "test:unit": "vitest run",
     "lint:fix": "eslint --fix --ext .js,.jsx .",
     "lint": "eslint ."
   },
@@ -62,6 +61,7 @@
     "eslint-plugin-react": "^7.30.0",
     "eslint-plugin-react-hooks": "^4.5.0",
     "sass": "^1.52.1",
-    "vite": "^5.4.14"
+    "vite": "^5.4.14",
+    "vitest": "^4.1.10"
   }
 }

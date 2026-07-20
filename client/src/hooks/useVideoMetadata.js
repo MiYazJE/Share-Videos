@@ -1,12 +1,10 @@
-import { useSelector } from 'react-redux';
 import { useEffect, useCallback, useState } from 'react';
 
 import { stringFormat } from 'src/utils';
-
-const readCurrentVideo = ({ room }) => room.currentVideo;
+import { useRoomState } from 'src/context/SocketEventsContextProvider';
 
 const useVideoMetadata = () => {
-  const currentVideo = useSelector(readCurrentVideo);
+  const { currentVideo } = useRoomState();
   const [viewsFormatted, setViewsFormatted] = useState('');
 
   const formatViews = useCallback(() => {

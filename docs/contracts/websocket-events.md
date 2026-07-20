@@ -24,9 +24,11 @@ All inbound asynchronous handlers pass through a realtime error boundary. A sync
 
 | Event | Payload | Recipients and client effect |
 | --- | --- | --- |
-| `WS_UPDATE_ROOM` | Full room or partial fields such as `{ users, chat }`, `{ queue }`, `{ isPlaying }`, `{ progressVideo }`, `{ seekVideo }` | Caller, peers, or entire room depending on operation; client shallow-merges into Rematch room state |
-| `WS_UPDATE_CHAT` | Chat entry array | Entire room; client replaces `room.chat` |
-| `WS_NOTIFY_MESSAGE` | `{ msg, variant }` | Caller, peers or entire room; client enqueues notifier state |
+| `WS_UPDATE_ROOM` | Full room or partial fields such as `{ users, chat }`, `{ queue }`, `{ isPlaying }`, `{ progressVideo }`, `{ seekVideo }` | Caller, peers, or entire room depending on operation; client shallow-merges into the focused room reducer state |
+| `WS_UPDATE_CHAT` | Chat entry array | Entire room; client replaces the room context chat array |
+| `WS_NOTIFY_MESSAGE` | `{ msg, variant }` | Caller, peers or entire room; client displays transient Chakra feedback through the notification context |
+
+Socket-driven room data remains outside the TanStack Query cache. Explicit route leave emits `WS_LEAVE_ROOM` and resets route-scoped client room state; the wire event names, payloads, and `/socket-io` path are unchanged.
 
 ## Definition matrix
 

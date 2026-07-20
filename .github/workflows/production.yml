@@ -52,6 +52,8 @@ jobs:
         run: npm ci --no-audit --no-fund --no-optional
       - name: Lint
         run: npm run lint
+      - name: Test Vitest unit suite
+        run: npm run test:unit
       - name: Test Cypress E2E
         uses: cypress-io/github-action@v7
         with:

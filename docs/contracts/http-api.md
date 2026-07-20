@@ -1,6 +1,6 @@
 # HTTP API contracts
 
-Base URL is `VITE_API_URL` in the client, defaulting to `http://localhost:5000`. The Axios wrapper sends `Authorization` on all requests when a token exists. Validation failures return HTTP 400 with `{ message, path }`. Rejected asynchronous route handlers pass through the terminal error middleware: classified operational errors retain their safe status/message, while unexpected errors return HTTP 500 `{ message: "Internal server error" }`. Server logs retain diagnostic errors; responses do not expose stacks.
+Base URL is `VITE_API_URL` in the client, defaulting to `http://localhost:5000`. The Axios wrapper sends `Authorization` on all requests when a token exists. Every failed client request rejects with a normalized error containing status, safe message, response details, and diagnostic cause; successful responses without an entity resolve to `null`, never an error-shaped `undefined`. Validation failures return HTTP 400 with `{ message, path }`. Rejected asynchronous route handlers pass through the terminal error middleware: classified operational errors retain their safe status/message, while unexpected errors return HTTP 500 `{ message: "Internal server error" }`. Server logs retain diagnostic errors; responses do not expose stacks.
 
 ## Health
 
@@ -20,7 +20,7 @@ Base URL is `VITE_API_URL` in the client, defaulting to `http://localhost:5000`.
 - Input: JSON `{ name: string, password: string }`; both required.
 - Success: `{ error: false, msg }`; creates a MongoDB user and default playlist.
 - Errors: 400 validation response; 400 `{ error: true, msg }` for duplicate nickname; unhandled storage errors can surface as server errors.
-- Client: `client/src/models/user.js` via `API_ROUTES.AUTH.REGISTER`.
+- Client: `client/src/api/auth.js` through the registration mutation in `client/src/pages/Home/Home.jsx`.
 - Server: `server/app/api/auth/auth.router.js`, validation and controller.
 
 ### `POST /auth/login`
@@ -29,7 +29,7 @@ Base URL is `VITE_API_URL` in the client, defaulting to `http://localhost:5000`.
 - Input: JSON `{ name: string, password: string }`; both required.
 - Success: `{ user: { id, name, avatarBase64, color }, token: "Bearer ..." }`.
 - Errors: 400 validation response; 401 `{ msg }` for invalid credentials.
-- Client: `client/src/models/user.js`.
+- Client: `client/src/api/auth.js` through the login mutation in `client/src/pages/Home/Home.jsx`.
 - Server: auth router/controller and Passport local strategy.
 
 ### `GET /auth/whoAmI`
@@ -38,7 +38,7 @@ Base URL is `VITE_API_URL` in the client, defaulting to `http://localhost:5000`.
 - Input: none.
 - Success: `{ auth: true, user: { id, name, avatarBase64, color } }`.
 - Errors: 401 for missing, invalid or expired token.
-- Client: called during `client/src/App.jsx` startup through `client/src/models/user.js`.
+- Client: `client/src/context/SessionContextProvider.jsx` through the shared session query.
 - Server: auth router/controller and `server/app/middlewares/authMiddlewares.js`.
 
 `/auth/logout` is not an active HTTP endpoint. The client enum declares it, but logout only removes the browser token.
@@ -51,7 +51,7 @@ Base URL is `VITE_API_URL` in the client, defaulting to `http://localhost:5000`.
 - Input: JSON `{ name: string }`, minimum length 3.
 - Success: full in-memory room object `{ id, host, chat, users, queue, progressVideo, currentVideo }`.
 - Errors: 400 validation response; unexpected controller errors are not explicitly handled.
-- Client: Home -> `client/src/models/room.js`.
+- Client: Home -> room-creation mutation using `client/src/api/rooms.js`.
 - Server: rooms router/validation/controller and `server/lib/roomsController.js`.
 
 ### `GET /rooms/:id/isValid`
@@ -73,7 +73,7 @@ The server route includes a trailing slash in its declaration, but Express accep
 - Input: required search text path parameter.
 - Success: YouTube suggestion array returned by `youtube-sr`.
 - Errors: 400 validation response; YouTube dependency failure returns HTTP 502 `{ message: "YouTube search is temporarily unavailable" }`.
-- Client: room search autocomplete via `client/src/models/room.js`.
+- Client: room search autocomplete via `client/src/queries/videos.js`; empty normalized input disables the query and superseded requests receive an Axios cancellation signal.
 - Server: videos router/validation/controller.
 
 ### `GET /videos/youtube/:q`
@@ -82,7 +82,7 @@ The server route includes a trailing slash in its declaration, but Express accep
 - Input: required search text; optional query `offset` (default 0) and `limit` (default 10).
 - Success: `{ data: video[], isLastPage: boolean }`; videos are normalized with thumbnail, duration and channel fields while retaining upstream fields. Upstream records missing the required URL, title, thumbnail URL, or channel name are omitted; a completed result containing no usable records returns an empty `data` array.
 - Errors: 400 validation response; YouTube dependency or parser failure returns HTTP 502 `{ message: "YouTube search is temporarily unavailable" }`.
-- Client: paginated room search via `client/src/models/room.js`.
+- Client: paginated room search via `client/src/queries/videos.js`; query keys include normalized search, limit, and offset, and prior page data remains usable while another page loads.
 - Server: videos router/validation/controller and external `youtube-sr` service.
 
 ## Playlists

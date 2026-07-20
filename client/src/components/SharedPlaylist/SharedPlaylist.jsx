@@ -10,7 +10,6 @@ import {
   VStack,
   useColorModeValue,
 } from '@chakra-ui/react';
-import { useSelector } from 'react-redux';
 import { Reorder } from 'framer-motion';
 import {
   MdDelete,
@@ -19,14 +18,9 @@ import {
   MdPlayArrow,
 } from 'react-icons/md';
 
-import { useSocketEvents } from 'src/context/SocketEventsContextProvider';
+import { useRoomState, useSocketEvents } from 'src/context/SocketEventsContextProvider';
+import { useSession } from 'src/context/SessionContextProvider';
 import useIsVideoPlaying from 'src/hooks/useIsVideoPlaying';
-
-const getPlaylist = ({ room, user }) => ({
-  playlist: room.queue,
-  roomId: room.id,
-  name: user.name,
-});
 
 function PlaylistItem({ video, onPause, onPlay, onRemove }) {
   const isPlaying = useIsVideoPlaying(video.url);
@@ -96,11 +90,8 @@ function PlaylistItem({ video, onPause, onPlay, onRemove }) {
 }
 
 function SharedPlaylist({ onAddVideos }) {
-  const {
-    playlist,
-    roomId,
-    name,
-  } = useSelector(getPlaylist);
+  const { queue: playlist, id: roomId } = useRoomState();
+  const { name } = useSession();
   const socketEvents = useSocketEvents();
 
   const handleReorderPlaylist = (nextPlaylist) => {
