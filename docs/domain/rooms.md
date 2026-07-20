@@ -16,11 +16,13 @@ stateDiagram-v2
 
 ## Creation and validation
 
-`POST /rooms/create` accepts a name, generates an ID, and stores a room with that name as `host`, an initial video, empty users/chat/queue, and progress 0. Creation does not join the creator. `GET /rooms/:id/isValid` checks the server-memory map. The Home page creates then navigates; `client/src/hooks/useRoom.js` validates the URL before the Room page joins.
+`POST /rooms/create` requires a bearer-authenticated user, generates an ID, and stores a room with the authenticated user's stored name as `host`, an initial video, empty users/chat/queue, and progress 0. The endpoint does not accept creator identity from the client. Creation does not join the creator. `GET /rooms/:id/isValid` remains public and checks the server-memory map. The Home page creates then navigates; `client/src/hooks/useRoom.js` validates the URL before the Room page joins.
+
+The Home page keeps Create room visible to guests. Activating it opens an authentication-required popup rather than calling the endpoint; login or registration begun there resumes creation once after authentication. Session restoration must settle before creation is available. These client checks provide guidance, while the server middleware remains the authorization boundary.
 
 ## Identity and joining
 
-The Room page waits for restored authentication. A guest supplies a nickname; a logged-in user sends the stored name. `WS_JOIN_ROOM` carries `{ roomId, name, isLogged }`. Logged users are looked up in MongoDB; guests receive generated IDs and avatars. The controller maps the socket to the user, appends an administrative chat entry, joins the Socket.IO room and emits current state.
+The Room page waits for restored authentication. Joining remains public: a guest supplies a nickname, while a logged-in user sends the stored name. `WS_JOIN_ROOM` carries `{ roomId, name, isLogged }`. Logged users are looked up in MongoDB; guests receive generated IDs and avatars. The controller maps the socket to the user, appends an administrative chat entry, joins the Socket.IO room and emits current state. Joining an unknown identifier does not create a room.
 
 ## Playback and progress
 
@@ -37,4 +39,3 @@ The Room page waits for restored authentication. A guest supplies a nickname; a 
 ## Leaving, host reassignment and deletion
 
 The client emits `WS_LEAVE_ROOM` during Room cleanup; transport closure can also call leave handling. The controller removes the socket mapping and participant. If nobody remains, the room is deleted. Otherwise, current observed behavior assigns a randomly selected remaining user's name to `host`, broadcasts users, and emits a leave notification. The host reassignment caveat is documented separately because the code does this after every departure.
-

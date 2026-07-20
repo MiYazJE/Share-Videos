@@ -7,12 +7,8 @@ describe('Home page e2e', () => {
 
   it('Home page should render', () => {
     cy.contains(/share videos/gi);
-    cy.get('[data-test-id="homeForm"] button').contains('Create room');
-    cy.get('[data-test-id="homeForm"] button').contains(/join room/gi);
-    cy.get('[data-test-id="homeForm"] label').contains(/nickname/gi);
-    cy.get('[data-test-id="homeForm"] input#nickName')
-      .should('have.attr', 'placeholder')
-      .and('match', /enter your nickname/gi);
+    cy.get('[data-test-id="homeActions"] button').contains('Create room');
+    cy.get('[data-test-id="homeActions"] button').contains(/join room/gi);
   });
 
   it('Change theme should work', () => {

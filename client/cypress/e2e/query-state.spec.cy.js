@@ -1,19 +1,23 @@
 describe('Query state and request recovery', () => {
   beforeEach(() => {
-    cy.intercept('GET', '**/auth/whoAmI', { statusCode: 401, body: { msg: 'Unauthorized' } });
+    cy.intercept('GET', '**/auth/whoAmI', {
+      body: {
+        user: {
+          id: 'user-id', name: 'Miya', avatarBase64: '', color: '#ffffff',
+        },
+      },
+    });
   });
 
-  it('preserves room creation input and stays home after failure', () => {
+  it('stays home after room creation failure', () => {
     cy.intercept('POST', '**/rooms/create', {
       statusCode: 500,
       body: { message: 'Internal server error' },
     }).as('createRoom');
     cy.visit('/');
-    cy.get('input#nickName').type('Miya');
     cy.contains('button', 'Create room').click();
     cy.wait('@createRoom');
     cy.location('pathname').should('eq', '/');
-    cy.get('input#nickName').should('have.value', 'Miya');
     cy.contains('Internal server error').should('be.visible');
   });
 
@@ -29,7 +33,6 @@ describe('Query state and request recovery', () => {
       body: true,
     });
     cy.visit('/');
-    cy.get('input#nickName').type('Miya');
     cy.contains('button', 'Create room').click().should('be.disabled');
     cy.wait('@createRoom');
   });
@@ -49,7 +52,6 @@ describe('Query state and request recovery', () => {
       body: { message: 'YouTube search is temporarily unavailable' },
     }).as('videoSearch');
     cy.visit('/');
-    cy.get('input#nickName').type('Miya');
     cy.contains('button', 'Create room').click();
     cy.location('pathname').should('eq', '/room/room-1');
     cy.contains('[role="status"]', 'Loading videos.').should('not.exist');

@@ -47,12 +47,13 @@ Base URL is `VITE_API_URL` in the client, defaulting to `http://localhost:5000`.
 
 ### `POST /rooms/create`
 
-- Auth: none.
-- Input: JSON `{ name: string }`, minimum length 3.
+- Auth: bearer JWT required by `userAuthMiddleware`; the referenced user must still exist.
+- Input: none. A client-supplied creator name is ignored and is not authoritative.
 - Success: full in-memory room object `{ id, host, chat, users, queue, progressVideo, currentVideo }`.
-- Errors: 400 validation response; unexpected controller errors are not explicitly handled.
-- Client: Home -> room-creation mutation using `client/src/api/rooms.js`.
-- Server: rooms router/validation/controller and `server/lib/roomsController.js`.
+- Identity: `host` is derived from the authenticated user's stored name.
+- Errors: 401 for a missing, malformed, invalid, expired, or valid-but-userless token; unexpected controller errors use the terminal error middleware.
+- Client: Home -> authenticated room-creation mutation using `client/src/api/rooms.js`. Anonymous visitors see an authentication-required popup; successful login or registration from that popup resumes the pending creation once.
+- Server: rooms router/controller, authentication middleware, and `server/lib/roomsController.js`.
 
 ### `GET /rooms/:id/isValid`
 
@@ -62,6 +63,8 @@ Base URL is `VITE_API_URL` in the client, defaulting to `http://localhost:5000`.
 - Errors: no explicit error response; unknown IDs return `false`.
 - Client: `client/src/hooks/useRoom.js`.
 - Server: rooms router/controller and in-memory controller lookup.
+
+Room validation remains public so guests can enter existing rooms without registering. Validation never creates a missing room.
 
 The server route includes a trailing slash in its declaration, but Express accepts the client's non-trailing form under current routing defaults.
 

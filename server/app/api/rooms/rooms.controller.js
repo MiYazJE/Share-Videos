@@ -1,7 +1,6 @@
 async function create(req, res) {
-  const { name } = req.body;
   const { roomsCtrl } = req.app.locals;
-  const room = await roomsCtrl.create(name);
+  const room = await roomsCtrl.create(req.user.name);
   res.json(room);
 }
 

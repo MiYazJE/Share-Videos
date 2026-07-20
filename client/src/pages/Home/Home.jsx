@@ -1,8 +1,9 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { useHistory } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
 
 import BoxDialog from 'src/components/Home/BoxDialog/BoxDialog';
+import AuthenticationRequiredDialog from 'src/components/Home/AuthenticationRequiredDialog';
 import NavBar from 'src/components/NavBar/NavBar';
 import Register from 'src/components/Register';
 import Login from 'src/components/Login';
@@ -15,17 +16,29 @@ import tokenStorage from 'src/utils/token-storage';
 function Home() {
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [showRegisterModal, setShowRegisterModal] = useState(false);
+  const [showAuthenticationRequired, setShowAuthenticationRequired] = useState(false);
+  const pendingCreateRef = useRef(false);
 
   const history = useHistory();
-  const { setAuthenticatedUser, setGuestName } = useSession();
+  const { setAuthenticatedUser, sessionQuery, user: sessionUser } = useSession();
   const { notify } = useNotification();
 
+  const createRoomMutation = useMutation({
+    mutationFn: createRoom,
+    onSuccess: (room) => history.push(`/room/${room.id}`),
+    onError: (error) => notify({ msg: error.message, variant: 'error' }),
+  });
   const loginMutation = useMutation({
     mutationFn: authApi.login,
     onSuccess: ({ user, token }) => {
       tokenStorage.saveToken(tokenStorage.JWT_TOKEN, token);
       setAuthenticatedUser(user);
       notify({ msg: 'Logged in successfully', variant: 'success' });
+
+      if (pendingCreateRef.current) {
+        pendingCreateRef.current = false;
+        createRoomMutation.mutate();
+      }
     },
     onError: (error) => notify({ msg: error.message, variant: 'error' }),
   });
@@ -34,20 +47,49 @@ function Home() {
     onSuccess: async (_, payload) => loginMutation.mutateAsync(payload),
     onError: (error) => notify({ msg: error.message, variant: 'error' }),
   });
-  const createRoomMutation = useMutation({
-    mutationFn: createRoom,
-    onSuccess: (room, nickname) => {
-      setGuestName(nickname);
-      history.push(`/room/${room.id}`);
-    },
-    onError: (error) => notify({ msg: error.message, variant: 'error' }),
-  });
 
-  const closeLoginModal = useCallback(() => setShowLoginModal(false), []);
-  const closeRegisterModal = useCallback(() => setShowRegisterModal(false), []);
+  const cancelPendingCreate = useCallback(() => {
+    pendingCreateRef.current = false;
+  }, []);
 
-  const handleCreateRoom = ({ nickName }) => {
-    createRoomMutation.mutate(nickName);
+  const closeLoginModal = useCallback(() => {
+    cancelPendingCreate();
+    setShowLoginModal(false);
+  }, [cancelPendingCreate]);
+  const closeRegisterModal = useCallback(() => {
+    cancelPendingCreate();
+    setShowRegisterModal(false);
+  }, [cancelPendingCreate]);
+
+  const openLogin = useCallback(() => {
+    cancelPendingCreate();
+    setShowLoginModal(true);
+  }, [cancelPendingCreate]);
+  const openRegister = useCallback(() => {
+    cancelPendingCreate();
+    setShowRegisterModal(true);
+  }, [cancelPendingCreate]);
+
+  const handleCreateRoom = () => {
+    if (sessionQuery.isPending) return;
+    if (sessionUser.isLogged) {
+      createRoomMutation.mutate();
+      return;
+    }
+
+    pendingCreateRef.current = true;
+    setShowAuthenticationRequired(true);
+  };
+
+  const closeAuthenticationRequired = () => {
+    cancelPendingCreate();
+    setShowAuthenticationRequired(false);
+  };
+
+  const authenticateForPendingCreate = (method) => {
+    setShowAuthenticationRequired(false);
+    if (method === 'login') setShowLoginModal(true);
+    if (method === 'register') setShowRegisterModal(true);
   };
 
   const handleRegister = (payload) => {
@@ -61,10 +103,21 @@ function Home() {
   return (
     <div id="home">
       <NavBar
-        openLogin={() => setShowLoginModal(true)}
-        openRegister={() => setShowRegisterModal(true)}
+        openLogin={openLogin}
+        openRegister={openRegister}
       />
-      <BoxDialog onCreateRoom={handleCreateRoom} isLoading={createRoomMutation.isPending} />
+      <BoxDialog
+        onCreateRoom={handleCreateRoom}
+        isLoading={createRoomMutation.isPending}
+        isCreateDisabled={sessionQuery.isPending}
+      />
+
+      <AuthenticationRequiredDialog
+        open={showAuthenticationRequired}
+        onClose={closeAuthenticationRequired}
+        onLogin={() => authenticateForPendingCreate('login')}
+        onRegister={() => authenticateForPendingCreate('register')}
+      />
 
       <Register
         open={showRegisterModal}
